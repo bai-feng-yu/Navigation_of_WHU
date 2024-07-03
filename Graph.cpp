@@ -405,6 +405,7 @@ bool Graph::update_road(string& road_name,float length,int pl_key,int pr_key,int
     }
     return false;
 }
+
 bool Graph::del_point(string& point_name)
 {
     // 删除景点，删除对应的道路
