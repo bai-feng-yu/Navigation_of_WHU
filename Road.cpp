@@ -1,6 +1,6 @@
 #include "Road.h"
 
-Road::Road(Point *pr, Point *pl, string &road_name, float length)
+Road::Road(Point *pr, Point *pl, string &road_name, int length)
 {
     this->pl = pl; 
     this->pr = pr; 
