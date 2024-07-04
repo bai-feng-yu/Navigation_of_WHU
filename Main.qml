@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import an.utility
+import "D:/Documents/QTDocuments/test_for_history_edit/Triggerable_Button.qml"
 
 Window {
     visible: true
@@ -9,7 +10,6 @@ Window {
     height: 480
     title: qsTr("WuHan Univerity Guide")
     /* 通过交换控件的位置来避免 事件冲突 */
-
     Rectangle{
         id: second_window_form
         visible: false
@@ -37,6 +37,15 @@ Window {
                 font.pixelSize: 30
                 text: qsTr("Admin Operations")
                 anchors.centerIn: parent
+            }
+        }
+        Repeater{
+            id : pointsGenarating
+            model:5
+            Triggerable_Button{
+                anchors.fill: parent
+                button_text: "2"
+
             }
         }
 
