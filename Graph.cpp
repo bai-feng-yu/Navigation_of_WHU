@@ -90,17 +90,11 @@ void Graph::inquire_point(Point *v)
     cout<<v->point_name<<endl<<v->point_intro<<endl;
 }
 
-vector<int> Graph::inquire_shortest_road(Point *u, Point *v)
-{
-    int from = u->point_key, to = v->point_key;
-    return this->inquire_shortest_road(from, to);
-}
-
-vector<int> Graph::inquire_shortest_road(int from, int to) 
+vector<int> Graph::inquire_shortest_road(int point_key1, int point_key2)
 {
     vector<int>res;
-    vector<int> points_path = __dijkstra(from);  
-    int cur = to;
+    vector<int> points_path = __dijkstra(point_key1);
+    int cur = point_key2;
     while(cur != -1){
         res.push_back(cur);
         cur = points_path[cur];
@@ -109,20 +103,59 @@ vector<int> Graph::inquire_shortest_road(int from, int to)
     return res;
 }
 
-vector<vector<int>> Graph::inquire_all_roads(Point *u, Point *v)
-{
-    int from = u->point_key, to = v->point_key;
-    return this->inquire_all_roads(from, to);
-}
 
-vector<vector<int>> Graph::inquire_all_roads(int u, int v)
+vector<vector<int>> Graph::inquire_all_roads(int point_key1, int point_key2)
 {
     vector<vector<int>>points_paths;
     vector<int>visited;
     vector<int>points_path;
     visited.resize(get_max_valid_point_key_from_points() + 1);
-    this->__dfs(u, v, points_paths, visited, points_path);
+    this->__dfs(point_key1, point_key2, points_paths, visited, points_path);
     return points_paths; // 经过的所有点
+}
+
+QString Graph::get_point_name(int point_key)
+{
+    //查询景点名称
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+
+    if (!database.isOpen()) {
+        return QString("Database is not open.");
+    }
+
+    QSqlQuery query=QSqlQuery(database);
+    QString find=QString("select * from point where point_key='%1'").arg(point_key);
+
+    if(query.exec(find)&&query.next())
+    {
+        return QString(query.value("point_name").toString());
+    }
+    else
+    {
+        return QString("There is no such point.");
+    }
+}
+
+QString Graph::get_point_intro(int point_key)
+{
+    //查询景点介绍
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+
+    if (!database.isOpen()) {
+        return QString("Database is not open.");
+    }
+
+    QSqlQuery query=QSqlQuery(database);
+    QString find=QString("select * from point where point_key='%1'").arg(point_key);
+
+    if(query.exec(find)&&query.next())
+    {
+        return QString(query.value("point_intro").toString());
+    }
+    else
+    {
+        return QString("There is no such point.");
+    }
 }
 
 int Graph::get_points_num()
