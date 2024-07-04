@@ -16,19 +16,24 @@ Window {
         enabled: false
         width: parent.width
         height: parent.height
-
+        Image {
+            id: unnamed1
+            anchors.fill: parent
+            source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
+        }
         Rectangle{
             id:welcome_rec
             width: 300
             height: 50
             visible: parent.visible
             enabled: parent.enabled
-            color: "#eee"
             radius: 20
+            color: Qt.rgba(255, 255, 255, 0.5)
             border.color : "blue"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top : parent.top
             Text {
+                opacity: 100
                 font.pixelSize: 30
                 text: qsTr("Admin Operations")
                 anchors.centerIn: parent
@@ -41,7 +46,7 @@ Window {
             height: 50
             visible: parent.visible
             enabled: parent.enabled
-            color: "#eee"
+            color: Qt.rgba(255, 255, 255, 0.5)
             radius: 20
             border.color : "gray"
             anchors.left: parent.left
@@ -63,10 +68,10 @@ Window {
                 hoverEnabled: parent.enabled
                 anchors.fill: parent
                 onEntered: {
-                    each_option_left.color = "red"
+                    each_option_left.color = Qt.rgba(255,153,129,0.8)
                 }
                 onExited: {
-                    each_option_left.color = "#eee"
+                    each_option_left.color = Qt.rgba(255, 255, 255, 0.5)
                 }
             }
         }
@@ -77,7 +82,7 @@ Window {
             height: 50
             visible: parent.visible
             enabled: parent.enabled
-            color: "#eee"
+            color: Qt.rgba(255, 255, 255, 0.5)
             radius: 20
             border.color : "gray"
             anchors.left: each_option_left.right
@@ -99,10 +104,10 @@ Window {
                 hoverEnabled: parent.enabled
                 anchors.fill: parent
                 onEntered: {
-                    each_option_center.color = "red"
+                    each_option_center.color = Qt.rgba(255,153,129,0.8)
                 }
                 onExited: {
-                    each_option_center.color = "#eee"
+                    each_option_center.color = Qt.rgba(255, 255, 255, 0.5)
                 }
             }
         }
@@ -113,7 +118,7 @@ Window {
             height: 50
             visible: parent.visible
             enabled: parent.enabled
-            color: "#eee"
+            color: Qt.rgba(255, 255, 255, 0.5)
             radius: 20
             border.color : "gray"
             anchors.left: each_option_center.right
@@ -135,10 +140,10 @@ Window {
                 hoverEnabled: parent.enabled
                 anchors.fill: parent
                 onEntered: {
-                    each_option_right.color = "red"
+                    each_option_right.color = Qt.rgba(255,153,129,0.8)
                 }
                 onExited: {
-                    each_option_right.color = "#eee"
+                    each_option_right.color = Qt.rgba(255, 255, 255, 0.5)
                 }
             }
         }
@@ -152,6 +157,11 @@ Window {
             enabled: true
             width: parent.width
             height: parent.height
+            Image {
+                id: unnamed2
+                anchors.fill: parent
+                source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
+            }
             MagicPool {
                     id: magicPool
                     visible: parent.visible
@@ -175,7 +185,7 @@ Window {
                     }
 
                     MouseArea {
-                        enabled: parent.enabled
+                        enabled: parent.enabled && !inputField.activeFocus
                         anchors.fill: parent
                         onClicked: magicPool.moveFish(mouse.x, mouse.y, true);
                     }
@@ -188,6 +198,7 @@ Window {
                 height: 40
                 selectByMouse: true
                 font.pointSize: 12
+
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 anchors.topMargin: 0 // 顶部中心
@@ -209,6 +220,7 @@ Window {
                 text: qsTr("搜索")
                 visible: parent.visible
                 enabled: parent.enabled
+
                 width: 70
                 height: 40
                 anchors.top: inputField.top // 与文本输入框绑定 同一高度
@@ -220,20 +232,21 @@ Window {
                 id: historyList
                 radius: 4
                 width: 300
-                height: 200
+                height: 150
                 enabled: parent.enabled
                 visible: parent.visible && (inputField.editing || inputField.activeFocus) // 什么时候可见
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: inputField.bottom
                 anchors.topMargin: 2
                 border.color: "red"
-                color: "#eee"
+                color: Qt.rgba(255, 255, 255, 0.5)
 
                 ListView { // 历史记录的列表
                     id: listView
                     anchors.fill: parent
                     enabled: parent.enabled
                     visible: parent.visible
+
                     anchors.margins: 5
                     clip: true
                     spacing: 5
@@ -319,4 +332,5 @@ Window {
         }
 
     }
+
 }
