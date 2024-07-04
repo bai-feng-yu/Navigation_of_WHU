@@ -4,7 +4,6 @@
 #include <queue>
 #include <algorithm>
 #include <QObject>
-#include <Qstring>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
