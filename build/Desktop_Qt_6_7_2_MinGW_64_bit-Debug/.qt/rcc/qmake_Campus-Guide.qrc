@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/Campus-Guide">
+    <file alias="qmldir">D:/Documents/QTDocuments/Campus-Guide/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/Campus-Guide/qmldir</file>
+  </qresource>
+</RCC>
+

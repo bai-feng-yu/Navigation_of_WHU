@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="/Campus-Guide/">
+    <file alias="Main.qml">D:/Documents/QTDocuments/Campus-Guide/Main.qml</file>
+    <file alias="Triggerable_Button.qml">D:/Documents/QTDocuments/Campus-Guide/Triggerable_Button.qml</file>
+  </qresource>
+</RCC>
+

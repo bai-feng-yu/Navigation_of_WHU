@@ -1,0 +1,6 @@
+module Campus-Guide
+typeinfo appCampus-Guide.qmltypes
+prefer :/Campus-Guide/
+Main 1.0 Main.qml
+Triggerable_Button 1.0 Triggerable_Button.qml
+
