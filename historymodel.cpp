@@ -18,8 +18,11 @@ HistoryModel::HistoryModel()
     //     // 将生成的随机数字符串前加上"测试"前缀，然后添加到m_historyData中
     //     m_historyData.push_back("测试" + randStr);
     // }
+
     m_historyData.push_back("武汉大学图书馆");
     m_historyData.push_back("武汉大学牌坊");
+    m_historyData.push_back("信息学部操场");
+
 
     // 初始化m_data为m_historyData的副本，用于展示
     m_data = m_historyData;
