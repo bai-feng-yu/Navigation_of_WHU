@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
-import an.utility
+//import an.utility
 import "D:/Documents/QTDocuments/test_for_history_edit/Triggerable_Button.qml"
 
 Window {
@@ -171,34 +171,34 @@ Window {
                 anchors.fill: parent
                 source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
             }
-            MagicPool {
-                    id: magicPool
-                    visible: parent.visible
-                    enabled: parent.enabled
-                    anchors.fill: parent
-                    // Component.onCompleted: randomMove();
+            // MagicPool {
+            //         id: magicPool
+            //         visible: parent.visible
+            //         enabled: parent.enabled
+            //         anchors.fill: parent
+            //         // Component.onCompleted: randomMove();
 
-                    // function randomMove() {
-                    //     var r_x = Math.random() * width;
-                    //     var r_y = Math.random() * height;
-                    //     magicPool.moveFish(r_x, r_y, false);
-                    // }
+            //         // function randomMove() {
+            //         //     var r_x = Math.random() * width;
+            //         //     var r_y = Math.random() * height;
+            //         //     magicPool.moveFish(r_x, r_y, false);
+            //         // }
 
-                    Timer {
-                        interval: 1500
-                        repeat: true
-                        running: true
-                        onTriggered: {
-                            //if (Math.random() > 0.6 && !magicPool.moving) magicPool.randomMove();
-                        }
-                    }
+            //         Timer {
+            //             interval: 1500
+            //             repeat: true
+            //             running: true
+            //             onTriggered: {
+            //                 //if (Math.random() > 0.6 && !magicPool.moving) magicPool.randomMove();
+            //             }
+            //         }
 
-                    MouseArea {
-                        enabled: parent.enabled && !inputField.activeFocus
-                        anchors.fill: parent
-                        onClicked: magicPool.moveFish(mouse.x, mouse.y, true);
-                    }
-            }
+            //         MouseArea {
+            //             enabled: parent.enabled && !inputField.activeFocus
+            //             anchors.fill: parent
+            //             onClicked: magicPool.moveFish(mouse.x, mouse.y, true);
+            //         }
+            // }
             TextField { // 文本输入框
                 id: inputField
                 visible: parent.visible
