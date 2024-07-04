@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) // 主函数入口
     QQmlApplicationEngine engine; // 创建QQmlApplicationEngine实例，用于加载和显示QML界面
     engine.rootContext()->setContextProperty("historyModel", &history_model); // 将model实例添加到QML环境的根上下文中，使其可以通过"historyModel"标识符在QML中访问
 
-    const QUrl url(QStringLiteral("qrc:/test_for_history_edit/Main.qml")); // 创建QUrl对象，指向QML文件的资源路径
+    const QUrl url(QStringLiteral("qrc:/Campus-Guide/Main.qml")); // 创建QUrl对象，指向QML文件的资源路径
     /* 异常处理 + 安全处理 */
     // 使用QObject::connect连接QQmlApplicationEngine的objectCreated信号到一个lambda函数
     // 当QML对象创建完成后，此lambda函数将被调用
