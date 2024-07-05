@@ -34,25 +34,29 @@ public:
 
 //用于算法的函数
     void createGraph();                                         /* 根据数据库的内容更新roads,points,graph*/
-    Q_INVOKABLE int get_max_valid_point_key_from_points();                  //获取最大的景点的key
+
 
 //用于大家查数据的函数
     //最短路径
     Q_INVOKABLE QVariantList inquire_shortest_road(int point_key1, int point_key2);            //查询点与点之间的最短路径信息(包括两点的key)
     Q_INVOKABLE QList<QVariantList> inquire_all_roads(int point_key1, int point_key2);        //查询点与点之间的全部路径信息(每条路都各自包括两点的key)
 
-    Q_INVOKABLE void inquire_point(Point* v);                       //查询单个点的信息
-
+    //查点
     Q_INVOKABLE int find_point_key(string& point_name);             //用景点名称查询景点的key,-1表示没找到
     Q_INVOKABLE QString get_point_name(int point_key);              //查询景点名称
     Q_INVOKABLE QString get_point_intro(int point_key);             //查询景点介绍
+    Q_INVOKABLE QVariantMap find_address_of_point(int point_key);   //查询景点坐标,返回（-1，-1）为未查询到
     Q_INVOKABLE int get_points_num();                               //查询景点的总数
-    Q_INVOKABLE QVariantList find_points_of_road(string& road_name); //根据路名找两个端点
+    Q_INVOKABLE int get_max_valid_point_key_from_points();          //获取目前景点中最大key
+    Q_INVOKABLE QVariantMap find_points_of_road(string& road_name); //根据路名找两个端点
+    Q_INVOKABLE QVariantList get_all_names_of_points(int max_num=5);  //获取大量景点名
 
+    //查路
     Q_INVOKABLE int find_road_key(string& road_name);               //找road编号，-1表示没找到
     Q_INVOKABLE int find_road_key(Point* u, Point* v);              //找两点间road编号，-1表示没找到
-    Q_INVOKABLE int find_road_key(int u_key, int v_key);            //找两点road编号，-1表示没找到
+    Q_INVOKABLE int find_road_key(int u_key, int v_key);            //找两点间road编号，-1表示没找到
 
+    //增、删、改
     Q_INVOKABLE bool expand_point(string& new_point_name, string& former_point_name, float length, string& road_name,string new_point_intro = "");  //扩充景点并形成新的路
     Q_INVOKABLE bool expand_road(string& road_name,string& point1, string& point2, float length);       //扩充路径
     Q_INVOKABLE bool expand_point(string& new_point_name, string new_point_intro = "");                 //扩充单个景点（用于初始化）

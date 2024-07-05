@@ -84,11 +84,6 @@ int Graph::get_max_valid_point_key_from_points()
     */
 }
 
-void Graph::inquire_point(Point *v)
-{
-    cout<<v->point_name<<endl<<v->point_intro<<endl;
-}
-
 QVariantList Graph::inquire_shortest_road(int point_key1, int point_key2)
 {
     vector<int>res;
@@ -171,6 +166,28 @@ QString Graph::get_point_intro(int point_key)
     else
     {
         return QString("There is no such point.");
+    }
+}
+
+QVariantMap Graph::find_address_of_point(int point_key)  //查询景点坐标
+{
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlQuery query=QSqlQuery(database);
+    QString find=QString("select * from point where point_key='%1'").arg(point_key);
+
+    if(query.exec(find)&&query.next())
+    {
+        QVariantMap map;
+        map["addr_x"]=query.value("addr_x").toInt();
+        map["addr_y"]=query.value("addr_y").toInt();
+        return map;
+    }
+    else
+    {
+        QVariantMap map;
+        map["addr_x"]=-1;
+        map["addr_y"]=-1;
+        return map;
     }
 }
 
@@ -296,6 +313,7 @@ bool Graph::expand_point(string& new_point_name, string new_point_intro)
 
     if(add_point.exec(add_p))
     {
+        this->createGraph();
         return true;
     }
     return false;
@@ -315,6 +333,7 @@ bool Graph::expand_point(string& new_point_name, string& former_point_name, floa
 
     if(this->expand_road(road_name,former_point_name,new_point_name,length)&&add_point.exec(add_p))
     {
+        this->createGraph();
         return true;
     }
     return false;
@@ -338,6 +357,7 @@ bool Graph::expand_road(string& road_name,string& point1, string& point2, float 
 
     if(add_road.exec(add_r))
     {
+        this->createGraph();
         return true;
     }
     return false;
@@ -358,6 +378,30 @@ int Graph::find_point_key(string& point_name)
     else
     {
         return -1;
+    }
+}
+
+QVariantList Graph::get_all_names_of_points(int max_num)
+{
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlQuery query=QSqlQuery(database);
+    QString str=QObject::tr("select * from point ");
+    QVariantList list;
+
+
+    if(query.exec(str)&&query.next())
+    {
+        int num=0;
+        while(query.next()&&num<max_num)
+        {
+            num++;
+            list.append(query.value("point_name"));
+        }
+        return list;
+    }
+    else
+    {
+        return list;
     }
 }
 
@@ -409,9 +453,9 @@ int Graph::find_road_key(int u_key, int v_key)
     }
 }
 
-QVariantList Graph::find_points_of_road(string& road_name)
+QVariantMap Graph::find_points_of_road(string& road_name)
 {
-    QVariantList vec;
+    QVariantMap vec;
 
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
@@ -421,8 +465,8 @@ QVariantList Graph::find_points_of_road(string& road_name)
     {
         int pr_key=query.value("pr_key").toInt();
         int pl_key=query.value("pl_key").toInt();
-        vec.append(pl_key);
-        vec.append(pr_key);
+        vec["pl_key"]=pl_key;
+        vec["pr_key"]=pr_key;
     }
     return vec;
 }
@@ -436,6 +480,7 @@ bool Graph::update_point(string& point_name,string& point_intro,int point_key)
                       .arg(QString::fromStdString(point_name),QString::fromStdString(point_intro),QString::number(point_key));
     if(query.exec(str))
     {
+        this->createGraph();
         return true;
     }
     return false;
@@ -450,6 +495,7 @@ bool Graph::update_road(string& road_name,float length,int pl_key,int pr_key,int
                       .arg(QString::fromStdString(road_name),QString::number(length),QString::number(pl_key),QString::number(pr_key),QString::number(road_key));
     if(query.exec(str))
     {
+        this->createGraph();
         return true;
     }
     return false;
@@ -468,6 +514,7 @@ bool Graph::del_point(string& point_name)
 
     if(del_p.exec(d_p)&&del_r.exec(d_r))
     {
+        this->createGraph();
         return true;
     }
     return false;
@@ -481,6 +528,7 @@ bool Graph::del_road(string& road_name) {
 
     if(del_r.exec(d_r))
     {
+        this->createGraph();
         return true;
     }
     return false;
