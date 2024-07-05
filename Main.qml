@@ -3,6 +3,7 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 //import an.utility
 import "D:/Documents/QTDocuments/test_for_history_edit/Triggerable_Button.qml"
+import "D:/Documents/QTDocuments/testForBasicGitConfig/SelectiveBox.qml"
 
 Window {
     visible: true
@@ -225,10 +226,69 @@ Window {
                 }
             }
 
+
+            SelectiveBox{
+                id:start_pos
+                x:0
+                y:30
+
+                selective_model: ListModel{
+
+                    ListElement{ text : qsTr("武汉大学图书馆")}
+                    ListElement{ text : qsTr("信息学部操场")}
+                    ListElement{ text : qsTr("武汉大学桂园食堂")}
+                }
+            }
+            SelectiveBox{
+                id:end_pos
+                y:30
+                x:implicitWidth + 160
+                selective_model: ListModel{
+
+                    ListElement{ text : qsTr("武汉大学图书馆")}
+                    ListElement{ text : qsTr("信息学部操场")}
+                    ListElement{ text : qsTr("武汉大学桂园食堂")}
+                }
+            }
+            Label{
+                id : start_pos_label
+                visible: end_pos.visible
+                enabled: end_pos.enabled
+                text: "         请输入起点：   "
+                background: Rectangle {
+                    width: 150; height: 30
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "white" }
+                        //GradientStop { position: 0.33; color: "yellow" }
+                        GradientStop { position: 1.0; color: "lightblue" }
+                    }
+                }
+            }
+            Label{
+                id : end_pos_label
+                visible: start_pos.visible
+                enabled: start_pos.enabled
+                text: "                                                        请输入终点：   "
+                background: Rectangle {
+                    id : back
+                    x : 160; y : 0
+                    width: 150; height: 30
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "white" }
+                        //GradientStop { position: 0.33; color: "yellow" }
+                        GradientStop { position: 1.0; color: "lightblue" }
+                    }
+                }
+            }
             Button {
                 text: qsTr("搜索")
                 visible: parent.visible
                 enabled: parent.enabled
+                onClicked: {
+                    if(inputField.text !== ""){
+                        console.log(inputField.text)
+                    }
+                }
 
                 width: 70
                 height: 40
@@ -310,6 +370,14 @@ Window {
                                 hoverEnabled: true
                                 onEntered: parent.hovered = true;
                                 onExited: parent.hovered = false;
+                                onClicked: {
+                                    let index = display.indexOf(inputField.text);
+                                    if (index !== -1)
+                                        var curContent = displayText.text
+                                    //console.debug(curContent)
+                                    inputField.text = curContent
+
+                                }
                             }
                         }
                     }
@@ -317,6 +385,47 @@ Window {
                     ScrollBar.vertical: ScrollBar {
                         width: 12
                         policy: ScrollBar.AlwaysOn
+                    }
+
+
+                }
+
+            }
+            Rectangle{
+                id:search_route
+                width: 100
+                height: 50
+                visible: parent.visible
+                enabled: parent.enabled
+                color: Qt.rgba(255, 255, 255, 0.5)
+                radius: 20
+                border.color : "gray"
+                anchors.left: parent.left
+                anchors.bottom : parent.bottom
+                Text {
+                    font.pixelSize: 20
+                    text: qsTr("查找路线")
+                    anchors.centerIn: parent
+                }
+                Button{
+                    anchors.fill: parent
+
+                    opacity: 0
+                    enabled: parent.enabled
+                }
+                MouseArea{
+                    enabled: parent.enabled
+                    hoverEnabled: parent.enabled
+                    anchors.fill: parent
+                    onEntered: {
+                        search_route.color = Qt.rgba(255,153,129,0.8)
+                    }
+                    onExited: {
+                        search_route.color = Qt.rgba(255, 255, 255, 0.5)
+                    }
+                    onClicked: {
+                        start_pos.visible = !start_pos.visible
+                        end_pos.visible = !end_pos.visible
                     }
 
                 }
