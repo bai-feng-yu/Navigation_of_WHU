@@ -10,16 +10,18 @@ void data::createConnection()   //初始化创建数据库连接
     QSqlQuery sqlQuery;              //创建操作对象
 
     //创建点数据表
-    QString point = QString("create table point ("
+    QString point = QString("create table  IF NOT EXISTS point ("
                                 "point_key INTEGER PRIMARY KEY AUTOINCREMENT not null, "
                                 "point_name text not null,"
-                                "point_intro text )");
+                                "point_intro text,"
+                                "addr_x int not null,"
+                                "addr_y int not null)");
     sqlQuery.exec(point);
 
     QString make_first_id_zero=QString("UPDATE sqlite_sequence SET seq = -1 WHERE name='%1'").arg("point");
 
     //创建路数据表
-    QString road = QString("create table road ("
+    QString road = QString("create table  IF NOT EXISTS road ("
                                 "road_key INTEGER PRIMARY KEY AUTOINCREMENT not null, "
                                 "road_name text not null,"
                                 "length float not null,"

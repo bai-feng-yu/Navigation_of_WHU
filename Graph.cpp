@@ -89,7 +89,7 @@ void Graph::inquire_point(Point *v)
     cout<<v->point_name<<endl<<v->point_intro<<endl;
 }
 
-vector<int> Graph::inquire_shortest_road(int point_key1, int point_key2)
+QVariantList Graph::inquire_shortest_road(int point_key1, int point_key2)
 {
     vector<int>res;
     vector<int> points_path = __dijkstra(point_key1);
@@ -99,18 +99,35 @@ vector<int> Graph::inquire_shortest_road(int point_key1, int point_key2)
         cur = points_path[cur];
     } 
     reverse(res.begin(), res.end());
-    return res;
+
+    QVariantList list;
+    for (const auto i : res) {
+        QVariantMap map;
+        map["point_key"] = i;
+        list.append(map);
+    }
+    return list;
 }
 
-
-vector<vector<int>> Graph::inquire_all_roads(int point_key1, int point_key2)
+QList<QVariantList> Graph::inquire_all_roads(int point_key1, int point_key2)
 {
     vector<vector<int>>points_paths;
     vector<int>visited;
     vector<int>points_path;
     visited.resize(get_max_valid_point_key_from_points() + 1);
     this->__dfs(point_key1, point_key2, points_paths, visited, points_path);
-    return points_paths; // 经过的所有点
+
+    QList<QVariantList> dataList;
+    for(int i=0;i<int(points_paths.size());i++)
+    {
+        QVariantList list;
+        for(int j=0;j<int(points_paths[i].size());j++)
+        {
+            list.append(points_paths[i][j]);
+        }
+        dataList.append(list);
+    }
+    return dataList;
 }
 
 QString Graph::get_point_name(int point_key)
@@ -392,9 +409,9 @@ int Graph::find_road_key(int u_key, int v_key)
     }
 }
 
-vector<int> Graph::find_points_of_road(string& road_name)
+QVariantList Graph::find_points_of_road(string& road_name)
 {
-    vector<int> vec;
+    QVariantList vec;
 
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
@@ -404,8 +421,8 @@ vector<int> Graph::find_points_of_road(string& road_name)
     {
         int pr_key=query.value("pr_key").toInt();
         int pl_key=query.value("pl_key").toInt();
-        vec.push_back(pl_key);
-        vec.push_back(pr_key);
+        vec.append(pl_key);
+        vec.append(pr_key);
     }
     return vec;
 }
