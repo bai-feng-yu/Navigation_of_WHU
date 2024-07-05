@@ -3,12 +3,15 @@
 #include <QGuiApplication> // 引入QGuiApplication类，用于GUI应用程序
 #include <QQmlApplicationEngine> // 引入QQmlApplicationEngine类，用于加载QML文件
 #include <QQmlContext> // 引入QQmlContext类，尽管在这段代码中未直接使用，但可能是为了说明或未来扩展
+#include "Graph.h"
 
 int main(int argc, char *argv[]) // 主函数入口
 {
     //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // 启用高DPI缩放，以支持高分辨率屏幕
 
     QGuiApplication app(argc, argv); // 创建QGuiApplication实例，这是GUI应用程序的基础
+
+    qmlRegisterType<Graph>("com.database", 1, 0, "Graph");  //注册并实例化用于数据库操作的对象
 
     HistoryModel history_model; // 创建HistoryModel的实例，这个模型用于存储和管理历史数据
     //qmlRegisterType<MagicPool>("an.utility", 1, 0, "MagicPool"); // 注册qml 可见类型
