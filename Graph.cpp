@@ -389,7 +389,7 @@ QVariantList Graph::get_all_names_of_points(int max_num)
     QVariantList list;
 
 
-    if(query.exec(str)&&query.next())
+    if(query.exec(str))
     {
         int num=0;
         while(query.next()&&num<max_num)
