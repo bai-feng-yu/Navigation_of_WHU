@@ -2,6 +2,11 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 //import an.utility
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+import "D:/Documents/QTDocuments/testForDataBase/Triggerable_Button.qml"
+import "D:/Documents/QTDocuments/testForDataBase/SelectiveBox.qml"
+/*----------------------------------------------------------------------------------------------------------------------------------*/
+import com.database 1.0
 import "D:/Documents/QTDocuments/test_for_history_edit/Triggerable_Button.qml"
 import "D:/Documents/QTDocuments/testForBasicGitConfig/SelectiveBox.qml"
 
@@ -11,6 +16,13 @@ Window {
     height: 480
     title: qsTr("WuHan Univerity Guide")
     /* 通过交换控件的位置来避免 事件冲突 */
+    property color chuntengPurple: Qt.rgba(51/255,5/255,141/255,0.5)
+    property color donghuBlue: Qt.rgba(65/255,182/255,230/255,0.5)
+    property color luoyingPink: Qt.rgba(248/255,163/255,188/255,0.5)
+    property color qiuguiYellow: Qt.rgba(255/255,163/255,0/255,0.5)
+    property color chengwuGrey: Qt.rgba(193/255,198/255,200/255,0.5)
+    property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
+
     Rectangle{
         id: second_window_form
         visible: false
@@ -20,6 +32,9 @@ Window {
         Image {
             id: unnamed1
             anchors.fill: parent
+            /*-------------------------------------------------------------------------------------------------------*/
+            source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
+            /*-------------------------------------------------------------------------------------------------------*/
             source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
         }
         Rectangle{
@@ -29,13 +44,19 @@ Window {
             visible: parent.visible
             enabled: parent.enabled
             radius: 20
-            color: Qt.rgba(255, 255, 255, 0.5)
+            color: chengwuGrey
+            border.width: 1
+            border.color : shuangyeRed
             border.color : "blue"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top : parent.top
             Text {
                 opacity: 100
                 font.pixelSize: 30
+                font.wordSpacing: 3
+                font.family: "Georgia"
+                font.pointSize: 13
+                font.bold: true
                 text: qsTr("Admin Operations")
                 anchors.centerIn: parent
             }
@@ -56,7 +77,7 @@ Window {
             height: 50
             visible: parent.visible
             enabled: parent.enabled
-            color: Qt.rgba(255, 255, 255, 0.5)
+            color: chengwuGrey
             radius: 20
             border.color : "gray"
             anchors.left: parent.left
@@ -71,17 +92,19 @@ Window {
 
                 opacity: 0
                 enabled: parent.enabled
-                //onClicked:
             }
             MouseArea{
                 enabled: parent.enabled
                 hoverEnabled: parent.enabled
                 anchors.fill: parent
                 onEntered: {
-                    each_option_left.color = Qt.rgba(255,153,129,0.8)
+                    each_option_left.color = donghuBlue
                 }
                 onExited: {
-                    each_option_left.color = Qt.rgba(255, 255, 255, 0.5)
+                    each_option_left.color = chengwuGrey
+                }
+                onClicked:{
+                    console.log("add view")
                 }
             }
         }
@@ -92,7 +115,7 @@ Window {
             height: 50
             visible: parent.visible
             enabled: parent.enabled
-            color: Qt.rgba(255, 255, 255, 0.5)
+            color: chengwuGrey
             radius: 20
             border.color : "gray"
             anchors.left: each_option_left.right
@@ -114,10 +137,10 @@ Window {
                 hoverEnabled: parent.enabled
                 anchors.fill: parent
                 onEntered: {
-                    each_option_center.color = Qt.rgba(255,153,129,0.8)
+                    each_option_center.color = luoyingPink
                 }
                 onExited: {
-                    each_option_center.color = Qt.rgba(255, 255, 255, 0.5)
+                    each_option_center.color = chengwuGrey
                 }
             }
         }
@@ -128,7 +151,7 @@ Window {
             height: 50
             visible: parent.visible
             enabled: parent.enabled
-            color: Qt.rgba(255, 255, 255, 0.5)
+            color: chengwuGrey
             radius: 20
             border.color : "gray"
             anchors.left: each_option_center.right
@@ -150,14 +173,13 @@ Window {
                 hoverEnabled: parent.enabled
                 anchors.fill: parent
                 onEntered: {
-                    each_option_right.color = Qt.rgba(255,153,129,0.8)
+                    each_option_right.color = qiuguiYellow
                 }
                 onExited: {
-                    each_option_right.color = Qt.rgba(255, 255, 255, 0.5)
+                    each_option_right.color = chengwuGrey
                 }
             }
         }
-
     }
 
 
@@ -397,7 +419,7 @@ Window {
                 height: 50
                 visible: parent.visible
                 enabled: parent.enabled
-                color: Qt.rgba(255, 255, 255, 0.5)
+                color: chengwuGrey
                 radius: 20
                 border.color : "gray"
                 anchors.left: parent.left
@@ -418,10 +440,10 @@ Window {
                     hoverEnabled: parent.enabled
                     anchors.fill: parent
                     onEntered: {
-                        search_route.color = Qt.rgba(255,153,129,0.8)
+                        search_route.color = shuangyeRed
                     }
                     onExited: {
-                        search_route.color = Qt.rgba(255, 255, 255, 0.5)
+                        search_route.color = chengwuGrey
                     }
                     onClicked: {
                         start_pos.visible = !start_pos.visible

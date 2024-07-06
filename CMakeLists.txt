@@ -19,6 +19,7 @@ qt_add_qml_module(appCampus-Guide
     QML_FILES
         Main.qml
         Triggerable_Button.qml
+        SelectiveBox.qml
         SOURCES Point.h
         SOURCES historymodel.h
         SOURCES historymodel.cpp
@@ -29,6 +30,7 @@ qt_add_qml_module(appCampus-Guide
         SOURCES Graph.cpp
         SOURCES connection.h
         SOURCES connection.cpp
+
 
 
 )
