@@ -7,6 +7,9 @@ import "D:/Documents/QTDocuments/testForDataBase/Triggerable_Button.qml"
 import "D:/Documents/QTDocuments/testForDataBase/SelectiveBox.qml"
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 import com.database 1.0
+import "D:/Documents/QTDocuments/test_for_history_edit/Triggerable_Button.qml"
+import "D:/Documents/QTDocuments/testForBasicGitConfig/SelectiveBox.qml"
+
 Window {
     visible: true
     width: 640
@@ -32,6 +35,7 @@ Window {
             /*-------------------------------------------------------------------------------------------------------*/
             source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
             /*-------------------------------------------------------------------------------------------------------*/
+            source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
         }
         Rectangle{
             id:welcome_rec
@@ -43,6 +47,7 @@ Window {
             color: chengwuGrey
             border.width: 1
             border.color : shuangyeRed
+            border.color : "blue"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top : parent.top
             Text {
@@ -87,7 +92,6 @@ Window {
 
                 opacity: 0
                 enabled: parent.enabled
-
             }
             MouseArea{
                 enabled: parent.enabled
