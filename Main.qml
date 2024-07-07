@@ -7,8 +7,7 @@ import "D:/Documents/QTDocuments/testForDataBase/Triggerable_Button.qml"
 import "D:/Documents/QTDocuments/testForDataBase/SelectiveBox.qml"
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 import com.database 1.0
-import "D:/Documents/QTDocuments/test_for_history_edit/Triggerable_Button.qml"
-import "D:/Documents/QTDocuments/testForBasicGitConfig/SelectiveBox.qml"
+
 
 Window {
     visible: true
@@ -35,7 +34,7 @@ Window {
             /*-------------------------------------------------------------------------------------------------------*/
             source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
             /*-------------------------------------------------------------------------------------------------------*/
-            source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
+
         }
         Rectangle{
             id:welcome_rec
