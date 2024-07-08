@@ -367,6 +367,28 @@ bool Graph::expand_road(string& road_name,string& point1, string& point2, float 
     return false;
 }
 
+bool Graph::expand_road(string& road_name,int point1_key, int point2_key, float length)
+{
+    //扩充路径
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlQuery add_road=QSqlQuery(database);
+
+
+    QString add_r=QString("INSERT INTO road(road_name,length,pl_key,pr_key)"
+                            "values('%1','%2','%3','%4')")
+                        .arg(QString::fromStdString(road_name),
+                             QString::number(length),
+                             QString::number(point1_key),
+                             QString::number(point2_key));
+
+    if(add_road.exec(add_r))
+    {
+        this->createGraph();
+        return true;
+    }
+    return false;
+}
+
 int Graph::get_point_key(string& point_name)
 {
     // 找point编号，-1表示没找到
