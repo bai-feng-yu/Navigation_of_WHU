@@ -22,7 +22,7 @@ Window {
     property color qiuguiYellow: Qt.rgba(255/255,163/255,0/255,0.5)
     property color chengwuGrey: Qt.rgba(193/255,198/255,200/255,0.5)
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
-    property int max_point_key : g.get_max_valid_point_key_from_points()
+    property int max_point_key : database.get_max_valid_point_key_from_points()
 
     Graph{
         id:database
