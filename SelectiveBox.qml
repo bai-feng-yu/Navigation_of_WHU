@@ -21,12 +21,7 @@ Item {
         height:30
         editable:true
         currentIndex : -1
-        model: ListModel{
-
-            ListElement{ text : qsTr("武汉大学图书馆")}
-            ListElement{ text : qsTr("信息学部操场")}
-            ListElement{ text : qsTr("武汉大学桂园食堂")}
-        }
+        model: ListModel{}
         onActivated: {
             console.log(qsTr("looking_up..." + currentIndex)); 
         }
