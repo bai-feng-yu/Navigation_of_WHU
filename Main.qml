@@ -46,7 +46,6 @@ Window {
             color: chengwuGrey
             border.width: 1
             border.color : shuangyeRed
-            border.color : "blue"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top : parent.top
             Text {
