@@ -3,8 +3,8 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 //import an.utility
 /*----------------------------------------------------------------------------------------------------------------------------------*/
-import "D:/Documents/QTDocuments/testForDataBase/Triggerable_Button.qml"
-import "D:/Documents/QTDocuments/testForDataBase/SelectiveBox.qml"
+import "C:/Users/admin/Desktop/Navigation_of_WHU/Triggerable_Button.qml"
+import "C:/Users/admin/Desktop/Navigation_of_WHU/SelectiveBox.qml"
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 import com.database 1.0
 
@@ -23,6 +23,20 @@ Window {
     property color chengwuGrey: Qt.rgba(193/255,198/255,200/255,0.5)
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
     property int max_point_key : g.get_max_valid_point_key_from_points()
+
+    Graph{
+        id:database
+    }
+
+    Component.onCompleted: {
+            var locations = database.get_all_names_of_points(1)
+            start_pos.selective_model.clear()
+            for (var i = 0; i < locations.length; i++) {
+                start_pos.selective_model.append({ "text": locations[i] })
+                end_pos.selective_model.append({ "text": locations[i] })
+            }
+    }
+
     Rectangle{
         id: second_window_form
         visible: false
@@ -205,11 +219,6 @@ Window {
                 anchors.fill: parent
                 source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
             }
-            Graph{
-                id : g
-
-            }
-
             // MagicPool {
             //         id: magicPool
             //         visible: parent.visible
@@ -269,23 +278,13 @@ Window {
                 id:start_pos
                 x:0
                 y:30
-                selective_model: ListModel{
-
-                    ListElement{ text : qsTr("武汉大学图书馆")}
-                    ListElement{ text : qsTr("信息学部操场")}
-                    ListElement{ text : qsTr("武汉大学桂园食堂")}
-                }
+                selective_model: ListModel{}
             }
             SelectiveBox{
                 id:end_pos
                 y:30
                 x:implicitWidth + 160
-                selective_model: ListModel{
-
-                    ListElement{ text : qsTr("武汉大学图书馆")}
-                    ListElement{ text : qsTr("信息学部操场")}
-                    ListElement{ text : qsTr("武汉大学桂园食堂")}
-                }
+                selective_model: ListModel{}
             }
             Button {
                 id:route_search
@@ -339,7 +338,6 @@ Window {
                     if(inputField.text !== ""){
                         console.log(inputField.text)
                     }
-
                 }
 
                 width: 70
@@ -478,7 +476,6 @@ Window {
                     onClicked: {
                         start_pos.visible = !start_pos.visible
                         end_pos.visible = !end_pos.visible
-
                     }
 
                 }
