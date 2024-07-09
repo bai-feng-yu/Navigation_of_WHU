@@ -325,15 +325,15 @@ void Graph::createGraph()
     this->graph=vec;
 }
 
-bool Graph::expand_point(string& new_point_name, int addr_x,int addr_y,string new_point_intro)
+bool Graph::expand_point(QString new_point_name, int addr_x,int addr_y,QString new_point_intro)
 {
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery add_point=QSqlQuery(database);
 
     QString add_p= QString("INSERT INTO point(point_name, point_intro,addr_x,addr_y) "
                             "VALUES('%1', '%2','%3','%4')")
-                        .arg(QString::fromStdString(new_point_name),
-                             QString::fromStdString(new_point_intro),
+                        .arg(new_point_name,
+                             new_point_intro,
                              QString::number(addr_x),
                              QString::number(addr_y));
 
@@ -346,7 +346,7 @@ bool Graph::expand_point(string& new_point_name, int addr_x,int addr_y,string ne
     return false;
 }
 
-bool Graph::expand_point(string& new_point_name, int addr_x,int addr_y,string& former_point_name, float length, string& road_name,string new_point_intro)
+bool Graph::expand_point(QString new_point_name, int addr_x,int addr_y,QString former_point_name, float length, QString road_name,QString new_point_intro)
 {
     // 扩充景点，形成新的路
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
@@ -354,8 +354,8 @@ bool Graph::expand_point(string& new_point_name, int addr_x,int addr_y,string& f
 
     QString add_p= QString("INSERT INTO point(point_name, point_intro,addr_x,addr_y) "
                             "VALUES('%1', '%2','%3','%4')")
-                        .arg(QString::fromStdString(new_point_name),
-                             QString::fromStdString(new_point_intro),
+                        .arg(new_point_name,
+                             new_point_intro,
                              QString::number(addr_x),
                              QString::number(addr_y));
 
@@ -368,7 +368,7 @@ bool Graph::expand_point(string& new_point_name, int addr_x,int addr_y,string& f
     return false;
 }
 
-bool Graph::expand_road(string& road_name,string& point1, string& point2, float length)
+bool Graph::expand_road(QString road_name,QString point1, QString point2, float length)
 {
     // 扩充路径
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
@@ -379,7 +379,7 @@ bool Graph::expand_road(string& road_name,string& point1, string& point2, float 
 
     QString add_r=QString("INSERT INTO road(road_name,length,pl_key,pr_key)"
                             "values('%1','%2','%3','%4')")
-                        .arg(QString::fromStdString(road_name),
+                        .arg(road_name,
                              QString::number(length),
                              QString::number(pl),
                              QString::number(pr));
@@ -392,7 +392,7 @@ bool Graph::expand_road(string& road_name,string& point1, string& point2, float 
     return false;
 }
 
-bool Graph::expand_road(string& road_name,int point1_key, int point2_key, float length)
+bool Graph::expand_road(QString road_name,int point1_key, int point2_key, float length)
 {
     //扩充路径
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
@@ -401,7 +401,7 @@ bool Graph::expand_road(string& road_name,int point1_key, int point2_key, float 
 
     QString add_r=QString("INSERT INTO road(road_name,length,pl_key,pr_key)"
                             "values('%1','%2','%3','%4')")
-                        .arg(QString::fromStdString(road_name),
+                        .arg(road_name,
                              QString::number(length),
                              QString::number(point1_key),
                              QString::number(point2_key));
@@ -414,13 +414,13 @@ bool Graph::expand_road(string& road_name,int point1_key, int point2_key, float 
     return false;
 }
 
-int Graph::get_point_key(string& point_name)
+int Graph::get_point_key(QString point_name)
 {
     // 找point编号，-1表示没找到
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
     QString str=QObject::tr("select * from point where point_name='%1' ")
-                      .arg(QString::fromStdString(point_name));
+                      .arg(point_name);
 
     if(query.exec(str)&&query.next())
     {
@@ -464,12 +464,12 @@ int Graph::get_road_key(Point *u, Point *v)
     return -1;
 }
 
-int Graph::get_road_key(string& road_name)
+int Graph::get_road_key(QString road_name)
 {
     // 找road编号，-1表示没找到
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
-    QString str=QObject::tr("select * from road where road_name='%1' ").arg(QString::fromStdString(road_name));
+    QString str=QObject::tr("select * from road where road_name='%1' ").arg(road_name);
 
     if(query.exec(str)&&query.next())
     {
@@ -504,13 +504,13 @@ int Graph::get_road_key(int u_key, int v_key)
     }
 }
 
-QVariantMap Graph::get_points_of_road(string& road_name)
+QVariantMap Graph::get_points_of_road(QString road_name)
 {
     QVariantMap vec;
 
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
-    QString str=QObject::tr("select * from road where road_name='%1'").arg(QString::fromStdString(road_name));
+    QString str=QObject::tr("select * from road where road_name='%1'").arg(road_name);
 
     if(query.exec(str)&&query.next())
     {
@@ -522,14 +522,14 @@ QVariantMap Graph::get_points_of_road(string& road_name)
     return vec;
 }
 
-bool Graph::update_point_name(int point_key,string& new_point_name)
+bool Graph::update_point_name(int point_key,QString new_point_name)
 {
     //更改点的名称
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
 
     QString str=QString("update point set point_name='%1' where point_key='%2'")
-                      .arg(QString::fromStdString(new_point_name),QString::number(point_key));
+                      .arg(new_point_name,QString::number(point_key));
 
     if(query.exec(str))
     {
@@ -540,14 +540,14 @@ bool Graph::update_point_name(int point_key,string& new_point_name)
     return false;
 }
 
-bool Graph::update_point_intro(int point_key,string& new_point_intro)
+bool Graph::update_point_intro(int point_key,QString new_point_intro)
 {
     //更改点的介绍
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
 
     QString str=QString("update point set point_intro='%1' where point_key='%2'")
-                      .arg(QString::fromStdString(new_point_intro),QString::number(point_key));
+                      .arg(new_point_intro,QString::number(point_key));
 
     if(query.exec(str))
     {
@@ -574,14 +574,14 @@ bool Graph::update_point_add(int point_key,int new_add_x,int new_add_y)
     return false;
 }
 
-bool Graph::update_road_name(int road_key,string& road_name)
+bool Graph::update_road_name(int road_key,QString road_name)
 {
     //更改路的名称
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
 
     QString str=QString("update point set road_name='%1'where road_key='%2'")
-                      .arg(QString::fromStdString(road_name),QString::number(road_key));
+                      .arg(road_name,QString::number(road_key));
 
     if(query.exec(str))
     {
@@ -608,14 +608,14 @@ bool Graph::update_road_length(int road_key,float length)
     return false;
 }
 
-bool Graph::del_point(string& point_name)
+bool Graph::del_point(QString point_name)
 {
     // 删除景点，删除对应的道路
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery del_p=QSqlQuery(database);
     QSqlQuery del_r=QSqlQuery(database);
 
-    QString d_p=QString("DELETE FROM point where point_name='%1' ").arg(QString::fromStdString(point_name));
+    QString d_p=QString("DELETE FROM point where point_name='%1' ").arg(point_name);
     int key=this->get_point_key(point_name);
     QString d_r=QString("DELETE FROM road where lp_key='%1 or rp_key='%2'").arg(key,key);
 
@@ -630,7 +630,7 @@ bool Graph::del_point(string& point_name)
 bool Graph::del_point(int point_key)
 {
     //删除景点 --> 删除对应的道路
-    string name=get_point_name(point_key).toStdString();
+    QString name=get_point_name(point_key);
 
     if(this->del_point(name))
     {
@@ -639,12 +639,12 @@ bool Graph::del_point(int point_key)
     return false;
 }
 
-bool Graph::del_road(string& road_name)
+bool Graph::del_road(QString road_name)
 {
     // 删除道路
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery del_r=QSqlQuery(database);
-    QString d_r=QString("DELETE FROM road where road_name='%1'").arg(QString::fromStdString(road_name));
+    QString d_r=QString("DELETE FROM road where road_name='%1'").arg(road_name);
 
     if(del_r.exec(d_r))
     {
