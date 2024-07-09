@@ -360,7 +360,7 @@ bool Graph::expand_point(QString new_point_name, int addr_x,int addr_y,QString f
                              QString::number(addr_y));
 
 
-    if(this->expand_road(road_name,former_point_name,new_point_name,length)&&add_point.exec(add_p))
+    if(add_point.exec(add_p)&&this->expand_road(road_name,former_point_name,new_point_name,length))
     {
         this->createGraph();
         return true;
@@ -469,7 +469,8 @@ int Graph::get_road_key(QString road_name)
     // 找road编号，-1表示没找到
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
-    QString str=QObject::tr("select * from road where road_name='%1' ").arg(road_name);
+    QString str=QObject::tr("select * from road where road_name='%1' ")
+                      .arg(road_name);
 
     if(query.exec(str)&&query.next())
     {
@@ -479,6 +480,7 @@ int Graph::get_road_key(QString road_name)
     {
         return -1;
     }
+    // 找point编号，-1表示没找到
 }
 
 int Graph::get_road_key(int u_key, int v_key)
