@@ -624,7 +624,7 @@ bool Graph::update_point_add(int point_key,int new_add_x,int new_add_y)
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
 
-    QString str=QString("update point set add_x='%1',add_y='%2' where point_key='%3'")
+    QString str=QString("update point set addr_x='%1',addr_y='%2' where point_key='%3'")
                       .arg(QString::number(new_add_x),QString::number(new_add_y),QString::number(point_key));
 
     if(query.exec(str))
@@ -641,7 +641,7 @@ bool Graph::update_road_name(int road_key,QString road_name)
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
 
-    QString str=QString("update point set road_name='%1'where road_key='%2'")
+    QString str=QString("update road set road_name='%1' where road_key='%2'")
                       .arg(road_name,QString::number(road_key));
 
     if(query.exec(str))
@@ -658,7 +658,7 @@ bool Graph::update_road_length(int road_key,float length)
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query=QSqlQuery(database);
 
-    QString str=QString("update point set length='%1' where road_key='%2'")
+    QString str=QString("update road set length='%1' where road_key='%2'")
                       .arg(QString::number(length),QString::number(road_key));
 
     if(query.exec(str))
@@ -678,7 +678,7 @@ bool Graph::del_point(QString point_name)
 
     QString d_p=QString("DELETE FROM point where point_name='%1' ").arg(point_name);
     int key=this->get_point_key(point_name);
-    QString d_r=QString("DELETE FROM road where lp_key='%1 or rp_key='%2'").arg(key,key);
+    QString d_r=QString("DELETE FROM road where lp_key='%1' or rp_key='%2'").arg(key,key);
 
     if(del_p.exec(d_p)&&del_r.exec(d_r))
     {
@@ -690,11 +690,17 @@ bool Graph::del_point(QString point_name)
 
 bool Graph::del_point(int point_key)
 {
-    //删除景点 --> 删除对应的道路
-    QString name=get_point_name(point_key);
+    // 删除景点，删除对应的道路
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlQuery del_p=QSqlQuery(database);
+    QSqlQuery del_r=QSqlQuery(database);
 
-    if(this->del_point(name))
+    QString d_p=QString("DELETE FROM point where point_key='%1' ").arg(point_key);
+    QString d_r=QString("DELETE FROM road where lp_key='%1' or rp_key='%2'").arg(point_key,point_key);
+
+    if(del_p.exec(d_p)&&del_r.exec(d_r))
     {
+        this->createGraph();
         return true;
     }
     return false;
