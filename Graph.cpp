@@ -212,6 +212,31 @@ int Graph::get_points_num()
 
 }
 
+int Graph::get_points_max_id()
+{
+    //查询景点的最大key
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlQuery query=QSqlQuery(database);
+
+    int max_key=0;
+    if(query.exec("select * from point"))
+    {
+        while(query.next())
+        {
+            int n=query.value("point_key").toInt();
+            if(max_key<n)
+            {
+                max_key=n;
+            }
+        }
+        return max_key;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 void Graph::createGraph()
 {
     // 根据数据库的内容重新创建图
@@ -224,7 +249,7 @@ void Graph::createGraph()
 
     vector<int> v;
     vector<vector<int>> ve;
-    vector<vector<vector<int>> > vec(this->get_points_num()+1,ve);
+    vector<vector<vector<int>> > vec(this->get_points_max_id()+1,ve);
 
     if(build_roads.exec(b_roads)&&build_points.exec(b_points))
     {

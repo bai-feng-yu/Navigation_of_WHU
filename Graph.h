@@ -38,18 +38,19 @@ public:
 
 //用于大家查数据的函数
     //最短路径
-    Q_INVOKABLE QVariantList inquire_shortest_road(int point_key1, int point_key2);            //查询点与点之间的最短路径key(包括两点的key)
-    Q_INVOKABLE QList<QVariantList> inquire_all_roads(int point_key1, int point_key2);        //查询点与点之间的全部路径(每条路都各自包括两点的key)
+    Q_INVOKABLE QVariantList inquire_shortest_road(int point_key1, int point_key2);       //查询点与点之间的最短路径key(包括两点的key)
+    Q_INVOKABLE QList<QVariantList> inquire_all_roads(int point_key1, int point_key2);    //查询点与点之间的全部路径(每条路都各自包括两点的key)
 
     //查点
-    Q_INVOKABLE int get_point_key(string& point_name);             //用景点名称查询景点的key,-1表示没找到
+    Q_INVOKABLE int get_point_key(string& point_name);              //用景点名称查询景点的key,-1表示没找到
     Q_INVOKABLE QString get_point_name(int point_key);              //查询景点名称
     Q_INVOKABLE QString get_point_intro(int point_key);             //查询景点介绍
-    Q_INVOKABLE QVariantMap get_address_of_point(int point_key);   //查询景点坐标,返回（-1，-1）为未查询到
+    Q_INVOKABLE QVariantMap get_address_of_point(int point_key);    //查询景点坐标,返回（-1，-1）为未查询到
     Q_INVOKABLE int get_points_num();                               //查询景点的总数
+    Q_INVOKABLE int get_points_max_id();                            //查询景点的最大key
     Q_INVOKABLE int get_max_valid_point_key_from_points();          //获取目前景点中最大key
-    Q_INVOKABLE QVariantMap get_points_of_road(string& road_name); //根据路名找两个端点
-    Q_INVOKABLE QVariantList get_all_names_of_points(int max_num=5);  //获取大量景点名
+    Q_INVOKABLE QVariantMap get_points_of_road(string& road_name);  //根据路名找两个端点
+    Q_INVOKABLE QVariantList get_all_names_of_points(int max_num=5);//获取大量景点名
 
     //查路
     Q_INVOKABLE int get_road_key(string& road_name);               //找road编号，-1表示没找到
