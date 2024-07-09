@@ -13,6 +13,7 @@ Window {
     visible: true
     width: 640
     height: 480
+    id : root
     title: qsTr("WuHan Univerity Guide")
     /* 通过交换控件的位置来避免 事件冲突 */
     /* 常用色的 定义*/
@@ -29,7 +30,7 @@ Window {
     }
 
     Component.onCompleted: {
-            var locations = database.get_all_names_of_points(1)
+            var locations = database.get_all_names_of_points(3)
             start_pos.selective_model.clear()
             for (var i = 0; i < locations.length; i++) {
                 start_pos.selective_model.append({ "text": locations[i] })
@@ -43,6 +44,7 @@ Window {
         enabled: false
         width: parent.width
         height: parent.height
+        property bool delete_button_pressed: false
         Image {
             id: unnamed1
             anchors.fill: parent
@@ -77,7 +79,8 @@ Window {
         }
         Repeater{
             id : pointsGenarating
-            model:5
+            property int init_point_key: init_point_key = root.max_point_key
+            model:pointsGenarating.init_point_key
             // x : index * 80
             // Triggerable_Button{
             //     anchors.fill: parent
@@ -94,6 +97,7 @@ Window {
                 anchors.leftMargin: index * 40
 
             }
+
         }
 
         Rectangle{
@@ -130,6 +134,16 @@ Window {
                 }
                 onClicked:{
                     console.log("add view")
+                    each_option_left.createTriggerButton()
+                }
+            }
+            function createTriggerButton() {
+                var component = Qt.createComponent("Triggerable_Button.qml");
+                var sprite = component.createObject(second_window_form, {x: 100, y: 0});
+
+                if (sprite === null) {
+                    // Error Handling
+                    console.log("Error creating object");
                 }
             }
         }
@@ -155,7 +169,7 @@ Window {
 
                 opacity: 0
                 enabled: parent.enabled
-                //onClicked:
+
             }
             MouseArea{
                 enabled: parent.enabled
@@ -166,6 +180,11 @@ Window {
                 }
                 onExited: {
                     each_option_center.color = chengwuGrey
+                }
+                onClicked:{
+                    second_window_form.delete_button_pressed = true
+                    console.log("delete view")
+                    console.log("second_window_form.delete_button_pressed: " + second_window_form.delete_button_pressed)
                 }
             }
         }
@@ -499,6 +518,7 @@ Window {
             second_window_form.enabled = !second_window_form.enabled;
             /*max_point_key++;*/
             console.log("当前最大点数目为：" + max_point_key)
+            console.log("init_max_key: " + pointsGenarating.init_point_key)
         }
 
     }
