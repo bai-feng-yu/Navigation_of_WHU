@@ -522,6 +522,65 @@ QVariantMap Graph::get_points_of_road(QString road_name)
     return vec;
 }
 
+QVariantMap Graph::get_points_of_road(int road_key)
+{
+    QVariantMap vec;
+
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlQuery query=QSqlQuery(database);
+    QString str=QObject::tr("select * from road where road_key='%1'").arg(QString::number(road_key));
+
+    if(query.exec(str)&&query.next())
+    {
+        int pr_key=query.value("pr_key").toInt();
+        int pl_key=query.value("pl_key").toInt();
+        vec["pl_key"]=pl_key;
+        vec["pr_key"]=pr_key;
+    }
+    return vec;
+}
+
+QString Graph::get_road_name(int road_key)
+{
+    //找road_name
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    if(!database.open())
+    {
+        return "database is not open";
+    }
+    QSqlQuery query=QSqlQuery(database);
+    QString str=QObject::tr("select * from road where road_key='%1'").arg(QString::number(road_key));
+
+
+    if(query.exec(str)&&query.next())
+    {
+        return query.value("road_name").toString();
+    }
+    else
+    {
+        return "There is no such road";
+    }
+
+}
+
+int Graph::get_road_length(int road_key)
+{
+    //找length
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+
+    QSqlQuery query=QSqlQuery(database);
+    QString str=QObject::tr("select * from road where road_key='%1'").arg(QString::number(road_key));
+
+    if(query.exec(str)&&query.next())
+    {
+        return query.value("length").toInt();
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 bool Graph::update_point_name(int point_key,QString new_point_name)
 {
     //更改点的名称

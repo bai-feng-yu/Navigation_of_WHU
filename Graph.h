@@ -49,13 +49,16 @@ public:
     Q_INVOKABLE int get_points_num();                               //查询景点的总数
     Q_INVOKABLE int get_points_max_id();                            //查询景点的最大key
     Q_INVOKABLE int get_max_valid_point_key_from_points();          //获取目前景点中最大key
-    Q_INVOKABLE QVariantMap get_points_of_road(QString road_name); //根据路名找两个端点
     Q_INVOKABLE QVariantList get_all_names_of_points(int max_num=5);//获取大量景点名
 
     //查路
-    Q_INVOKABLE int get_road_key(QString road_name);               //找road编号，-1表示没找到
-    Q_INVOKABLE int get_road_key(Point* u, Point* v);               //找两点间road编号，-1表示没找到
-    Q_INVOKABLE int get_road_key(int u_key, int v_key);             //找两点间road编号，-1表示没找到
+    Q_INVOKABLE int get_road_key(QString road_name);         //找road编号，-1表示没找到
+    Q_INVOKABLE int get_road_key(Point* u, Point* v);        //找两点间road编号，-1表示没找到
+    Q_INVOKABLE int get_road_key(int u_key, int v_key);      //找两点间road编号，-1表示没找到
+    Q_INVOKABLE QString get_road_name(int road_key);         //找road_name
+    Q_INVOKABLE int get_road_length(int road_key);           //找length
+    Q_INVOKABLE QVariantMap get_points_of_road(QString road_name);  //根据路名找两个端点
+    Q_INVOKABLE QVariantMap get_points_of_road(int road_key);       //根据road_key找两个端点
 
     //增、删、改
     Q_INVOKABLE bool expand_point(QString new_point_name, int addr_x,int addr_y,QString former_point_name, float length, QString road_name,QString new_point_intro = "");  //扩充景点并形成新的路
@@ -66,9 +69,9 @@ public:
 
     Q_INVOKABLE bool update_point_name(int point_key,QString new_point_name);          //更改点的名称
     Q_INVOKABLE bool update_point_intro(int point_key,QString new_point_intro);        //更改点的介绍
-    Q_INVOKABLE bool update_point_add(int point_key,int new_add_x,int new_add_y);       //更改点的坐标
+    Q_INVOKABLE bool update_point_add(int point_key,int new_add_x,int new_add_y);      //更改点的坐标
     Q_INVOKABLE bool update_road_name(int road_key,QString road_name);                 //更改路的名称
-    Q_INVOKABLE bool update_road_length(int road_key,float length);                     //更改路的长度
+    Q_INVOKABLE bool update_road_length(int road_key,float length);                    //更改路的长度
 
     Q_INVOKABLE bool del_point(QString point_name);             //删除景点 --> 删除对应的道路
     Q_INVOKABLE bool del_point(int point_key);                   //删除景点 --> 删除对应的道路
