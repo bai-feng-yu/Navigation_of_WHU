@@ -487,8 +487,8 @@ int Graph::get_road_key(int u_key, int v_key)
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery query1=QSqlQuery(database);
     QSqlQuery query2=QSqlQuery(database);
-    QString str1=QObject::tr("select * from road where pl_key='%1' and pr_key='%2' ").arg(u_key,v_key);
-    QString str2=QObject::tr("select * from road where pl_key='%1' and pr_key='%2' ").arg(v_key,u_key);
+    QString str1=QObject::tr("select * from road where pl_key='%1' and pr_key='%2' ").arg(QString::number(u_key),QString::number(v_key));
+    QString str2=QObject::tr("select * from road where pl_key='%1' and pr_key='%2' ").arg(QString::number(v_key),QString::number(u_key));
 
     if(query1.exec(str1)&&query1.next())
     {
