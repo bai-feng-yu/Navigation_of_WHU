@@ -57,7 +57,7 @@ Item {
                 // 弹出框的内容项为 ListView
                 contentItem: ListView {
                     clip: true // 裁剪内容
-                    implicitHeight: contentHeight // 默认高度为内容的高度
+                    implicitHeight: 27.33 * 4 // 默认高度为 4 格显示内容
                     model: optional_points.popup.visible ? optional_points.delegateModel : null // 设置模型为下拉框的代理模型
                     currentIndex: optional_points.highlightedIndex // 当前选中项的索引
 
