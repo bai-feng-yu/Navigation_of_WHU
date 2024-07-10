@@ -31,7 +31,7 @@ Window {
     }
 
     Component.onCompleted: {
-        var locations = database.get_all_names_of_points(3)
+        var locations = database.get_all_names_of_points(10)
         start_pos.selective_model.clear()
         for (var i = 0; i < locations.length; i++) {
             start_pos.selective_model.append({ "text": locations[i] })
@@ -128,15 +128,56 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top : parent.top
             Text {
-                opacity: 100
+                id : welcome_text
+                opacity: 1
                 font.pixelSize: 30
                 font.wordSpacing: 3
-                font.family: "Georgia"
+                font.family: "华文彩云"
                 font.pointSize: 13
+                //font.italic: true
                 font.bold: true
-                text: qsTr("Admin Operations")
+                style: Text.Outline
+                styleColor: "steelblue"
+                color: "white"
+                text: qsTr("管理员操作")
                 anchors.centerIn: parent
             }
+
+            // NumberAnimation {
+            //     target: welcome_text
+            //     loops: Animation.Infinite
+            //     property: "name"
+            //     duration: 200
+            //     easing.type: Easing.InOutQuad
+            // }
+
+            SequentialAnimation{
+                    loops: Animation.Infinite
+                    running: true
+                    NumberAnimation {
+                            target: welcome_text
+                            property: "opacity"
+                            duration: 2000
+                            to: 0.2
+                            easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                            target: welcome_text
+                            property: "opacity"
+                            duration: 2000
+                            to: 1
+                            easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                            target: welcome_text
+                            property: "opacity"
+                            duration: 200
+                            to: 1
+                            easing.type: Easing.InOutQuad
+                    }
+
+            }
+
         }
         Repeater{
             id : pointsGenarating
@@ -174,7 +215,10 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
+                font.family: "华文彩云"
                 text: qsTr("添加景点")
+                style: Text.Outline
+                styleColor: "steelblue"
                 anchors.centerIn: parent
             }
             Button{
@@ -224,6 +268,9 @@ Window {
                 height: add_success_instruction.height
                 Text{
                     id : add_success_text
+                    font.family: "华文彩云"
+                    style: Text.Outline
+                    styleColor: "steelblue"
                     text: "添加成功!"
                 }
                 MouseArea{
@@ -262,6 +309,9 @@ Window {
                 height: delete_finish_instruction.height
                 Text{
                     id : delete_finish_text
+                    font.family: "华文彩云"
+                    style: Text.Outline
+                    styleColor: "steelblue"
                     text: "删除成功"
                 }
                 MouseArea{
@@ -300,6 +350,9 @@ Window {
                 height: delete_instruction.height
                 Text{
                     id : delete_text
+                    font.family: "华文彩云"
+                    style: Text.Outline
+                    styleColor: "steelblue"
                     text: "请点击你要删除的景点"
                 }
                 MouseArea{
@@ -336,6 +389,9 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
+                font.family: "华文彩云"
+                style: Text.Outline
+                styleColor: "steelblue"
                 text: qsTr("删除景点")
                 anchors.centerIn: parent
             }
@@ -383,6 +439,9 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
+                font.family: "华文彩云"
+                style: Text.Outline
+                styleColor: "steelblue"
                 text: qsTr("删除路径")
                 anchors.centerIn: parent
             }
@@ -453,7 +512,13 @@ Window {
         Label {
             id: road_text_label
             visible: false
-            text: "点击路径以显示信息"
+            Text{
+                font.family: "华文彩云"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: "点击路径以显示信息"
+            }
+
             background: Rectangle {
                 width: road_text_label.width + 10; height: road_text_label.height + 10
                 gradient: Gradient {
@@ -525,8 +590,10 @@ Window {
             width: 300
             height: 40
             selectByMouse: true
-            font.pointSize: 12
-
+            font.pointSize: 15
+            font.family: "华文彩云"
+            //style: Text.Outline
+            //styleColor: "lightblue"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 0 // 顶部中心
@@ -559,7 +626,16 @@ Window {
         }
         Button {
             id:route_search
-            text: qsTr("搜索")
+            Text{
+                font.family: "华文彩云"
+                font.pixelSize: 20
+                style: Text.Outline
+                styleColor: "steelblue"
+                anchors.centerIn: parent
+                text: qsTr("搜索")
+            }
+
+
             visible: start_pos.visible
             enabled: start_pos.enabled
             width: 70
@@ -575,7 +651,14 @@ Window {
             id : start_pos_label
             visible: end_pos.visible
             enabled: end_pos.enabled
-            text: "         请输入起点：   "
+            Text{
+                font.family: "华文彩云"
+                font.pixelSize: 15
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: "       请输入起点：   "
+            }
+
             background: Rectangle {
                 width: 150; height: 30
                 gradient: Gradient {
@@ -589,7 +672,14 @@ Window {
             id : end_pos_label
             visible: start_pos.visible
             enabled: start_pos.enabled
-            text: "                                                        请输入终点：   "
+            Text{
+                font.family: "华文彩云"
+                font.pixelSize: 15
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: "                                        请输入终点：   "
+            }
+
             background: Rectangle {
                 id : back
                 x : 160; y : 0
@@ -602,7 +692,15 @@ Window {
             }
         }
         Button {
-            text: qsTr("搜索")
+            Text{
+                font.family: "华文彩云"
+                font.pixelSize: 20
+                text: qsTr("搜索")
+                style: Text.Outline
+                styleColor: "steelblue"
+                anchors.centerIn: parent
+            }
+
             visible: parent.visible
             enabled: parent.enabled
             onClicked: {
@@ -653,6 +751,9 @@ Window {
                         Text {
                             id: displayText
                             text: display // 文本名
+                            font.family: "华文彩云"
+                            style: Text.Outline
+                            styleColor: "lightblue"
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 20
@@ -712,6 +813,15 @@ Window {
             }
 
         }
+        ParallelAnimation {
+            id: searching_route_player
+            running: false
+            NumberAnimation { target: start_pos_label; property: "opacity"; from : 0;to: 1.0; duration: 400}
+            NumberAnimation { target: end_pos_label; property: "opacity"; from :0;to: 1.0; duration: 400}
+            NumberAnimation { target: route_search; property: "opacity"; from:0;to: 1.0; duration: 400}
+            NumberAnimation { target: start_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
+            NumberAnimation { target: end_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
+        }
         Rectangle{
             id:search_route
             width: 100
@@ -725,7 +835,10 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
+                font.family: "华文彩云"
                 text: qsTr("查找路线")
+                style: Text.Outline
+                styleColor: "steelblue"
                 anchors.centerIn: parent
             }
             Button{
@@ -747,6 +860,8 @@ Window {
                 onClicked: {
                     start_pos.visible = !start_pos.visible
                     end_pos.visible = !end_pos.visible
+                    console.log("searching-")
+                    searching_route_player.start()
                 }
 
             }
@@ -757,13 +872,22 @@ Window {
         id: disable_button
         width:100
         height: 50
-        font.family: Ubuntu
-        text: qsTr("游客访问")
+        Text{
+            id:disable_button_text
+            font.pixelSize: 20
+            font.family: "华文彩云"
+            style: Text.Outline
+            styleColor: "steelblue"
+            text: qsTr("游客访问")
+            anchors.centerIn: parent
+        }
+
+
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom : parent.bottom
         onClicked: {
-            disable_button.text = disable_button.text === "游客访问" ? "管理员访问" : "游客访问"
+            disable_button_text.text = disable_button_text.text === "游客访问" ? "管理员访问" : "游客访问"
             first_window_form.visible = !first_window_form.visible;
             first_window_form.enabled = !first_window_form.enabled;
             second_window_form.visible = !second_window_form.visible;
