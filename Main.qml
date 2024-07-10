@@ -45,6 +45,8 @@ Window {
         width: parent.width
         height: parent.height
         property bool delete_button_pressed: false
+        property bool delete_button_success: false
+        property bool add_button_success: false
         Image {
             id: unnamed1
             anchors.fill: parent
@@ -134,6 +136,7 @@ Window {
                 }
                 onClicked:{
                     console.log("add view")
+                    add_success_instruction.open()
                     each_option_left.createTriggerButton()
                 }
             }
@@ -147,7 +150,120 @@ Window {
                 }
             }
         }
+        Popup{
+            id: add_success_instruction
+            width: 130
+            height: 40
+            modal: true
+            visible: parent.visible && second_window_form.add_button_success
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: add_success_rec
+                width: add_success_instruction.width
+                height: add_success_instruction.height
+                Text{
+                    id : add_success_text
+                    text: "添加成功!"
+                }
+                MouseArea{
+                    anchors.fill: add_success_instruction
 
+                }
+                Button{
+                    id: add_success_instruction_button
+                    text: "OK"
+                    x : add_success_rec.x + (add_success_rec.width - add_success_instruction_button.width) / 2
+                    anchors.top: add_success_text.bottom
+                    anchors.topMargin: 0
+                    onClicked: {
+                        add_success_instruction.close()
+                    }
+                }
+            }
+
+            Overlay.modal: Rectangle {
+                color: chengwuGrey
+            }
+            closePolicy:Popup.CloseOnPressOutside
+        }
+        Popup{
+            id: delete_finish_instruction
+            width: 50
+            height: 40
+            modal: true
+            visible: parent.visible && second_window_form.delete_button_success
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: delete_finish_instruction_rec
+                width: delete_finish_instruction.width
+                height: delete_finish_instruction.height
+                Text{
+                    id : delete_finish_text
+                    text: "删除成功"
+                }
+                MouseArea{
+                    anchors.fill: delete_finish_instruction
+
+                }
+                Button{
+                    id: delete_finish_instruction_button
+                    text: "OK"
+                    x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_instruction_button.width) / 2
+                    anchors.top: delete_finish_text.bottom
+                    anchors.topMargin: 0
+                    onClicked: {
+                        delete_finish_instruction.close()
+                    }
+                }
+            }
+
+            Overlay.modal: Rectangle {
+                color: chengwuGrey
+            }
+        }
+
+        Popup{
+            id: delete_instruction
+            width: 130
+            height: 40
+            modal: true
+            visible: parent.visible && second_window_form.delete_button_pressed
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: delete_instruction_rec
+                width: delete_instruction.width
+                height: delete_instruction.height
+                Text{
+                    id : delete_text
+                    text: "请点击你要删除的景点"
+                }
+                MouseArea{
+                    anchors.fill: delete_instruction
+
+                }
+                Button{
+                    id: delete_instruction_button
+                    text: "OK"
+                    x : delete_instruction_rec.x + (delete_instruction_rec.width - delete_instruction_button.width) / 2
+                    anchors.top: delete_text.bottom
+                    anchors.topMargin: 0
+                    onClicked: {
+                        delete_instruction.close()
+                    }
+                }
+            }
+
+            Overlay.modal: Rectangle {
+                color: chengwuGrey
+            }
+            //closePolicy:Popup.CloseOnPressOutside
+        }
         Rectangle{
             id:each_option_center
             width: 100
@@ -184,10 +300,16 @@ Window {
                 onClicked:{
                     second_window_form.delete_button_pressed = true
                     console.log("delete view")
-                    console.log("second_window_form.delete_button_pressed: " + second_window_form.delete_button_pressed)
+                    //console.log("second_window_form.delete_button_pressed: " + second_window_form.delete_button_pressed)
+                    console.log("instruction for delete")
+                    delete_instruction.open()
+
                 }
+
             }
         }
+
+
 
         Rectangle{
             id:each_option_right

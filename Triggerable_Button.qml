@@ -32,6 +32,8 @@ Item {
                 if(second_window_form.delete_button_pressed){
                     trigger_root.visible = false
                     second_window_form.delete_button_pressed = ! second_window_form.delete_button_pressed
+                    second_window_form.delete_button_success = true
+                    delete_finish_instruction.open()
                 }
             }
             onReleased: {
