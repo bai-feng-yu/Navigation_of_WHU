@@ -25,7 +25,8 @@ Window {
     property color chengwuGrey: Qt.rgba(193/255,198/255,200/255,0.5)
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
     property int max_point_key : database.get_max_valid_point_key_from_points()
-
+    property var tempobject1: []
+    property var tempobject2: []//临时储存点
     Graph{
         id:database
     }
@@ -650,31 +651,91 @@ Window {
             x:160
             selective_model: ListModel{}
         }
-        Button {
-            id:route_search
-            Text{
-                font.family: "华文彩云"
-                font.pixelSize: 20
-                style: Text.Outline
-                styleColor: "steelblue"
-                color: "white"
-                anchors.centerIn: parent
-                text: qsTr("搜索")
-            }
+        Button{
+                    property int clicknum1: 0
+                    id:shortest_search
+                    Text{
+                        font.family: "华文彩云"
+                        font.pixelSize: 20
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        color: "white"
+                        anchors.centerIn: parent
+                        text: qsTr("显示最短路径")
+                    }
+                    visible: start_pos.visible
+                    enabled: start_pos.enabled
+                    width: 140
+                    height: 30
+                    y : 30
+                    anchors.left: end_pos.right
+                    anchors.leftMargin: 20
+                    onClicked: {
+                        if(clicknum1===0){
+                            var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                            var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                            var shortest_point_key=database.inquire_shortest_road(tempstartpoint,tempendpoint)
+                            console.log(tempstartpoint+" "+tempendpoint)
+                            for(var i=0;i<shortest_point_key.length-1;i++){
+                                var temppointxy11=database.get_address_of_point(shortest_point_key[i].point_key)
+                                var temppointxy22=database.get_address_of_point(shortest_point_key[i+1].point_key)
+                                console.log(shortest_point_key[i].point_key+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
+                                console.log(shortest_point_key[i+1].point_key+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
+                                var component2 = Qt.createComponent("shortestpath_animation.qml");
+                                if (component2.status === Component.Ready) {
+                                    tempobject2[i]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                                starty:temppointxy11.addr_y,
+                                                                                endx:temppointxy22.addr_x,
+                                                                                endy:temppointxy22.addr_y});
+                                }
+                            }
+                            for(var j=0;j<shortest_point_key.length-1;j++){
+                                var temppointxy1=database.get_address_of_point(shortest_point_key[j].point_key)
+                                var temppointxy2=database.get_address_of_point(shortest_point_key[j+1].point_key)
+                                console.log(shortest_point_key[j].point_key+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
+                                console.log(shortest_point_key[j+1].point_key+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
+                                var component1 = Qt.createComponent("shortestpath_line.qml");
+                                if (component1.status === Component.Ready) {
+                                    tempobject1[j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                                sy:temppointxy1.addr_y,
+                                                                                ex:temppointxy2.addr_x,
+                                                                                ey:temppointxy2.addr_y});
+                                }
 
-
-            visible: start_pos.visible
-            enabled: start_pos.enabled
-            width: 70
-            height: 30
-            y : 30
-            anchors.left: end_pos.right
-            anchors.leftMargin: 10
-            onClicked: {
-                console.log("start_pos_label.width: " + start_pos_label.width + "height: " + start_pos_label.height + " " + start_pos.implicitHeight)
-                console.log(start_pos.cur_chosen_point + " " + end_pos.cur_chosen_point)
-            }
-        }
+                            }
+                            clicknum1+=1
+                        }
+                        else{
+                            for(var k=0;k<2;k++){
+                                tempobject1[k].destroy()
+                                tempobject2[k].destroy()
+                            }
+                            clicknum1=0
+                        }
+                    }
+                }
+                Button{
+                    id:allpath_search
+                    Text{
+                        font.family: "华文彩云"
+                        font.pixelSize: 20
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        color: "white"
+                        anchors.centerIn: parent
+                        text: qsTr("显示所有路径")
+                    }
+                    visible: start_pos.visible
+                    enabled: start_pos.enabled
+                    width: 140
+                    height: 30
+                    y : 0
+                    anchors.left: end_pos.right
+                    anchors.leftMargin: 20
+                    onClicked: {
+                        console.log(start_pos.cur_chosen_point + " " + end_pos.cur_chosen_point)
+                    }
+                }
         Label{
             id : start_pos_label
             visible: end_pos.visible
@@ -862,9 +923,10 @@ Window {
             running: false
             NumberAnimation { target: start_pos_label; property: "opacity"; from : 0;to: 1.0; duration: 400}
             NumberAnimation { target: end_pos_label; property: "opacity"; from :0;to: 1.0; duration: 400}
-            NumberAnimation { target: route_search; property: "opacity"; from:0;to: 1.0; duration: 400}
+            NumberAnimation { target: shortest_search; property: "opacity"; from:0;to: 1.0; duration: 400}
             NumberAnimation { target: start_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
             NumberAnimation { target: end_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
+            NumberAnimation { target: allpath_search; property: "opacity"; from : 0;to: 1.0; duration: 400}
         }
         Rectangle{
             id:search_route
