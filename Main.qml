@@ -27,6 +27,7 @@ Window {
     property int max_point_key : database.get_max_valid_point_key_from_points()
     property var tempobject1: []
     property var tempobject2: []//临时储存点
+    property var temppointnum
     Graph{
         id:database
     }
@@ -676,6 +677,7 @@ Window {
                             var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
                             var shortest_point_key=database.inquire_shortest_road(tempstartpoint,tempendpoint)
                             console.log(tempstartpoint+" "+tempendpoint)
+                            temppointnum=shortest_point_key.length-1
                             for(var i=0;i<shortest_point_key.length-1;i++){
                                 var temppointxy11=database.get_address_of_point(shortest_point_key[i].point_key)
                                 var temppointxy22=database.get_address_of_point(shortest_point_key[i+1].point_key)
@@ -706,10 +708,11 @@ Window {
                             clicknum1+=1
                         }
                         else{
-                            for(var k=0;k<2;k++){
-                                tempobject1[k].destroy()
-                                tempobject2[k].destroy()
+                            for(var k=0;k<temppointnum;k++){
+                                tempobject1[k].opacity=0
+                                tempobject2[k].opacity=0
                             }
+
                             clicknum1=0
                         }
                     }
@@ -969,6 +972,10 @@ Window {
                     end_pos.visible = !end_pos.visible
                     console.log("searching-")
                     searching_route_player.start()
+                    for(var k=0;k<temppointnum;k++){
+                        tempobject1[k].opacity=0
+                        tempobject2[k].opacity=0
+                    }
                 }
 
             }
