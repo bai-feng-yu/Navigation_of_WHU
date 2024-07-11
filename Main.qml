@@ -48,14 +48,14 @@ Window {
         property bool delete_button_pressed: false
         property bool delete_button_success: false
         property bool add_button_success: false
-        Image {
-            id: unnamed1
-            anchors.fill: parent
-            /*-------------------------------------------------------------------------------------------------------*/
-            source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
-            /*-------------------------------------------------------------------------------------------------------*/
+        // Image {
+        //     id: unnamed1
+        //     anchors.fill: parent
+        //     /*-------------------------------------------------------------------------------------------------------*/
+        //     source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
+        //     /*-------------------------------------------------------------------------------------------------------*/
 
-        }
+        // }
         ListModel {
             id: pathsMod
         }
@@ -216,6 +216,7 @@ Window {
             Text {
                 font.pixelSize: 20
                 font.family: "华文彩云"
+                color: "white"
                 text: qsTr("添加景点")
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -269,6 +270,7 @@ Window {
                 Text{
                     id : add_success_text
                     font.family: "华文彩云"
+                    color: "white"
                     style: Text.Outline
                     styleColor: "steelblue"
                     text: "添加成功!"
@@ -311,6 +313,7 @@ Window {
                 Text{
                     id : delete_finish_text
                     font.family: "华文彩云"
+                    color: "white"
                     x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_text.width) / 2
                     style: Text.Outline
                     styleColor: "steelblue"
@@ -352,6 +355,7 @@ Window {
                 height: delete_instruction.height
                 Text{
                     id : delete_text
+                    color: "white"
                     font.family: "华文彩云"
                     style: Text.Outline
                     styleColor: "steelblue"
@@ -392,6 +396,7 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
+                color: "white"
                 font.family: "华文彩云"
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -443,6 +448,7 @@ Window {
             Text {
                 font.pixelSize: 20
                 font.family: "华文彩云"
+                color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
                 text: qsTr("删除路径")
@@ -476,11 +482,11 @@ Window {
         enabled: true
         width: parent.width
         height: parent.height
-        Image {
-            id: unnamed2
-            anchors.fill: parent
-            source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
-        }
+        // Image {
+        //     id: unnamed2
+        //     anchors.fill: parent
+        //     source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
+        // }
         // MagicPool {
         //         id: magicPool
         //         visible: parent.visible
@@ -527,6 +533,7 @@ Window {
             visible: false
             Text{
                 font.family: "华文彩云"
+                color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
                 text: "点击路径以显示信息"
@@ -610,9 +617,11 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 0 // 顶部中心
+            placeholderText : "请输入你想查找的景点："
+            //placeholderTextColor : "black"
             background: Rectangle {
                 radius: 4
-                border.color: "green"
+                border.color: "steelblue"
             }
 
             property bool editing: false // qml 定义变量的方式
@@ -648,6 +657,7 @@ Window {
                 font.pixelSize: 20
                 style: Text.Outline
                 styleColor: "steelblue"
+                color: "white"
                 anchors.centerIn: parent
                 text: qsTr("搜索")
             }
@@ -674,6 +684,7 @@ Window {
             Text{
                 id : start_pos_label_text
                 font.family: "华文彩云"
+                color: "white"
                 font.pixelSize: 15
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -702,6 +713,7 @@ Window {
             Text{
                 font.family: "华文彩云"
                 font.pixelSize: 15
+                color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
                 text: "请输入终点:"
@@ -724,6 +736,7 @@ Window {
         Button {
             Text{
                 font.family: "华文彩云"
+                color: "white"
                 font.pixelSize: 20
                 text: qsTr("搜索")
                 style: Text.Outline
@@ -750,7 +763,7 @@ Window {
             id: historyList
             radius: 4
             width: 300
-            height: 150
+            height: 120
             enabled: parent.enabled
             visible: parent.visible && (inputField.editing || inputField.activeFocus) // 什么时候可见
             anchors.horizontalCenter: parent.horizontalCenter
@@ -772,9 +785,9 @@ Window {
                     Rectangle {
                         radius: 4
                         width: listView.width - 20
-                        height: 20
+                        height: 22
                         color: hovered ? "#f4f4f4" : "#ddd"
-                        border.color: "gray"
+                        border.color: chuntengPurple
 
                         property bool hovered: false
 
@@ -782,12 +795,13 @@ Window {
                             id: displayText
                             text: display // 文本名
                             font.family: "华文彩云"
+                            color: "white"
                             style: Text.Outline
-                            styleColor: "lightblue"
+                            styleColor: "steelblue"
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 20
-                            font.pixelSize: 18
+                            font.pixelSize: 22
                             font.wordSpacing: 3
 
                             TextMetrics {
@@ -865,6 +879,7 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
+                color: "white"
                 font.family: "华文彩云"
                 text: qsTr("查找路线")
                 style: Text.Outline
@@ -906,6 +921,7 @@ Window {
             id:disable_button_text
             font.pixelSize: 20
             font.family: "华文彩云"
+            color: "white"
             style: Text.Outline
             styleColor: "steelblue"
             text: qsTr("游客访问")
