@@ -20,6 +20,9 @@ qt_add_qml_module(appCampus-Guide
         Main.qml
         Triggerable_Button.qml
         SelectiveBox.qml
+        ButtonWithComponent.qml
+        shortestpath_animation.qml
+        shortestpath_line.qml
         SOURCES Point.h
         SOURCES historymodel.h
         SOURCES historymodel.cpp
