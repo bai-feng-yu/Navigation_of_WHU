@@ -8,12 +8,12 @@ import "C:/Users/admin/Desktop/Navigation_of_WHU/Triggerable_Button.qml"
 import "C:/Users/admin/Desktop/Navigation_of_WHU/SelectiveBox.qml"
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 import com.database 1.0
-
+import "D:/Documents/QTDocuments/downloadTest/ButtonWithComponent.qml"
 
 Window {
     visible: true
     width:Screen.desktopAvailableWidth
-    height: Screen.desktopAvailableHeight
+    height: Screen.desktopAvailableHeight - 25
     id : root
     title: qsTr("WuHan Univerity Guide")
     /* 通过交换控件的位置来避免 事件冲突 */
@@ -272,6 +272,7 @@ Window {
                     style: Text.Outline
                     styleColor: "steelblue"
                     text: "添加成功!"
+                    x : add_success_rec.x + (add_success_rec.width - add_success_text.width) / 2
                 }
                 MouseArea{
                     anchors.fill: add_success_instruction
@@ -310,9 +311,10 @@ Window {
                 Text{
                     id : delete_finish_text
                     font.family: "华文彩云"
+                    x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_text.width) / 2
                     style: Text.Outline
                     styleColor: "steelblue"
-                    text: "删除成功"
+                    text: "删除成功!"
                 }
                 MouseArea{
                     anchors.fill: delete_finish_instruction
@@ -353,7 +355,8 @@ Window {
                     font.family: "华文彩云"
                     style: Text.Outline
                     styleColor: "steelblue"
-                    text: "请点击你要删除的景点"
+                    text: "请点击你要删除的景点:"
+                    x : delete_instruction_rec.x + (delete_instruction_rec.width - delete_text.width) / 2
                 }
                 MouseArea{
                     anchors.fill: delete_instruction
@@ -507,6 +510,16 @@ Window {
         //         }
         // }
 
+        ButtonWithComponent{
+            id:myButton
+            originalX:100
+            originalY:100
+            nameContext: "武汉大学"
+            infoContext1: "介绍1"
+            infoContext2: "介绍2"
+            infoContext3: "介绍3"
+            imageSource:"path/example.png"
+        }
 
 
         Label {
@@ -614,14 +627,18 @@ Window {
 
         SelectiveBox{
             id:start_pos
+            width: 150
+            height: 30
             x:0
             y:30
             selective_model: ListModel{}
         }
         SelectiveBox{
             id:end_pos
+            width: 150
+            height: 30
             y:30
-            x:implicitWidth + 160
+            x:160
             selective_model: ListModel{}
         }
         Button {
@@ -642,8 +659,9 @@ Window {
             height: 30
             y : 30
             anchors.left: end_pos.right
-            anchors.leftMargin: 160
+            anchors.leftMargin: 10
             onClicked: {
+                console.log("start_pos_label.width: " + start_pos_label.width + "height: " + start_pos_label.height + " " + start_pos.implicitHeight)
                 console.log(start_pos.cur_chosen_point + " " + end_pos.cur_chosen_point)
             }
         }
@@ -651,16 +669,21 @@ Window {
             id : start_pos_label
             visible: end_pos.visible
             enabled: end_pos.enabled
+            width: start_pos.width
+            height: start_pos.height
             Text{
+                id : start_pos_label_text
                 font.family: "华文彩云"
                 font.pixelSize: 15
                 style: Text.Outline
                 styleColor: "steelblue"
-                text: "       请输入起点：   "
+                text: "请输入起点:"
+                anchors.centerIn: start_pos_label
             }
 
             background: Rectangle {
-                width: 150; height: 30
+                width: start_pos.width
+                height: start_pos.height
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: "white" }
                     //GradientStop { position: 0.33; color: "yellow" }
@@ -672,18 +695,25 @@ Window {
             id : end_pos_label
             visible: start_pos.visible
             enabled: start_pos.enabled
+            anchors.left: start_pos_label.right
+            anchors.leftMargin: 10
+            width: start_pos.width
+            height: start_pos.height
             Text{
                 font.family: "华文彩云"
                 font.pixelSize: 15
                 style: Text.Outline
                 styleColor: "steelblue"
-                text: "                                        请输入终点：   "
+                text: "请输入终点:"
+                anchors.centerIn: end_pos_label
             }
 
             background: Rectangle {
                 id : back
-                x : 160; y : 0
-                width: 150; height: 30
+                anchors.centerIn: end_pos_label
+                width: start_pos.width
+                height: start_pos.height
+
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: "white" }
                     //GradientStop { position: 0.33; color: "yellow" }
