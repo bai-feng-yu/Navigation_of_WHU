@@ -7,8 +7,8 @@ Item {
     property int ey
     Rectangle{
         id:rect1
-        x:sx+10
-        y:sy+5
+        x:sx
+        y:sy
         height:10
         width:0
         color: "black"
@@ -22,6 +22,9 @@ Item {
             duration: 1000
        }
         Component.onCompleted: {
+            if(ex<sx){
+                rect1.rotation=180+Math.atan((ey-sy)/(ex-sx))/(Math.PI/180)
+            }
             animatewidth1.start()
         }
     }
