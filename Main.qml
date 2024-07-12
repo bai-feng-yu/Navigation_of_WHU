@@ -77,6 +77,7 @@ Window {
 
                 width: root.width;
                 anchors.centerIn: parent
+        }
         ListModel{
             id: pointsMod
         }
