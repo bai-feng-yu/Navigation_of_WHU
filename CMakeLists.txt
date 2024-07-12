@@ -33,6 +33,7 @@ qt_add_qml_module(appCampus-Guide
         SOURCES Graph.cpp
         SOURCES connection.h
         SOURCES connection.cpp
+        QML_FILES Carousel.qml
 
 
 

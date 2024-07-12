@@ -553,34 +553,7 @@ Window {
         //     /*-------------------------------------------------------------------------------------------------------*/
 
         // }
-        // MagicPool {
-        //         id: magicPool
-        //         visible: parent.visible
-        //         enabled: parent.enabled
-        //         anchors.fill: parent
-        //         // Component.onCompleted: randomMove();
 
-        //         // function randomMove() {
-        //         //     var r_x = Math.random() * width;
-        //         //     var r_y = Math.random() * height;
-        //         //     magicPool.moveFish(r_x, r_y, false);
-        //         // }
-
-        //         Timer {
-        //             interval: 1500
-        //             repeat: true
-        //             running: true
-        //             onTriggered: {
-        //                 //if (Math.random() > 0.6 && !magicPool.moving) magicPool.randomMove();
-        //             }
-        //         }
-
-        //         MouseArea {
-        //             enabled: parent.enabled && !inputField.activeFocus
-        //             anchors.fill: parent
-        //             onClicked: magicPool.moveFish(mouse.x, mouse.y, true);
-        //         }
-        // }
 
         ButtonWithComponent{
             id:myButton
