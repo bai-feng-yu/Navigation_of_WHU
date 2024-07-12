@@ -5,6 +5,8 @@ Item {
     id : trigger_root
     property alias button_text: circle_text.text
     property int index_of_point: 0 // 表示无效id
+    property int point_x: 0 // 每个按钮的 X 坐标
+    property int point_y: 0 // 每个按钮的 Y 坐标
 
     Rectangle{
         id: circle_rect
@@ -18,6 +20,8 @@ Item {
         Drag.active: dragArea.drag.active
         Drag.hotSpot.x: 0
         Drag.hotSpot.y: 0
+        x:point_x
+        y:point_y
 
         MouseArea {
             id: dragArea
