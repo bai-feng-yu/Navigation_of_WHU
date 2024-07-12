@@ -1,10 +1,11 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
+
 Item {
     id : trigger_root
     property alias button_text: circle_text.text
-    property int index_of_point: 0 // 表示无效id
+    property int index_of_point: circle_text.text // 表示无效id
     property int point_x: 0 // 每个按钮的 X 坐标
     property int point_y: 0 // 每个按钮的 Y 坐标
 
@@ -17,6 +18,9 @@ Item {
         border.color : "blue"
         property int count: 0
         //Drag.
+
+
+        property bool draggable: true
         Drag.active: dragArea.drag.active
         Drag.hotSpot.x: 0
         Drag.hotSpot.y: 0
@@ -25,6 +29,7 @@ Item {
 
         MouseArea {
             id: dragArea
+            enabled: circle_rect.draggable
             anchors.fill: parent
 
             drag.target: parent
@@ -42,12 +47,12 @@ Item {
             }
             onReleased: {
 
-                console.log("确认" + (++circle_rect.count))
+                console.log("确认" + index_of_point)
                 // if(circle_rect.count % 2 == 0){
                 //     circle_rect.x = 10, circle_rect.y = 10
                 // }
                 /*如何让按钮确认后不再移动*/
-
+                circle_rect.draggable = false
 
             }
             // onDoubleClicked: {
