@@ -8,12 +8,12 @@ import "C:/Users/admin/Desktop/Navigation_of_WHU/Triggerable_Button.qml"
 import "C:/Users/admin/Desktop/Navigation_of_WHU/SelectiveBox.qml"
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 import com.database 1.0
-
+import "D:/Documents/QTDocuments/downloadTest/ButtonWithComponent.qml"
 
 Window {
     visible: true
     width:Screen.desktopAvailableWidth
-    height: Screen.desktopAvailableHeight
+    height: Screen.desktopAvailableHeight - 25
     id : root
     title: qsTr("WuHan Univerity Guide")
     /* 通过交换控件的位置来避免 事件冲突 */
@@ -25,13 +25,15 @@ Window {
     property color chengwuGrey: Qt.rgba(193/255,198/255,200/255,0.5)
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
     property int max_point_key : database.get_max_valid_point_key_from_points()
-
+    property var tempobject1: []
+    property var tempobject2: []//临时储存点
+    property var temppointnum
     Graph{
         id:database
     }
 
     Component.onCompleted: {
-        var locations = database.get_all_names_of_points(3)
+        var locations = database.get_all_names_of_points(10)
         start_pos.selective_model.clear()
         for (var i = 0; i < locations.length; i++) {
             start_pos.selective_model.append({ "text": locations[i] })
@@ -46,26 +48,43 @@ Window {
         width: parent.width
         height: parent.height
         property bool delete_button_pressed: false
-        Image {
-            id: unnamed1
-            anchors.fill: parent
-            /*-------------------------------------------------------------------------------------------------------*/
-            source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
-            /*-------------------------------------------------------------------------------------------------------*/
+        property bool delete_button_success: false
+        property bool add_button_success: false
+        // Image {
+        //     id: unnamed1
+        //     anchors.fill: parent
+        //     /*-------------------------------------------------------------------------------------------------------*/
+        //     source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
+        //     /*-------------------------------------------------------------------------------------------------------*/
 
+        // }
+
+        ListModel{
+            id: pointsMod
         }
         ListModel {
             id: pathsMod
         }
         Component.onCompleted: {
-            var pointsnum=database.get_points_num();
             var max_point_key=database.get_max_valid_point_key_from_points();
 
             for(var i=1;i<=max_point_key;i++)
             {
+                var point_map=database.get_address_of_point(i);
+                var point_x=point_map["addr_x"];
+                var point_y=point_map["addr_y"];
+               // console.log(point_x+","+point_y)
+                if(point_x!==-1)
+                {
+                    pointsMod.append({
+                                          "point_addr_x":point_x,
+                                          "point_addr_y":point_y,
+                                          "point_key":i
+                                      })
+                }
                 for(var j=1;j<=max_point_key;j++)
                 {
-                    //console.log(database.get_road_key(i,j))
+
                     if(database.get_road_key(i,j)!==-1)
                     {
                         var start_point_name=database.get_point_name(i);
@@ -78,18 +97,19 @@ Window {
                         var end_y=end_point_map["addr_y"];
                         var road_key=database.get_road_key(i,j);
                         pathsMod.append({
-                                            "road_key":road_key,
-                                            "road_name":database.get_road_name(road_key),
-                                            "road_length":database.get_road_length(road_key),
-                                            "start_point_name":database.get_point_name(i),
-                                            "end_point_name":database.get_point_name(j),
-                                            "start_point_add":Qt.point(start_x,start_y),
-                                            "end_point_add":Qt.point(end_x,end_y)
-                                        })
+                                             "road_key":road_key,
+                                             "road_name":database.get_road_name(road_key),
+                                             "road_length":database.get_road_length(road_key),
+                                             "start_point_name":database.get_point_name(i),
+                                             "end_point_name":database.get_point_name(j),
+                                             "start_point_add":Qt.point(start_x,start_y),
+                                             "end_point_add":Qt.point(end_x,end_y)
+                                         })
                     }
                 }
             }
         }
+
 
         Canvas {
             id: second_path_canvas
@@ -126,20 +146,62 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top : parent.top
             Text {
-                opacity: 100
+                id : welcome_text
+                opacity: 1
                 font.pixelSize: 30
                 font.wordSpacing: 3
-                font.family: "Georgia"
+                font.family: "华文彩云"
                 font.pointSize: 13
+                //font.italic: true
                 font.bold: true
-                text: qsTr("Admin Operations")
+                style: Text.Outline
+                styleColor: "steelblue"
+                color: "white"
+                text: qsTr("管理员操作")
                 anchors.centerIn: parent
             }
+
+            // NumberAnimation {
+            //     target: welcome_text
+            //     loops: Animation.Infinite
+            //     property: "name"
+            //     duration: 200
+            //     easing.type: Easing.InOutQuad
+            // }
+
+            SequentialAnimation{
+                    loops: Animation.Infinite
+                    running: true
+                    NumberAnimation {
+                            target: welcome_text
+                            property: "opacity"
+                            duration: 2000
+                            to: 0.2
+                            easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                            target: welcome_text
+                            property: "opacity"
+                            duration: 2000
+                            to: 1
+                            easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                            target: welcome_text
+                            property: "opacity"
+                            duration: 200
+                            to: 1
+                            easing.type: Easing.InOutQuad
+                    }
+
+            }
+
         }
         Repeater{
             id : pointsGenarating
             property int init_point_key: init_point_key = root.max_point_key
-            model:pointsGenarating.init_point_key
+
+            model:pointsMod.count
             // x : index * 80
             // Triggerable_Button{
             //     anchors.fill: parent
@@ -147,18 +209,26 @@ Window {
             //     button_text: index
 
             // }
+
             delegate: Triggerable_Button{
-                y : 20
+                //console.log(pointsMod.get(index).point_key)
+                //y : 20
                 //id : index
-                index_of_point : index + 1
-                button_text: index + 1
-                anchors.left: parent.left
-                anchors.leftMargin: index * 40
+
+                index_of_point :pointsMod.get(index).point_key
+                button_text: pointsMod.get(index).point_key
+                //anchors.left: parent.left
+                //anchors.leftMargin: index * 40
+
+
+                point_x: pointsMod.get(index).point_addr_x // 使用当前元素的 point_x
+
+                point_y: pointsMod.get(index).point_addr_y // 使用当前元素的 point_y
+
 
             }
 
         }
-
         Rectangle{
             id:each_option_left
             width: 100
@@ -172,7 +242,11 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
+                font.family: "华文彩云"
+                color: "white"
                 text: qsTr("添加景点")
+                style: Text.Outline
+                styleColor: "steelblue"
                 anchors.centerIn: parent
             }
             Button{
@@ -193,6 +267,7 @@ Window {
                 }
                 onClicked:{
                     console.log("add view")
+                    add_success_instruction.open()
                     each_option_left.createTriggerButton()
                 }
             }
@@ -206,7 +281,135 @@ Window {
                 }
             }
         }
+        Popup{
+            id: add_success_instruction
+            width: 130
+            height: 40
+            modal: true
+            visible: parent.visible && second_window_form.add_button_success
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: add_success_rec
+                width: add_success_instruction.width
+                height: add_success_instruction.height
+                Text{
+                    id : add_success_text
+                    font.family: "华文彩云"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    text: "添加成功!"
+                    x : add_success_rec.x + (add_success_rec.width - add_success_text.width) / 2
+                }
+                MouseArea{
+                    anchors.fill: add_success_instruction
 
+                }
+                Button{
+                    id: add_success_instruction_button
+                    text: "OK"
+                    x : add_success_rec.x + (add_success_rec.width - add_success_instruction_button.width) / 2
+                    anchors.top: add_success_text.bottom
+                    anchors.topMargin: 0
+                    onClicked: {
+                        add_success_instruction.close()
+                    }
+                }
+            }
+
+            Overlay.modal: Rectangle {
+                color: chengwuGrey
+            }
+            closePolicy:Popup.CloseOnPressOutside
+        }
+        Popup{
+            id: delete_finish_instruction
+            width: 50
+            height: 40
+            modal: true
+            visible: parent.visible && second_window_form.delete_button_success
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: delete_finish_instruction_rec
+                width: delete_finish_instruction.width
+                height: delete_finish_instruction.height
+                Text{
+                    id : delete_finish_text
+                    font.family: "华文彩云"
+                    color: "white"
+                    x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_text.width) / 2
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    text: "删除成功!"
+                }
+                MouseArea{
+                    anchors.fill: delete_finish_instruction
+
+                }
+                Button{
+                    id: delete_finish_instruction_button
+                    text: "OK"
+                    x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_instruction_button.width) / 2
+                    anchors.top: delete_finish_text.bottom
+                    anchors.topMargin: 0
+                    onClicked: {
+                        delete_finish_instruction.close()
+                    }
+                }
+            }
+
+            Overlay.modal: Rectangle {
+                color: chengwuGrey
+            }
+        }
+
+        Popup{
+            id: delete_instruction
+            width: 130
+            height: 40
+            modal: true
+            visible: parent.visible && second_window_form.delete_button_pressed
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: delete_instruction_rec
+                width: delete_instruction.width
+                height: delete_instruction.height
+                Text{
+                    id : delete_text
+                    color: "white"
+                    font.family: "华文彩云"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    text: "请点击你要删除的景点:"
+                    x : delete_instruction_rec.x + (delete_instruction_rec.width - delete_text.width) / 2
+                }
+                MouseArea{
+                    anchors.fill: delete_instruction
+
+                }
+                Button{
+                    id: delete_instruction_button
+                    text: "OK"
+                    x : delete_instruction_rec.x + (delete_instruction_rec.width - delete_instruction_button.width) / 2
+                    anchors.top: delete_text.bottom
+                    anchors.topMargin: 0
+                    onClicked: {
+                        delete_instruction.close()
+                    }
+                }
+            }
+
+            Overlay.modal: Rectangle {
+                color: chengwuGrey
+            }
+            //closePolicy:Popup.CloseOnPressOutside
+        }
         Rectangle{
             id:each_option_center
             width: 100
@@ -220,6 +423,10 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
+                color: "white"
+                font.family: "华文彩云"
+                style: Text.Outline
+                styleColor: "steelblue"
                 text: qsTr("删除景点")
                 anchors.centerIn: parent
             }
@@ -243,10 +450,16 @@ Window {
                 onClicked:{
                     second_window_form.delete_button_pressed = true
                     console.log("delete view")
-                    console.log("second_window_form.delete_button_pressed: " + second_window_form.delete_button_pressed)
+                    //console.log("second_window_form.delete_button_pressed: " + second_window_form.delete_button_pressed)
+                    console.log("instruction for delete")
+                    delete_instruction.open()
+
                 }
+
             }
         }
+
+
 
         Rectangle{
             id:each_option_right
@@ -261,6 +474,10 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
+                font.family: "华文彩云"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
                 text: qsTr("删除路径")
                 anchors.centerIn: parent
             }
@@ -292,11 +509,11 @@ Window {
         enabled: true
         width: parent.width
         height: parent.height
-        Image {
-            id: unnamed2
-            anchors.fill: parent
-            source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
-        }
+        // Image {
+        //     id: unnamed2
+        //     anchors.fill: parent
+        //     source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
+        // }
         // MagicPool {
         //         id: magicPool
         //         visible: parent.visible
@@ -326,12 +543,29 @@ Window {
         //         }
         // }
 
+        ButtonWithComponent{
+            id:myButton
+            originalX:100
+            originalY:100
+            nameContext: "武汉大学"
+            infoContext1: "介绍1"
+            infoContext2: "介绍2"
+            infoContext3: "介绍3"
+            imageSource:"path/example.png"
+        }
 
 
         Label {
             id: road_text_label
             visible: false
-            text: "点击路径以显示信息"
+            Text{
+                font.family: "华文彩云"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: "点击路径以显示信息"
+            }
+
             background: Rectangle {
                 width: road_text_label.width + 10; height: road_text_label.height + 10
                 gradient: Gradient {
@@ -403,14 +637,18 @@ Window {
             width: 300
             height: 40
             selectByMouse: true
-            font.pointSize: 12
-
+            font.pointSize: 15
+            font.family: "华文彩云"
+            //style: Text.Outline
+            //styleColor: "lightblue"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 0 // 顶部中心
+            placeholderText : "请输入你想查找的景点："
+            //placeholderTextColor : "black"
             background: Rectangle {
                 radius: 4
-                border.color: "green"
+                border.color: "steelblue"
             }
 
             property bool editing: false // qml 定义变量的方式
@@ -425,37 +663,127 @@ Window {
 
         SelectiveBox{
             id:start_pos
+            width: 150
+            height: 30
             x:0
             y:30
             selective_model: ListModel{}
         }
         SelectiveBox{
             id:end_pos
+            width: 150
+            height: 30
             y:30
-            x:implicitWidth + 160
+            x:160
             selective_model: ListModel{}
         }
-        Button {
-            id:route_search
-            text: qsTr("搜索")
-            visible: start_pos.visible
-            enabled: start_pos.enabled
-            width: 70
-            height: 30
-            y : 30
-            anchors.left: end_pos.right
-            anchors.leftMargin: 160
-            onClicked: {
-                console.log(start_pos.cur_chosen_point + " " + end_pos.cur_chosen_point)
-            }
-        }
+        Button{
+                    property int clicknum1: 0
+                    id:shortest_search
+                    Text{
+                        font.family: "华文彩云"
+                        font.pixelSize: 20
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        color: "white"
+                        anchors.centerIn: parent
+                        text: qsTr("显示最短路径")
+                    }
+                    visible: start_pos.visible
+                    enabled: start_pos.enabled
+                    width: 140
+                    height: 30
+                    y : 30
+                    anchors.left: end_pos.right
+                    anchors.leftMargin: 20
+                    onClicked: {
+                        if(clicknum1===0){
+                            var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                            var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                            var shortest_point_key=database.inquire_shortest_road(tempstartpoint,tempendpoint)
+                            console.log(tempstartpoint+" "+tempendpoint)
+                            temppointnum=shortest_point_key.length-1
+                            for(var i=0;i<shortest_point_key.length-1;i++){
+                                var temppointxy11=database.get_address_of_point(shortest_point_key[i].point_key)
+                                var temppointxy22=database.get_address_of_point(shortest_point_key[i+1].point_key)
+                                console.log(shortest_point_key[i].point_key+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
+                                console.log(shortest_point_key[i+1].point_key+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
+                                var component2 = Qt.createComponent("shortestpath_animation.qml");
+                                if (component2.status === Component.Ready) {
+                                    tempobject2[i]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                                starty:temppointxy11.addr_y,
+                                                                                endx:temppointxy22.addr_x,
+                                                                                endy:temppointxy22.addr_y});
+                                }
+                            }
+                            for(var j=0;j<shortest_point_key.length-1;j++){
+                                var temppointxy1=database.get_address_of_point(shortest_point_key[j].point_key)
+                                var temppointxy2=database.get_address_of_point(shortest_point_key[j+1].point_key)
+                                console.log(shortest_point_key[j].point_key+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
+                                console.log(shortest_point_key[j+1].point_key+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
+                                var component1 = Qt.createComponent("shortestpath_line.qml");
+                                if (component1.status === Component.Ready) {
+                                    tempobject1[j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                                sy:temppointxy1.addr_y,
+                                                                                ex:temppointxy2.addr_x,
+                                                                                ey:temppointxy2.addr_y});
+                                }
+
+                            }
+                            clicknum1+=1
+                        }
+                        else{
+                            for(var k=0;k<temppointnum;k++){
+                                tempobject1[k].opacity=0
+                                tempobject2[k].opacity=0
+                            }
+
+                            clicknum1=0
+                        }
+                    }
+                }
+                Button{
+                    id:allpath_search
+                    Text{
+                        font.family: "华文彩云"
+                        font.pixelSize: 20
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        color: "white"
+                        anchors.centerIn: parent
+                        text: qsTr("显示所有路径")
+                    }
+                    visible: start_pos.visible
+                    enabled: start_pos.enabled
+                    width: 140
+                    height: 30
+                    y : 0
+                    anchors.left: end_pos.right
+                    anchors.leftMargin: 20
+                    onClicked: {
+                        console.log(start_pos.cur_chosen_point + " " + end_pos.cur_chosen_point)
+                    }
+                }
         Label{
             id : start_pos_label
             visible: end_pos.visible
             enabled: end_pos.enabled
-            text: "         请输入起点：   "
+            width: start_pos.width
+            height: start_pos.height
+            Text{
+                id : start_pos_label_text
+                font.family: "华文彩云"
+                color: "white"
+                font.pixelSize: 15
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: "请输入起点:"
+                anchors.centerIn: start_pos_label
+            }
+
             background: Rectangle {
-                width: 150; height: 30
+                width: start_pos.width
+                height: start_pos.height
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: "white" }
                     //GradientStop { position: 0.33; color: "yellow" }
@@ -467,11 +795,26 @@ Window {
             id : end_pos_label
             visible: start_pos.visible
             enabled: start_pos.enabled
-            text: "                                                        请输入终点：   "
+            anchors.left: start_pos_label.right
+            anchors.leftMargin: 10
+            width: start_pos.width
+            height: start_pos.height
+            Text{
+                font.family: "华文彩云"
+                font.pixelSize: 15
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: "请输入终点:"
+                anchors.centerIn: end_pos_label
+            }
+
             background: Rectangle {
                 id : back
-                x : 160; y : 0
-                width: 150; height: 30
+                anchors.centerIn: end_pos_label
+                width: start_pos.width
+                height: start_pos.height
+
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: "white" }
                     //GradientStop { position: 0.33; color: "yellow" }
@@ -480,7 +823,16 @@ Window {
             }
         }
         Button {
-            text: qsTr("搜索")
+            Text{
+                font.family: "华文彩云"
+                color: "white"
+                font.pixelSize: 20
+                text: qsTr("搜索")
+                style: Text.Outline
+                styleColor: "steelblue"
+                anchors.centerIn: parent
+            }
+
             visible: parent.visible
             enabled: parent.enabled
             onClicked: {
@@ -500,7 +852,7 @@ Window {
             id: historyList
             radius: 4
             width: 300
-            height: 150
+            height: 120
             enabled: parent.enabled
             visible: parent.visible && (inputField.editing || inputField.activeFocus) // 什么时候可见
             anchors.horizontalCenter: parent.horizontalCenter
@@ -522,19 +874,23 @@ Window {
                     Rectangle {
                         radius: 4
                         width: listView.width - 20
-                        height: 20
+                        height: 22
                         color: hovered ? "#f4f4f4" : "#ddd"
-                        border.color: "gray"
+                        border.color: chuntengPurple
 
                         property bool hovered: false
 
                         Text {
                             id: displayText
                             text: display // 文本名
+                            font.family: "华文彩云"
+                            color: "white"
+                            style: Text.Outline
+                            styleColor: "steelblue"
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 20
-                            font.pixelSize: 18
+                            font.pixelSize: 22
                             font.wordSpacing: 3
 
                             TextMetrics {
@@ -590,6 +946,16 @@ Window {
             }
 
         }
+        ParallelAnimation {
+            id: searching_route_player
+            running: false
+            NumberAnimation { target: start_pos_label; property: "opacity"; from : 0;to: 1.0; duration: 400}
+            NumberAnimation { target: end_pos_label; property: "opacity"; from :0;to: 1.0; duration: 400}
+            NumberAnimation { target: shortest_search; property: "opacity"; from:0;to: 1.0; duration: 400}
+            NumberAnimation { target: start_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
+            NumberAnimation { target: end_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
+            NumberAnimation { target: allpath_search; property: "opacity"; from : 0;to: 1.0; duration: 400}
+        }
         Rectangle{
             id:search_route
             width: 100
@@ -603,7 +969,11 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
+                color: "white"
+                font.family: "华文彩云"
                 text: qsTr("查找路线")
+                style: Text.Outline
+                styleColor: "steelblue"
                 anchors.centerIn: parent
             }
             Button{
@@ -625,6 +995,12 @@ Window {
                 onClicked: {
                     start_pos.visible = !start_pos.visible
                     end_pos.visible = !end_pos.visible
+                    console.log("searching-")
+                    searching_route_player.start()
+                    for(var k=0;k<temppointnum;k++){
+                        tempobject1[k].opacity=0
+                        tempobject2[k].opacity=0
+                    }
                 }
 
             }
@@ -635,13 +1011,23 @@ Window {
         id: disable_button
         width:100
         height: 50
-        font.family: Ubuntu
-        text: qsTr("游客访问")
+        Text{
+            id:disable_button_text
+            font.pixelSize: 20
+            font.family: "华文彩云"
+            color: "white"
+            style: Text.Outline
+            styleColor: "steelblue"
+            text: qsTr("游客访问")
+            anchors.centerIn: parent
+        }
+
+
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom : parent.bottom
         onClicked: {
-            disable_button.text = disable_button.text === "游客访问" ? "管理员访问" : "游客访问"
+            disable_button_text.text = disable_button_text.text === "游客访问" ? "管理员访问" : "游客访问"
             first_window_form.visible = !first_window_form.visible;
             first_window_form.enabled = !first_window_form.enabled;
             second_window_form.visible = !second_window_form.visible;
