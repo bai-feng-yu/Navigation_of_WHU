@@ -2,6 +2,7 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
+import QtMultimedia
 //import an.utility
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 import "C:/Users/admin/Desktop/Navigation_of_WHU/Triggerable_Button.qml"
@@ -39,6 +40,9 @@ Window {
             start_pos.selective_model.append({ "text": locations[i] })
             end_pos.selective_model.append({ "text": locations[i] })
         }
+        unnamed1.play()
+        unnamed2.play()
+        console.log("play!")
     }
 
     Rectangle{
@@ -58,6 +62,22 @@ Window {
         //     /*-------------------------------------------------------------------------------------------------------*/
 
         // }
+
+        MediaPlayer {
+            id: unnamed1
+            loops: MediaPlayer.Infinite
+            //anchors.fill: parent
+            source: "file:///D:/Downloads/Lone_Cherry_Blossom.mp4"
+            videoOutput: videoOutput2
+
+            audioOutput: AudioOutput{}
+        }
+        VideoOutput{
+                id:videoOutput2
+
+                width: root.width;
+                anchors.centerIn: parent
+        }
         ListModel {
             id: pathsMod
         }
@@ -484,10 +504,30 @@ Window {
         enabled: true
         width: parent.width
         height: parent.height
+        MediaPlayer {
+            id: unnamed2
+            loops: MediaPlayer.Infinite
+            //anchors.fill: parent
+            source: "file:///D:/Downloads/68363-528670466_small.mp4"
+            videoOutput: videoOutput
+
+            audioOutput: AudioOutput{}
+        }
+        VideoOutput{
+                id:videoOutput
+
+                width: root.width;
+                anchors.centerIn: parent
+        }
         // Image {
-        //     id: unnamed2
-        //     anchors.fill: parent
-        //     source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
+        //     id: map
+        //     width: 600 * 1.4
+        //     height: 400 * 1.4
+        //     anchors.centerIn: parent
+        //     /*-------------------------------------------------------------------------------------------------------*/
+        //     source: "file:///C:/Users/Administrator/Desktop/mymap.jpg"
+        //     /*-------------------------------------------------------------------------------------------------------*/
+
         // }
         // MagicPool {
         //         id: magicPool
@@ -814,6 +854,7 @@ Window {
                 if(inputField.text !== ""){
                     console.log(inputField.text)
                 }
+                console.log(unnamed2.mediaStatus)
             }
 
             width: 70
