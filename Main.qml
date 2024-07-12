@@ -168,7 +168,7 @@ Window {
                 opacity: 1
                 font.pixelSize: 30
                 font.wordSpacing: 3
-                font.family: "华文彩云"
+                font.family: "楷体"
                 font.pointSize: 13
                 //font.italic: true
                 font.bold: true
@@ -260,7 +260,7 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
-                font.family: "华文彩云"
+                font.family: "楷体"
                 color: "white"
                 text: qsTr("添加景点")
                 style: Text.Outline
@@ -314,7 +314,7 @@ Window {
                 height: add_success_instruction.height
                 Text{
                     id : add_success_text
-                    font.family: "华文彩云"
+                    font.family: "楷体"
                     color: "white"
                     style: Text.Outline
                     styleColor: "steelblue"
@@ -357,7 +357,7 @@ Window {
                 height: delete_finish_instruction.height
                 Text{
                     id : delete_finish_text
-                    font.family: "华文彩云"
+                    font.family: "楷体"
                     color: "white"
                     x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_text.width) / 2
                     style: Text.Outline
@@ -401,7 +401,7 @@ Window {
                 Text{
                     id : delete_text
                     color: "white"
-                    font.family: "华文彩云"
+                    font.family: "楷体"
                     style: Text.Outline
                     styleColor: "steelblue"
                     text: "请点击你要删除的景点:"
@@ -442,7 +442,7 @@ Window {
             Text {
                 font.pixelSize: 20
                 color: "white"
-                font.family: "华文彩云"
+                font.family: "楷体"
                 style: Text.Outline
                 styleColor: "steelblue"
                 text: qsTr("删除景点")
@@ -492,7 +492,7 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
-                font.family: "华文彩云"
+                font.family: "楷体"
                 color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -597,7 +597,7 @@ Window {
             id: road_text_label
             visible: false
             Text{
-                font.family: "华文彩云"
+                font.family: "楷体"
                 color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -676,7 +676,7 @@ Window {
             height: 40
             selectByMouse: true
             font.pointSize: 15
-            font.family: "华文彩云"
+            font.family: "楷体"
             //style: Text.Outline
             //styleColor: "lightblue"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -719,7 +719,7 @@ Window {
                     property int clicknum1: 0
                     id:shortest_search
                     Text{
-                        font.family: "华文彩云"
+                        font.family: "楷体"
                         font.pixelSize: 20
                         style: Text.Outline
                         styleColor: "steelblue"
@@ -783,7 +783,7 @@ Window {
                 Button{
                     id:allpath_search
                     Text{
-                        font.family: "华文彩云"
+                        font.family: "楷体"
                         font.pixelSize: 20
                         style: Text.Outline
                         styleColor: "steelblue"
@@ -810,7 +810,7 @@ Window {
             height: start_pos.height
             Text{
                 id : start_pos_label_text
-                font.family: "华文彩云"
+                font.family: "楷体"
                 color: "white"
                 font.pixelSize: 15
                 style: Text.Outline
@@ -838,7 +838,7 @@ Window {
             width: start_pos.width
             height: start_pos.height
             Text{
-                font.family: "华文彩云"
+                font.family: "楷体"
                 font.pixelSize: 15
                 color: "white"
                 style: Text.Outline
@@ -862,7 +862,7 @@ Window {
         }
         Button {
             Text{
-                font.family: "华文彩云"
+                font.family: "楷体"
                 color: "white"
                 font.pixelSize: 20
                 text: qsTr("搜索")
@@ -922,7 +922,7 @@ Window {
                         Text {
                             id: displayText
                             text: display // 文本名
-                            font.family: "华文彩云"
+                            font.family: "楷体"
                             color: "white"
                             style: Text.Outline
                             styleColor: "steelblue"
@@ -1009,7 +1009,7 @@ Window {
             Text {
                 font.pixelSize: 20
                 color: "white"
-                font.family: "华文彩云"
+                font.family: "楷体"
                 text: qsTr("查找路线")
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -1053,7 +1053,7 @@ Window {
         Text{
             id:disable_button_text
             font.pixelSize: 20
-            font.family: "华文彩云"
+            font.family: "楷体"
             color: "white"
             style: Text.Outline
             styleColor: "steelblue"
