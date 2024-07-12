@@ -62,18 +62,33 @@ Window {
         //     /*-------------------------------------------------------------------------------------------------------*/
 
         // }
+
+        ListModel{
+            id: pointsMod
+        }
         ListModel {
             id: pathsMod
         }
         Component.onCompleted: {
-            var pointsnum=database.get_points_num();
             var max_point_key=database.get_max_valid_point_key_from_points();
 
             for(var i=1;i<=max_point_key;i++)
             {
+                var point_map=database.get_address_of_point(i);
+                var point_x=point_map["addr_x"];
+                var point_y=point_map["addr_y"];
+               // console.log(point_x+","+point_y)
+                if(point_x!==-1)
+                {
+                    pointsMod.append({
+                                          "point_addr_x":point_x,
+                                          "point_addr_y":point_y,
+                                          "point_key":i
+                                      })
+                }
                 for(var j=1;j<=max_point_key;j++)
                 {
-                    //console.log(database.get_road_key(i,j))
+
                     if(database.get_road_key(i,j)!==-1)
                     {
                         var start_point_name=database.get_point_name(i);
@@ -86,18 +101,19 @@ Window {
                         var end_y=end_point_map["addr_y"];
                         var road_key=database.get_road_key(i,j);
                         pathsMod.append({
-                                            "road_key":road_key,
-                                            "road_name":database.get_road_name(road_key),
-                                            "road_length":database.get_road_length(road_key),
-                                            "start_point_name":database.get_point_name(i),
-                                            "end_point_name":database.get_point_name(j),
-                                            "start_point_add":Qt.point(start_x,start_y),
-                                            "end_point_add":Qt.point(end_x,end_y)
-                                        })
+                                             "road_key":road_key,
+                                             "road_name":database.get_road_name(road_key),
+                                             "road_length":database.get_road_length(road_key),
+                                             "start_point_name":database.get_point_name(i),
+                                             "end_point_name":database.get_point_name(j),
+                                             "start_point_add":Qt.point(start_x,start_y),
+                                             "end_point_add":Qt.point(end_x,end_y)
+                                         })
                     }
                 }
             }
         }
+
 
         Canvas {
             id: second_path_canvas
@@ -188,7 +204,8 @@ Window {
         Repeater{
             id : pointsGenarating
             property int init_point_key: init_point_key = root.max_point_key
-            model:pointsGenarating.init_point_key
+
+            model:pointsMod.count
             // x : index * 80
             // Triggerable_Button{
             //     anchors.fill: parent
@@ -196,18 +213,26 @@ Window {
             //     button_text: index
 
             // }
+
             delegate: Triggerable_Button{
-                y : 20
+                //console.log(pointsMod.get(index).point_key)
+                //y : 20
                 //id : index
-                index_of_point : index + 1
-                button_text: index + 1
-                anchors.left: parent.left
-                anchors.leftMargin: index * 40
+
+                index_of_point :pointsMod.get(index).point_key
+                button_text: pointsMod.get(index).point_key
+                //anchors.left: parent.left
+                //anchors.leftMargin: index * 40
+
+
+                point_x: pointsMod.get(index).point_addr_x // 使用当前元素的 point_x
+
+                point_y: pointsMod.get(index).point_addr_y // 使用当前元素的 point_y
+
 
             }
 
         }
-
         Rectangle{
             id:each_option_left
             width: 100
@@ -722,7 +747,6 @@ Window {
                             }
                             clicknum1=0
                         }
-
                     }
                 }
                 Button{
