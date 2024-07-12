@@ -325,17 +325,18 @@ void Graph::createGraph()
     this->graph=vec;
 }
 
-bool Graph::expand_point(QString new_point_name, int addr_x,int addr_y,QString new_point_intro)
+bool Graph::expand_point(int point_key,QString new_point_name, int addr_x,int addr_y,QString new_point_intro)
 {
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery add_point=QSqlQuery(database);
 
-    QString add_p= QString("INSERT INTO point(point_name, point_intro,addr_x,addr_y) "
-                            "VALUES('%1', '%2','%3','%4')")
+    QString add_p= QString("INSERT INTO point(point_name, point_intro,addr_x,addr_y,point_key) "
+                            "VALUES('%1', '%2','%3','%4','%5')")
                         .arg(new_point_name,
                              new_point_intro,
                              QString::number(addr_x),
-                             QString::number(addr_y));
+                             QString::number(addr_y),
+                             QString::number(point_key));
 
 
     if(add_point.exec(add_p))
@@ -346,21 +347,22 @@ bool Graph::expand_point(QString new_point_name, int addr_x,int addr_y,QString n
     return false;
 }
 
-bool Graph::expand_point(QString new_point_name, int addr_x,int addr_y,QString former_point_name, float length, QString road_name,QString new_point_intro)
+bool Graph::expand_point(int point_key,QString new_point_name, int addr_x,int addr_y,QString former_point_name, float length,int road_key, QString road_name,QString new_point_intro)
 {
     // 扩充景点，形成新的路
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery add_point=QSqlQuery(database);
 
-    QString add_p= QString("INSERT INTO point(point_name, point_intro,addr_x,addr_y) "
-                            "VALUES('%1', '%2','%3','%4')")
+    QString add_p= QString("INSERT INTO point(point_name, point_intro,addr_x,addr_y,point_key) "
+                            "VALUES('%1', '%2','%3','%4','%5')")
                         .arg(new_point_name,
                              new_point_intro,
                              QString::number(addr_x),
-                             QString::number(addr_y));
+                             QString::number(addr_y),
+                             QString::number(point_key));
 
 
-    if(add_point.exec(add_p)&&this->expand_road(road_name,former_point_name,new_point_name,length))
+    if(add_point.exec(add_p)&&this->expand_road(road_key ,road_name,former_point_name,new_point_name,length))
     {
         this->createGraph();
         return true;
@@ -368,7 +370,7 @@ bool Graph::expand_point(QString new_point_name, int addr_x,int addr_y,QString f
     return false;
 }
 
-bool Graph::expand_road(QString road_name,QString point1, QString point2, float length)
+bool Graph::expand_road(int road_key,QString road_name,QString point1, QString point2, float length)
 {
     // 扩充路径
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
@@ -377,12 +379,13 @@ bool Graph::expand_road(QString road_name,QString point1, QString point2, float 
     int pl=this->get_point_key(point1);
     int pr=this->get_point_key(point2);
 
-    QString add_r=QString("INSERT INTO road(road_name,length,pl_key,pr_key)"
-                            "values('%1','%2','%3','%4')")
+    QString add_r=QString("INSERT INTO road(road_name,length,pl_key,pr_key,road_key)"
+                            "values('%1','%2','%3','%4','%5')")
                         .arg(road_name,
                              QString::number(length),
                              QString::number(pl),
-                             QString::number(pr));
+                             QString::number(pr),
+                             QString::number(road_key));
 
     if(add_road.exec(add_r))
     {
@@ -392,19 +395,20 @@ bool Graph::expand_road(QString road_name,QString point1, QString point2, float 
     return false;
 }
 
-bool Graph::expand_road(QString road_name,int point1_key, int point2_key, float length)
+bool Graph::expand_road(int road_key,QString road_name,int point1_key, int point2_key, float length)
 {
     //扩充路径
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery add_road=QSqlQuery(database);
 
 
-    QString add_r=QString("INSERT INTO road(road_name,length,pl_key,pr_key)"
-                            "values('%1','%2','%3','%4')")
+    QString add_r=QString("INSERT INTO road(road_name,length,pl_key,pr_key,road_key)"
+                            "values('%1','%2','%3','%4','%5')")
                         .arg(road_name,
                              QString::number(length),
                              QString::number(point1_key),
-                             QString::number(point2_key));
+                             QString::number(point2_key),
+                             QString::number(road_key));
 
     if(add_road.exec(add_r))
     {

@@ -61,10 +61,10 @@ public:
     Q_INVOKABLE QVariantMap get_points_of_road(int road_key);       //根据road_key找两个端点
 
     //增、删、改
-    Q_INVOKABLE bool expand_point(QString new_point_name, int addr_x,int addr_y,QString former_point_name, float length, QString road_name,QString new_point_intro = "");  //扩充景点并形成新的路
-    Q_INVOKABLE bool expand_point(QString new_point_name, int addr_x,int addr_y,QString new_point_intro = "");   //扩充单个景点（用于初始化）
-    Q_INVOKABLE bool expand_road(QString road_name,QString point1, QString point2, float length);       //扩充路径
-    Q_INVOKABLE bool expand_road(QString road_name,int point1_key, int point2_key, float length);       //扩充路径
+    Q_INVOKABLE bool expand_point(int point_key,QString new_point_name, int addr_x,int addr_y,QString former_point_name, float length,int road_key, QString road_name,QString new_point_intro = "");  //扩充景点并形成新的路
+    Q_INVOKABLE bool expand_point(int point_key,QString new_point_name, int addr_x,int addr_y,QString new_point_intro = "");   //扩充单个景点（用于初始化）
+    Q_INVOKABLE bool expand_road(int road_key,QString road_name,QString point1, QString point2, float length);       //扩充路径
+    Q_INVOKABLE bool expand_road(int road_key,QString road_name,int point1_key, int point2_key, float length);       //扩充路径
 
 
     Q_INVOKABLE bool update_point_name(int point_key,QString new_point_name);          //更改点的名称

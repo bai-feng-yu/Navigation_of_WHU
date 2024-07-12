@@ -2,7 +2,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
-import QtMultimedia
 //import an.utility
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 import "C:/Users/admin/Desktop/Navigation_of_WHU/Triggerable_Button.qml"
@@ -27,8 +26,12 @@ Window {
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
     property int max_point_key : database.get_max_valid_point_key_from_points()
     property var tempobject1: []
-    property var tempobject2: []//临时储存点
+    property var tempobject2: []
+    property var tempobject3: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+    property var tempobject4: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]//临时储存点
     property var temppointnum
+    property var temppointallnum
+
     Graph{
         id:database
     }
@@ -40,9 +43,6 @@ Window {
             start_pos.selective_model.append({ "text": locations[i] })
             end_pos.selective_model.append({ "text": locations[i] })
         }
-        unnamed1.play()
-        unnamed2.play()
-        console.log("play!")
     }
 
     Rectangle{
@@ -63,21 +63,6 @@ Window {
 
         // }
 
-        MediaPlayer {
-            id: unnamed1
-            loops: MediaPlayer.Infinite
-            //anchors.fill: parent
-            source: "file:///D:/Downloads/Lone_Cherry_Blossom.mp4"
-            videoOutput: videoOutput2
-
-            audioOutput: AudioOutput{}
-        }
-        VideoOutput{
-                id:videoOutput2
-
-                width: root.width;
-                anchors.centerIn: parent
-        }
         ListModel{
             id: pointsMod
         }
@@ -169,7 +154,7 @@ Window {
                 opacity: 1
                 font.pixelSize: 30
                 font.wordSpacing: 3
-                font.family: "楷体"
+                font.family: "华文彩云"
                 font.pointSize: 13
                 //font.italic: true
                 font.bold: true
@@ -261,7 +246,7 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
-                font.family: "楷体"
+                font.family: "华文彩云"
                 color: "white"
                 text: qsTr("添加景点")
                 style: Text.Outline
@@ -315,7 +300,7 @@ Window {
                 height: add_success_instruction.height
                 Text{
                     id : add_success_text
-                    font.family: "楷体"
+                    font.family: "华文彩云"
                     color: "white"
                     style: Text.Outline
                     styleColor: "steelblue"
@@ -358,7 +343,7 @@ Window {
                 height: delete_finish_instruction.height
                 Text{
                     id : delete_finish_text
-                    font.family: "楷体"
+                    font.family: "华文彩云"
                     color: "white"
                     x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_text.width) / 2
                     style: Text.Outline
@@ -402,7 +387,7 @@ Window {
                 Text{
                     id : delete_text
                     color: "white"
-                    font.family: "楷体"
+                    font.family: "华文彩云"
                     style: Text.Outline
                     styleColor: "steelblue"
                     text: "请点击你要删除的景点:"
@@ -443,7 +428,7 @@ Window {
             Text {
                 font.pixelSize: 20
                 color: "white"
-                font.family: "楷体"
+                font.family: "华文彩云"
                 style: Text.Outline
                 styleColor: "steelblue"
                 text: qsTr("删除景点")
@@ -493,7 +478,7 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
-                font.family: "楷体"
+                font.family: "华文彩云"
                 color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -528,30 +513,10 @@ Window {
         enabled: true
         width: parent.width
         height: parent.height
-        MediaPlayer {
-            id: unnamed2
-            loops: MediaPlayer.Infinite
-            //anchors.fill: parent
-            source: "file:///D:/Downloads/68363-528670466_small.mp4"
-            videoOutput: videoOutput
-
-            audioOutput: AudioOutput{}
-        }
-        VideoOutput{
-                id:videoOutput
-
-                width: root.width;
-                anchors.centerIn: parent
-        }
         // Image {
-        //     id: map
-        //     width: 600 * 1.4
-        //     height: 400 * 1.4
-        //     anchors.centerIn: parent
-        //     /*-------------------------------------------------------------------------------------------------------*/
-        //     source: "file:///C:/Users/Administrator/Desktop/mymap.jpg"
-        //     /*-------------------------------------------------------------------------------------------------------*/
-
+        //     id: unnamed2
+        //     anchors.fill: parent
+        //     source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
         // }
 
 
@@ -571,7 +536,7 @@ Window {
             id: road_text_label
             visible: false
             Text{
-                font.family: "楷体"
+                font.family: "华文彩云"
                 color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -650,7 +615,7 @@ Window {
             height: 40
             selectByMouse: true
             font.pointSize: 15
-            font.family: "楷体"
+            font.family: "华文彩云"
             //style: Text.Outline
             //styleColor: "lightblue"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -693,7 +658,7 @@ Window {
                     property int clicknum1: 0
                     id:shortest_search
                     Text{
-                        font.family: "楷体"
+                        font.family: "华文彩云"
                         font.pixelSize: 20
                         style: Text.Outline
                         styleColor: "steelblue"
@@ -710,54 +675,58 @@ Window {
                     anchors.leftMargin: 20
                     onClicked: {
                         if(clicknum1===0){
-                            var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
-                            var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
-                            var shortest_point_key=database.inquire_shortest_road(tempstartpoint,tempendpoint)
-                            console.log(tempstartpoint+" "+tempendpoint)
-                            temppointnum=shortest_point_key.length-1
-                            for(var i=0;i<shortest_point_key.length-1;i++){
-                                var temppointxy11=database.get_address_of_point(shortest_point_key[i].point_key)
-                                var temppointxy22=database.get_address_of_point(shortest_point_key[i+1].point_key)
-                                console.log(shortest_point_key[i].point_key+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
-                                console.log(shortest_point_key[i+1].point_key+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
-                                var component2 = Qt.createComponent("shortestpath_animation.qml");
-                                if (component2.status === Component.Ready) {
-                                    tempobject2[i]= component2.createObject(parent,{startx:temppointxy11.addr_x,
-                                                                                starty:temppointxy11.addr_y,
-                                                                                endx:temppointxy22.addr_x,
-                                                                                endy:temppointxy22.addr_y});
+                            if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                                var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                                var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                                var shortest_point_key=database.inquire_shortest_road(tempstartpoint,tempendpoint)
+                                console.log(tempstartpoint+" "+tempendpoint)
+                                temppointnum=shortest_point_key.length-1
+                                for(var i=0;i<shortest_point_key.length-1;i++){
+                                    var temppointxy11=database.get_address_of_point(shortest_point_key[i].point_key)
+                                    var temppointxy22=database.get_address_of_point(shortest_point_key[i+1].point_key)
+                                    console.log(shortest_point_key[i].point_key+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
+                                    console.log(shortest_point_key[i+1].point_key+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
+                                    var component2 = Qt.createComponent("shortestpath_animation.qml");
+                                    if (component2.status === Component.Ready) {
+                                        tempobject2[i]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                                    starty:temppointxy11.addr_y,
+                                                                                    endx:temppointxy22.addr_x,
+                                                                                    endy:temppointxy22.addr_y});
+                                    }
                                 }
-                            }
-                            for(var j=0;j<shortest_point_key.length-1;j++){
-                                var temppointxy1=database.get_address_of_point(shortest_point_key[j].point_key)
-                                var temppointxy2=database.get_address_of_point(shortest_point_key[j+1].point_key)
-                                console.log(shortest_point_key[j].point_key+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
-                                console.log(shortest_point_key[j+1].point_key+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
-                                var component1 = Qt.createComponent("shortestpath_line.qml");
-                                if (component1.status === Component.Ready) {
-                                    tempobject1[j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
-                                                                                sy:temppointxy1.addr_y,
-                                                                                ex:temppointxy2.addr_x,
-                                                                                ey:temppointxy2.addr_y});
+                                for(var j=0;j<shortest_point_key.length-1;j++){
+                                    var temppointxy1=database.get_address_of_point(shortest_point_key[j].point_key)
+                                    var temppointxy2=database.get_address_of_point(shortest_point_key[j+1].point_key)
+                                    console.log(shortest_point_key[j].point_key+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
+                                    console.log(shortest_point_key[j+1].point_key+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
+                                    var component1 = Qt.createComponent("shortestpath_line.qml");
+                                    if (component1.status === Component.Ready){
+                                        tempobject1[j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                                    sy:temppointxy1.addr_y,
+                                                                                    ex:temppointxy2.addr_x,
+                                                                                    ey:temppointxy2.addr_y});
+                                        if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
+                                            tempobject1[j].transformOrigin="BottomRight"
+                                        }
+                                    }
                                 }
-
+                                clicknum1+=1
                             }
-                            clicknum1+=1
                         }
                         else{
                             for(var k=0;k<temppointnum;k++){
                                 tempobject1[k].opacity=0
                                 tempobject2[k].opacity=0
                             }
-
                             clicknum1=0
                         }
                     }
                 }
                 Button{
+                    property int clicknum2: 0
                     id:allpath_search
                     Text{
-                        font.family: "楷体"
+                        font.family: "华文彩云"
                         font.pixelSize: 20
                         style: Text.Outline
                         styleColor: "steelblue"
@@ -773,7 +742,66 @@ Window {
                     anchors.left: end_pos.right
                     anchors.leftMargin: 20
                     onClicked: {
-                        console.log(start_pos.cur_chosen_point + " " + end_pos.cur_chosen_point)
+                        if(clicknum2===0){
+                            if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                                var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                                var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                                var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
+                                console.log(tempstartpoint+" "+tempendpoint)
+                                temppointnum=all_point_key.length
+
+                                for(var i=0;i<temppointnum;i++){
+                                    console.log("路径"+(i+1)+":")
+                                    temppointallnum=all_point_key[i].length-1
+                                    console.log(temppointallnum)
+                                    for(var k=0;k<temppointallnum;k++){
+                                        var temppointxy11=database.get_address_of_point(all_point_key[i][k])
+                                        var temppointxy22=database.get_address_of_point(all_point_key[i][k+1])
+                                        console.log(all_point_key[i][k]+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
+                                        console.log(all_point_key[i][k+1]+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
+                                        var component2 = Qt.createComponent("shortestpath_animation.qml");
+                                        if (component2.status === Component.Ready) {
+                                            tempobject3[i][k]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                                        starty:temppointxy11.addr_y,
+                                                                                        endx:temppointxy22.addr_x,
+                                                                                        endy:temppointxy22.addr_y});
+                                        }
+                                    }
+                                    for(var j=0;j<temppointallnum;j++){
+                                        var temppointxy1=database.get_address_of_point(all_point_key[i][j])
+                                        var temppointxy2=database.get_address_of_point(all_point_key[i][j+1])
+                                        console.log(all_point_key[i][j]+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
+                                        console.log(all_point_key[i][j+1]+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
+                                        var component1 = Qt.createComponent("shortestpath_line.qml");
+                                        if (component1.status === Component.Ready){
+                                            tempobject4[i][j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                                        sy:temppointxy1.addr_y,
+                                                                                        ex:temppointxy2.addr_x,
+                                                                                        ey:temppointxy2.addr_y});
+                                            if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
+                                                tempobject4[i][j].transformOrigin="BottomRight"
+                                            }
+                                        }
+                                    }
+                                }
+
+                                clicknum2+=1
+                            }
+                        }
+                        else{
+                            for(var t=0;t<temppointnum;t++){
+                                for(var p=0;p<temppointallnum;p++){
+                                    if(tempobject3[t][p]!==undefined){
+                                        tempobject3[t][p].opacity=0
+                                    }
+                                    if(tempobject4[t][p]!==undefined){
+                                        tempobject4[t][p].opacity=0
+                                    }
+
+                                }
+                            }
+                            clicknum2=0
+                        }
                     }
                 }
         Label{
@@ -784,7 +812,7 @@ Window {
             height: start_pos.height
             Text{
                 id : start_pos_label_text
-                font.family: "楷体"
+                font.family: "华文彩云"
                 color: "white"
                 font.pixelSize: 15
                 style: Text.Outline
@@ -812,7 +840,7 @@ Window {
             width: start_pos.width
             height: start_pos.height
             Text{
-                font.family: "楷体"
+                font.family: "华文彩云"
                 font.pixelSize: 15
                 color: "white"
                 style: Text.Outline
@@ -836,7 +864,7 @@ Window {
         }
         Button {
             Text{
-                font.family: "楷体"
+                font.family: "华文彩云"
                 color: "white"
                 font.pixelSize: 20
                 text: qsTr("搜索")
@@ -851,7 +879,6 @@ Window {
                 if(inputField.text !== ""){
                     console.log(inputField.text)
                 }
-                console.log(unnamed2.mediaStatus)
             }
 
             width: 70
@@ -896,7 +923,7 @@ Window {
                         Text {
                             id: displayText
                             text: display // 文本名
-                            font.family: "楷体"
+                            font.family: "华文彩云"
                             color: "white"
                             style: Text.Outline
                             styleColor: "steelblue"
@@ -983,7 +1010,7 @@ Window {
             Text {
                 font.pixelSize: 20
                 color: "white"
-                font.family: "楷体"
+                font.family: "华文彩云"
                 text: qsTr("查找路线")
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -1027,7 +1054,7 @@ Window {
         Text{
             id:disable_button_text
             font.pixelSize: 20
-            font.family: "楷体"
+            font.family: "华文彩云"
             color: "white"
             style: Text.Outline
             styleColor: "steelblue"
