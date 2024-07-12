@@ -77,19 +77,32 @@ Window {
 
                 width: root.width;
                 anchors.centerIn: parent
+        ListModel{
+            id: pointsMod
         }
         ListModel {
             id: pathsMod
         }
         Component.onCompleted: {
-            var pointsnum=database.get_points_num();
             var max_point_key=database.get_max_valid_point_key_from_points();
 
             for(var i=1;i<=max_point_key;i++)
             {
+                var point_map=database.get_address_of_point(i);
+                var point_x=point_map["addr_x"];
+                var point_y=point_map["addr_y"];
+               // console.log(point_x+","+point_y)
+                if(point_x!==-1)
+                {
+                    pointsMod.append({
+                                          "point_addr_x":point_x,
+                                          "point_addr_y":point_y,
+                                          "point_key":i
+                                      })
+                }
                 for(var j=1;j<=max_point_key;j++)
                 {
-                    //console.log(database.get_road_key(i,j))
+
                     if(database.get_road_key(i,j)!==-1)
                     {
                         var start_point_name=database.get_point_name(i);
@@ -102,18 +115,19 @@ Window {
                         var end_y=end_point_map["addr_y"];
                         var road_key=database.get_road_key(i,j);
                         pathsMod.append({
-                                            "road_key":road_key,
-                                            "road_name":database.get_road_name(road_key),
-                                            "road_length":database.get_road_length(road_key),
-                                            "start_point_name":database.get_point_name(i),
-                                            "end_point_name":database.get_point_name(j),
-                                            "start_point_add":Qt.point(start_x,start_y),
-                                            "end_point_add":Qt.point(end_x,end_y)
-                                        })
+                                             "road_key":road_key,
+                                             "road_name":database.get_road_name(road_key),
+                                             "road_length":database.get_road_length(road_key),
+                                             "start_point_name":database.get_point_name(i),
+                                             "end_point_name":database.get_point_name(j),
+                                             "start_point_add":Qt.point(start_x,start_y),
+                                             "end_point_add":Qt.point(end_x,end_y)
+                                         })
                     }
                 }
             }
         }
+
 
         Canvas {
             id: second_path_canvas
@@ -154,7 +168,7 @@ Window {
                 opacity: 1
                 font.pixelSize: 30
                 font.wordSpacing: 3
-                font.family: "楷体"
+                font.family: "华文彩云"
                 font.pointSize: 13
                 //font.italic: true
                 font.bold: true
@@ -204,7 +218,8 @@ Window {
         Repeater{
             id : pointsGenarating
             property int init_point_key: init_point_key = root.max_point_key
-            model:pointsGenarating.init_point_key
+
+            model:pointsMod.count
             // x : index * 80
             // Triggerable_Button{
             //     anchors.fill: parent
@@ -212,18 +227,26 @@ Window {
             //     button_text: index
 
             // }
+
             delegate: Triggerable_Button{
-                y : 20
+                //console.log(pointsMod.get(index).point_key)
+                //y : 20
                 //id : index
-                index_of_point : index + 1
-                button_text: index + 1
-                anchors.left: parent.left
-                anchors.leftMargin: index * 40
+
+                index_of_point :pointsMod.get(index).point_key
+                button_text: pointsMod.get(index).point_key
+                //anchors.left: parent.left
+                //anchors.leftMargin: index * 40
+
+
+                point_x: pointsMod.get(index).point_addr_x // 使用当前元素的 point_x
+
+                point_y: pointsMod.get(index).point_addr_y // 使用当前元素的 point_y
+
 
             }
 
         }
-
         Rectangle{
             id:each_option_left
             width: 100
@@ -237,7 +260,7 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
-                font.family: "楷体"
+                font.family: "华文彩云"
                 color: "white"
                 text: qsTr("添加景点")
                 style: Text.Outline
@@ -291,7 +314,7 @@ Window {
                 height: add_success_instruction.height
                 Text{
                     id : add_success_text
-                    font.family: "楷体"
+                    font.family: "华文彩云"
                     color: "white"
                     style: Text.Outline
                     styleColor: "steelblue"
@@ -334,7 +357,7 @@ Window {
                 height: delete_finish_instruction.height
                 Text{
                     id : delete_finish_text
-                    font.family: "楷体"
+                    font.family: "华文彩云"
                     color: "white"
                     x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_text.width) / 2
                     style: Text.Outline
@@ -378,7 +401,7 @@ Window {
                 Text{
                     id : delete_text
                     color: "white"
-                    font.family: "楷体"
+                    font.family: "华文彩云"
                     style: Text.Outline
                     styleColor: "steelblue"
                     text: "请点击你要删除的景点:"
@@ -419,7 +442,7 @@ Window {
             Text {
                 font.pixelSize: 20
                 color: "white"
-                font.family: "楷体"
+                font.family: "华文彩云"
                 style: Text.Outline
                 styleColor: "steelblue"
                 text: qsTr("删除景点")
@@ -469,7 +492,7 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
-                font.family: "楷体"
+                font.family: "华文彩云"
                 color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -558,23 +581,23 @@ Window {
         //         }
         // }
 
-        // ButtonWithComponent{
-        //     id:myButton
-        //     originalX:100
-        //     originalY:100
-        //     nameContext: "武汉大学"
-        //     infoContext1: "介绍1"
-        //     infoContext2: "介绍2"
-        //     infoContext3: "介绍3"
-        //     imageSource:"path/example.png"
-        // }
+        ButtonWithComponent{
+            id:myButton
+            originalX:100
+            originalY:100
+            nameContext: "武汉大学"
+            infoContext1: "介绍1"
+            infoContext2: "介绍2"
+            infoContext3: "介绍3"
+            imageSource:"path/example.png"
+        }
 
 
         Label {
             id: road_text_label
             visible: false
             Text{
-                font.family: "楷体"
+                font.family: "华文彩云"
                 color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -653,7 +676,7 @@ Window {
             height: 40
             selectByMouse: true
             font.pointSize: 15
-            font.family: "楷体"
+            font.family: "华文彩云"
             //style: Text.Outline
             //styleColor: "lightblue"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -696,7 +719,7 @@ Window {
                     property int clicknum1: 0
                     id:shortest_search
                     Text{
-                        font.family: "楷体"
+                        font.family: "华文彩云"
                         font.pixelSize: 20
                         style: Text.Outline
                         styleColor: "steelblue"
@@ -760,7 +783,7 @@ Window {
                 Button{
                     id:allpath_search
                     Text{
-                        font.family: "楷体"
+                        font.family: "华文彩云"
                         font.pixelSize: 20
                         style: Text.Outline
                         styleColor: "steelblue"
@@ -787,7 +810,7 @@ Window {
             height: start_pos.height
             Text{
                 id : start_pos_label_text
-                font.family: "楷体"
+                font.family: "华文彩云"
                 color: "white"
                 font.pixelSize: 15
                 style: Text.Outline
@@ -815,7 +838,7 @@ Window {
             width: start_pos.width
             height: start_pos.height
             Text{
-                font.family: "楷体"
+                font.family: "华文彩云"
                 font.pixelSize: 15
                 color: "white"
                 style: Text.Outline
@@ -839,7 +862,7 @@ Window {
         }
         Button {
             Text{
-                font.family: "楷体"
+                font.family: "华文彩云"
                 color: "white"
                 font.pixelSize: 20
                 text: qsTr("搜索")
@@ -899,7 +922,7 @@ Window {
                         Text {
                             id: displayText
                             text: display // 文本名
-                            font.family: "楷体"
+                            font.family: "华文彩云"
                             color: "white"
                             style: Text.Outline
                             styleColor: "steelblue"
@@ -986,7 +1009,7 @@ Window {
             Text {
                 font.pixelSize: 20
                 color: "white"
-                font.family: "楷体"
+                font.family: "华文彩云"
                 text: qsTr("查找路线")
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -1030,7 +1053,7 @@ Window {
         Text{
             id:disable_button_text
             font.pixelSize: 20
-            font.family: "楷体"
+            font.family: "华文彩云"
             color: "white"
             style: Text.Outline
             styleColor: "steelblue"
