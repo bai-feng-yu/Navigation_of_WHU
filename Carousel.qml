@@ -55,7 +55,7 @@ Item {
         preferredHighlightEnd: 0
         highlightMoveDuration: 0
         Component.onCompleted: { // 初始化
-            d.setData(control.model)
+            d.setData(control.model) // model 初始化必需参数
         }
         interactive: list_view.count>3 // 便于看到较后的信息
         Connections{

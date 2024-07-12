@@ -558,14 +558,21 @@ Window {
 
 
         ButtonWithComponent{
-            id:myButton
+            id:myButton_yinghuachengbao
             originalX:100
             originalY:100
             nameContext: "武汉大学"
             infoContext1: "介绍1"
             infoContext2: "介绍2"
             infoContext3: "介绍3"
-            imageSource:"path/example.png"
+            Component.onCompleted: {
+                carousel_pics_model = [
+                         {url:"file:///C:/Users/Administrator/Desktop/yinhua1.jpg"},
+                         {url:"file:///C:/Users/Administrator/Desktop/yinhua2.jpg"},
+                         {url:"file:///C:/Users/Administrator/Desktop/yinhua3.jpg"},
+                         {url:"file:///C:/Users/Administrator/Desktop/yinhua4.jpg"}
+                        ]
+            }
         }
 
 
