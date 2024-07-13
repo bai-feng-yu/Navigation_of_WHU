@@ -52,6 +52,7 @@ public:
     Q_INVOKABLE QVariantList get_all_names_of_points(int max_num=5);//获取大量景点名
 
     //查路
+    Q_INVOKABLE int get_roads_max_id();                      //查询路径的最大key
     Q_INVOKABLE int get_road_key(QString road_name);         //找road编号，-1表示没找到
     Q_INVOKABLE int get_road_key(Point* u, Point* v);        //找两点间road编号，-1表示没找到
     Q_INVOKABLE int get_road_key(int u_key, int v_key);      //找两点间road编号，-1表示没找到
