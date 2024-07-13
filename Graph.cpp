@@ -330,13 +330,15 @@ bool Graph::expand_point(int point_key,QString new_point_name, int addr_x,int ad
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery add_point=QSqlQuery(database);
 
-    QString add_p= QString("INSERT INTO point(point_name, point_intro,addr_x,addr_y,point_key) "
-                            "VALUES('%1', '%2','%3','%4','%5')")
+    QString add_p= QString("INSERT INTO point(point_name, point_intro,addr_x,addr_y,point_key,score,people_num) "
+                            "VALUES('%1', '%2','%3','%4','%5','%6','%7')")
                         .arg(new_point_name,
                              new_point_intro,
                              QString::number(addr_x),
                              QString::number(addr_y),
-                             QString::number(point_key));
+                             QString::number(point_key),
+                             QString::number(0),
+                             QString::number(0));
 
 
     if(add_point.exec(add_p))
@@ -353,13 +355,15 @@ bool Graph::expand_point(int point_key,QString new_point_name, int addr_x,int ad
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery add_point=QSqlQuery(database);
 
-    QString add_p= QString("INSERT INTO point(point_name, point_intro,addr_x,addr_y,point_key) "
-                            "VALUES('%1', '%2','%3','%4','%5')")
+    QString add_p= QString("INSERT INTO point(point_name, point_intro,addr_x,addr_y,point_key,score,people_num) "
+                            "VALUES('%1', '%2','%3','%4','%5','%6','%7')")
                         .arg(new_point_name,
                              new_point_intro,
                              QString::number(addr_x),
                              QString::number(addr_y),
-                             QString::number(point_key));
+                             QString::number(point_key),
+                             QString::number(0),
+                             QString::number(0));
 
 
     if(add_point.exec(add_p)&&this->expand_road(road_key ,road_name,former_point_name,new_point_name,length))
@@ -460,6 +464,31 @@ QVariantList Graph::get_all_names_of_points(int max_num)
     }
 }
 
+int Graph::get_roads_max_id()
+{
+    //查询路径的最大key
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlQuery query=QSqlQuery(database);
+
+    int max_key=0;
+    if(query.exec("select * from road"))
+    {
+        while(query.next())
+        {
+            int n=query.value("road_key").toInt();
+            if(max_key<n)
+            {
+                max_key=n;
+            }
+        }
+        return max_key;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 int Graph::get_road_key(Point *u, Point *v)
 {
     for(int i=0;i<this->roads.size();i++){
@@ -467,6 +496,7 @@ int Graph::get_road_key(Point *u, Point *v)
     }
     return -1;
 }
+
 
 int Graph::get_road_key(QString road_name)
 {
@@ -738,4 +768,56 @@ bool Graph::del_road(int road_key)
         return true;
     }
     return false;
+}
+
+bool Graph::add_score(int point_key,int score)
+{
+    //输入评分
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlQuery check_score=QSqlQuery(database);
+    QString str=QString("SELECT * FROM point WHERE point_key='%1'")
+                      .arg(QString::number(point_key));
+
+    if(check_score.exec(str)&&check_score.next())
+    {
+        float f_score=check_score.value("score").toFloat();
+        int num=check_score.value("people_num").toInt();
+
+        float a_score=score+f_score*num;
+        float t_score=a_score/(num+1);
+
+        QSqlQuery ad_score=QSqlQuery(database);
+        QString str2=QString("update point set score='%1',people_num='%2' where point_key='%3'")
+                           .arg(QString::number(t_score),QString::number(num+1),QString::number(point_key));
+
+        if(ad_score.exec(str2))
+        {
+            return true;
+        }
+    }
+    return false;
+
+}
+
+QList<QVariantMap> Graph::get_score()
+{
+    //获取评分
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlQuery check_score=QSqlQuery(database);
+    QString str=QString("SELECT * FROM point ");
+
+    QList<QVariantMap> list;
+
+    if(check_score.exec(str))
+    {
+        while(check_score.next())
+        {
+            QVariantMap map;
+            map["point_name"]=check_score.value("point_name");
+            map["score"]=check_score.value("score").toFloat();
+            map["people_num"]=check_score.value("people_num").toInt();
+            list.append(map);
+        }
+    }
+    return list;
 }

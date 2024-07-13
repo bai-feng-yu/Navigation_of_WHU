@@ -33,7 +33,7 @@ public:
     vector<vector<vector<int>>>graph;                       // graph[i] -> {to, weight},{}
 
 //用于算法的函数
-    void createGraph();                                         /* 根据数据库的内容更新roads,points,graph*/
+    void createGraph();                                     //根据数据库的内容更新roads,points,graph
 
 
 //用于大家查数据的函数
@@ -52,6 +52,7 @@ public:
     Q_INVOKABLE QVariantList get_all_names_of_points(int max_num=5);//获取大量景点名
 
     //查路
+    Q_INVOKABLE int get_roads_max_id();                      //查询路径的最大key
     Q_INVOKABLE int get_road_key(QString road_name);         //找road编号，-1表示没找到
     Q_INVOKABLE int get_road_key(Point* u, Point* v);        //找两点间road编号，-1表示没找到
     Q_INVOKABLE int get_road_key(int u_key, int v_key);      //找两点间road编号，-1表示没找到
@@ -74,9 +75,12 @@ public:
     Q_INVOKABLE bool update_road_length(int road_key,float length);                    //更改路的长度
 
     Q_INVOKABLE bool del_point(QString point_name);             //删除景点 --> 删除对应的道路
-    Q_INVOKABLE bool del_point(int point_key);                   //删除景点 --> 删除对应的道路
+    Q_INVOKABLE bool del_point(int point_key);                  //删除景点 --> 删除对应的道路
     Q_INVOKABLE bool del_road(QString road_name);               //删除道路
-    Q_INVOKABLE bool del_road(int road_key);                     //删除道路
+    Q_INVOKABLE bool del_road(int road_key);                    //删除道路
+
+    Q_INVOKABLE bool add_score(int point_key,int score);        //输入评分
+    Q_INVOKABLE QList<QVariantMap> get_score();                 //获取评分
 };
 
 #endif // GRAPH_H
