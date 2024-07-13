@@ -749,7 +749,7 @@ bool Graph::add_score(int point_key,int score)
     //输入评分
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery check_score=QSqlQuery(database);
-    QString str=QString("SELECT FROM point WHERE point_key='%1'")
+    QString str=QString("SELECT * FROM point WHERE point_key='%1'")
                       .arg(QString::number(point_key));
 
     if(check_score.exec(str)&&check_score.next())
@@ -773,38 +773,25 @@ bool Graph::add_score(int point_key,int score)
 
 }
 
-float Graph::get_score(int point_key)
+QList<QVariantMap> Graph::get_score()
 {
-    //查询评分
+    //获取评分
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery check_score=QSqlQuery(database);
-    QString str=QString("SELECT FROM point WHERE point_key='%1'")
-                      .arg(QString::number(point_key));
+    QString str=QString("SELECT * FROM point ");
 
-    if(check_score.exec(str)&&check_score.next())
-    {
-        return check_score.value("score").toFloat();
-    }
-    else
-    {
-        return -1;
-    }
-}
+    QList<QVariantMap> list;
 
-int Graph::get_people_num(int point_key)
-{
-    //查询评价人数
-    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
-    QSqlQuery check_score=QSqlQuery(database);
-    QString str=QString("SELECT FROM point WHERE point_key='%1'")
-                      .arg(QString::number(point_key));
-
-    if(check_score.exec(str)&&check_score.next())
+    if(check_score.exec(str))
     {
-        return check_score.value("people_num").toInt();
+        while(check_score.next())
+        {
+            QVariantMap map;
+            map["point_name"]=check_score.value("point_name");
+            map["score"]=check_score.value("score").toFloat();
+            map["people_num"]=check_score.value("people_num").toInt();
+            list.append(map);
+        }
     }
-    else
-    {
-        return -1;
-    }
+    return list;
 }

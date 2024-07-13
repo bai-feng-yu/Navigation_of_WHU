@@ -79,8 +79,7 @@ public:
     Q_INVOKABLE bool del_road(int road_key);                    //删除道路
 
     Q_INVOKABLE bool add_score(int point_key,int score);        //输入评分
-    Q_INVOKABLE float get_score(int point_key);                 //查询评分
-    Q_INVOKABLE int get_people_num(int point_key);              //查询评价人数
+    Q_INVOKABLE QList<QVariantMap> get_score();                 //获取评分                           //查询评分
 };
 
 #endif // GRAPH_H
