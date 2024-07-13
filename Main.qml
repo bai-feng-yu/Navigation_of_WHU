@@ -106,7 +106,7 @@ Window {
         }
         Component.onCompleted: {
             var max_point_key=database.get_max_valid_point_key_from_points();
-
+            console.log("pointsMod max_point_key" + max_point_key)
             for(var i=1;i<=max_point_key;i++)
             {
                 var point_map=database.get_address_of_point(i);
@@ -147,6 +147,7 @@ Window {
                     }
                 }
             }
+            console.log("pointMod count " + pointsMod.count)
         }
         property alias exportedListModel: pathsMod
         Loader {
@@ -1495,10 +1496,10 @@ Window {
                 hoverEnabled: parent.enabled
                 anchors.fill: parent
                 onEntered: {
-                    search_route.color = shuangyeRed
+                    rating_scene.color = Qt.rgba(255/255,222/255,0/255,0.5)
                 }
                 onExited: {
-                    search_route.color = chengwuGrey
+                    rating_scene.color = chengwuGrey
                 }
                 onClicked: {
                     /* 调用 待评分 列表框*/
@@ -1639,7 +1640,7 @@ Window {
             second_window_form.visible = !second_window_form.visible;
             second_window_form.enabled = !second_window_form.enabled;
             /*max_point_key++;*/
-            console.log("当前最大点数目为：" + max_point_key)
+            console.log("当前最大点为：" + root.max_point_key)
             console.log("init_max_key: " + pointsGenarating.init_point_key)
         }
 
