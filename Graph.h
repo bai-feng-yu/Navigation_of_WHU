@@ -33,7 +33,7 @@ public:
     vector<vector<vector<int>>>graph;                       // graph[i] -> {to, weight},{}
 
 //用于算法的函数
-    void createGraph();                                         /* 根据数据库的内容更新roads,points,graph*/
+    void createGraph();                                     //根据数据库的内容更新roads,points,graph
 
 
 //用于大家查数据的函数
@@ -79,7 +79,7 @@ public:
     Q_INVOKABLE bool del_road(int road_key);                    //删除道路
 
     Q_INVOKABLE bool add_score(int point_key,int score);        //输入评分
-    Q_INVOKABLE QList<QVariantMap> get_score();                 //获取评分                           //查询评分
+    Q_INVOKABLE QList<QVariantMap> get_score();                 //获取评分
 };
 
 #endif // GRAPH_H
