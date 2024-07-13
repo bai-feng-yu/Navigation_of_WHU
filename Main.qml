@@ -34,6 +34,7 @@ Window {
     property var temppointnum
     property var temppointallnum
 
+
     Graph{
         id:database
     }
@@ -98,14 +99,14 @@ Window {
                 var point_map=database.get_address_of_point(i);
                 var point_x=point_map["addr_x"];
                 var point_y=point_map["addr_y"];
-               // console.log(point_x+","+point_y)
+                // console.log(point_x+","+point_y)
                 if(point_x!==-1)
                 {
                     pointsMod.append({
-                                          "point_addr_x":point_x,
-                                          "point_addr_y":point_y,
-                                          "point_key":i
-                                      })
+                                         "point_addr_x":point_x,
+                                         "point_addr_y":point_y,
+                                         "point_key":i
+                                     })
                 }
                 for(var j=1;j<=max_point_key;j++)
                 {
@@ -122,17 +123,23 @@ Window {
                         var end_y=end_point_map["addr_y"];
                         var road_key=database.get_road_key(i,j);
                         pathsMod.append({
-                                             "road_key":road_key,
-                                             "road_name":database.get_road_name(road_key),
-                                             "road_length":database.get_road_length(road_key),
-                                             "start_point_name":database.get_point_name(i),
-                                             "end_point_name":database.get_point_name(j),
-                                             "start_point_add":Qt.point(start_x,start_y),
-                                             "end_point_add":Qt.point(end_x,end_y)
-                                         })
+                                            "road_key":road_key,
+                                            "road_name":database.get_road_name(road_key),
+                                            "road_length":database.get_road_length(road_key),
+                                            "start_point_name":database.get_point_name(i),
+                                            "end_point_name":database.get_point_name(j),
+                                            "start_point_add":Qt.point(start_x,start_y),
+                                            "end_point_add":Qt.point(end_x,end_y)
+                                        })
                     }
                 }
             }
+        }
+        property alias exportedListModel: pathsMod
+        Loader {
+            id: loader
+            source: "Triggerable_Button.qml"
+            anchors.fill: parent
         }
 
 
@@ -175,7 +182,7 @@ Window {
                 opacity: 1
                 font.pixelSize: 30
                 font.wordSpacing: 3
-                font.family: "华文彩云"
+                font.family: "楷体"
                 font.pointSize: 13
                 //font.italic: true
                 font.bold: true
@@ -195,29 +202,29 @@ Window {
             // }
 
             SequentialAnimation{
-                    loops: Animation.Infinite
-                    running: true
-                    NumberAnimation {
-                            target: welcome_text
-                            property: "opacity"
-                            duration: 2000
-                            to: 0.2
-                            easing.type: Easing.InOutQuad
-                    }
-                    NumberAnimation {
-                            target: welcome_text
-                            property: "opacity"
-                            duration: 2000
-                            to: 1
-                            easing.type: Easing.InOutQuad
-                    }
-                    NumberAnimation {
-                            target: welcome_text
-                            property: "opacity"
-                            duration: 200
-                            to: 1
-                            easing.type: Easing.InOutQuad
-                    }
+                loops: Animation.Infinite
+                running: true
+                NumberAnimation {
+                    target: welcome_text
+                    property: "opacity"
+                    duration: 2000
+                    to: 0.2
+                    easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                    target: welcome_text
+                    property: "opacity"
+                    duration: 2000
+                    to: 1
+                    easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                    target: welcome_text
+                    property: "opacity"
+                    duration: 200
+                    to: 1
+                    easing.type: Easing.InOutQuad
+                }
 
             }
 
@@ -246,10 +253,9 @@ Window {
                 //anchors.leftMargin: index * 40
 
 
-                point_x: pointsMod.get(index).point_addr_x // 使用当前元素的 point_x
+                point_x: pointsMod.get(index).point_addr_x-15 // 使用当前元素的 point_x
 
-                point_y: pointsMod.get(index).point_addr_y // 使用当前元素的 point_y
-
+                point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
 
             }
 
@@ -267,7 +273,7 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
-                font.family: "华文彩云"
+                font.family: "楷体"
                 color: "white"
                 text: qsTr("添加景点")
                 style: Text.Outline
@@ -321,7 +327,7 @@ Window {
                 height: add_success_instruction.height
                 Text{
                     id : add_success_text
-                    font.family: "华文彩云"
+                    font.family: "楷体"
                     color: "white"
                     style: Text.Outline
                     styleColor: "steelblue"
@@ -364,7 +370,7 @@ Window {
                 height: delete_finish_instruction.height
                 Text{
                     id : delete_finish_text
-                    font.family: "华文彩云"
+                    font.family: "楷体"
                     color: "white"
                     x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_text.width) / 2
                     style: Text.Outline
@@ -383,6 +389,14 @@ Window {
                     anchors.topMargin: 0
                     onClicked: {
                         delete_finish_instruction.close()
+                        //修改listmodel中的信息
+
+
+
+
+
+
+                        //second_path_canvas.requestPaint()
                     }
                 }
             }
@@ -408,7 +422,7 @@ Window {
                 Text{
                     id : delete_text
                     color: "white"
-                    font.family: "华文彩云"
+                    font.family: "楷体"
                     style: Text.Outline
                     styleColor: "steelblue"
                     text: "请点击你要删除的景点:"
@@ -435,7 +449,99 @@ Window {
             }
             //closePolicy:Popup.CloseOnPressOutside
         }
-        Rectangle{
+
+        Popup{            //输入景点信息弹窗
+            id:confirm_add_point
+            width:400
+            height:200
+            modal:true
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: confirm_add_rec
+                width: confirm_add_point.width
+                height: confirm_add_point.height
+            }
+            Text{
+                id : add_point_text
+                font.family: "楷体"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: "请输入景点信息"
+                font.pointSize: 24
+                x : confirm_add_rec.x
+                y:parent.y+5
+            }
+            Text{
+                id:add_point_name
+                font.family: "楷体"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text:"景点名称："
+                font.pointSize: 20
+                x : confirm_add_rec.x
+                y: add_point_text.y + add_point_text.height+15
+
+            }
+            TextField{
+                id:input_point_name
+                visible: parent.visible
+                enabled: parent.enabled
+                width: 250
+                height:add_point_name.hight
+                x:add_point_name.width+confirm_add_rec.x+10
+                y: add_point_text.y + add_point_text.height+20
+                background: Rectangle {
+                    radius: 4
+                    border.color: "steelblue"
+                }
+            }
+            Text{
+                id:add_point_intro
+                font.family: "楷体"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text:"景点简介："
+                font.pointSize: 20
+                x : confirm_add_rec.x
+                y: add_point_text.y + add_point_text.height+10+input_point_name.height+25
+            }
+            TextField{
+                id:input_point_intro
+                visible: parent.visible
+                enabled: parent.enabled
+                width: 250
+                height:add_point_name.hight
+                x:add_point_name.width+confirm_add_rec.x+10
+                y: add_point_text.y + add_point_text.height+15+input_point_name.height+25
+                background: Rectangle {
+                    radius: 4
+                    border.color: "steelblue"
+                }
+            }
+            Button{
+                id:confirm_point
+                text: "OK"
+                width:80
+                height:40
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: {
+                    var point_name=input_point_name.text
+                    var point_intro=input_point_intro.text
+                    database.update_point_intro(database.get_max_valid_point_key_from_points(),point_intro)
+                    database.update_point_name(database.get_max_valid_point_key_from_points(),point_name)
+                    confirm_add_point.close()
+
+                }
+            }
+        }
+        Rectangle{//删除景点
             id:each_option_center
             width: 100
             height: 50
@@ -449,15 +555,14 @@ Window {
             Text {
                 font.pixelSize: 20
                 color: "white"
-                font.family: "华文彩云"
+                font.family: "楷体"
                 style: Text.Outline
                 styleColor: "steelblue"
                 text: qsTr("删除景点")
                 anchors.centerIn: parent
             }
             Button{
-                anchors.fill: parent
-
+                anchors.fill: parent``````````
                 opacity: 0
                 enabled: parent.enabled
 
@@ -474,19 +579,233 @@ Window {
                 }
                 onClicked:{
                     second_window_form.delete_button_pressed = true
+
                     console.log("delete view")
                     //console.log("second_window_form.delete_button_pressed: " + second_window_form.delete_button_pressed)
                     console.log("instruction for delete")
                     delete_instruction.open()
 
                 }
+            }
+        }
+        Popup{//有误提示弹窗
+            id:not_add_road_success
+            width: 400
+            height:200
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: not_add_road_success_rec
+                width: not_add_road_success.width
+                height: not_add_road_success.height
+
+                Text {
+                    id: not_add_road_success_text
+                    text: "景点编号输入有误或不存在，请重新输入"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_add_road_success_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_add_road_success.close()
+                    }
+                }
 
             }
         }
+        Popup{            //输入路径信息弹窗
+            id:confirm_add_road
+            width:400
+            height:300
+            modal:true
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: confirm_add_road_rec
+                width: confirm_add_road.width
+                height: confirm_add_road.height
+            }
+            Text{
+                id : add_road_text
+                font.family: "楷体"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: "请输入路径信息"
+                font.pointSize: 24
+                x : confirm_add_road_rec.x
+                y:parent.y+5
+            }
+            Text{
+                id:add_road_name
+                font.family: "楷体"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text:"路径名称："
+                font.pointSize: 20
+                x : confirm_add_road_rec.x
+                y: add_road_text.y + add_road_text.height+15
+
+            }
+            TextField{
+                id:input_road_name
+                visible: parent.visible
+                enabled: parent.enabled
+                width: 250
+                height:add_road_name.hight
+                x:add_road_name.width+confirm_add_road_rec.x+10
+                y: add_road_text.y + add_road_text.height+20
+                background: Rectangle {
+                    radius: 4
+                    border.color: "steelblue"
+                }
+            }
+            Text{
+                id:add_road_length
+                font.family: "楷体"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text:"路径长度(m)："
+                font.pointSize: 20
+                x : confirm_add_road_rec.x
+                y: add_road_text.y + add_road_text.height+10+input_road_name.height+25
+            }
+            TextField{
+                id:input_road_length
+                visible: parent.visible
+                enabled: parent.enabled
+                width: 250
+                height:add_road_name.hight
+                x:add_road_name.width+confirm_add_road_rec.x+10
+                y: add_road_text.y + add_road_text.height+15+input_road_name.height+25
+                background: Rectangle {
+                    radius: 4
+                    border.color: "steelblue"
+                }
+            }
+            Text {
+                id: add_road_start
+                font.family: "楷体"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: "起点编号："
+                font.pointSize: 20
+                x : confirm_add_road_rec.x
+                y:add_road_text.y + add_road_text.height+15+input_road_name.height+25+input_road_length.height+20
+            }
+            TextField{
+                id:input_road_start
+                visible: parent.visible
+                enabled: parent.enabled
+                width: 250
+                height:add_road_name.hight
+                x:add_road_name.width+confirm_add_road_rec.x+10
+                y:add_road_text.y + add_road_text.height+15+input_road_name.height+25+input_road_length.height+20
+                background: Rectangle {
+                    radius: 4
+                    border.color: "steelblue"
+                }
+            }
+            Text {
+                id: add_road_end
+                font.family: "楷体"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: "终点编号："
+                font.pointSize: 20
+                x : confirm_add_road_rec.x
+                y:add_road_text.y + add_road_text.height+15+input_road_name.height+25+input_road_length.height+20+input_road_start.height+25
+            }
+            TextField{
+                id:input_road_end
+                visible: parent.visible
+                enabled: parent.enabled
+                width: 250
+                height:add_road_name.hight
+                x:add_road_name.width+confirm_add_road_rec.x+10
+                y:add_road_text.y + add_road_text.height+15+input_road_name.height+25+input_road_length.height+20+input_road_start.height+25
+                background: Rectangle {
+                    radius: 4
+                    border.color: "steelblue"
+                }
+            }
+
+            Button{
+                id:confirm_road
+                text: "OK"
+                width:80
+                height:40
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: {
+                    var road_length=input_road_length.text
+                    var road_name=input_road_name.text
+                    var road_start_key=input_road_start.text
+                    var road_end_key=input_road_end.text
+                    var road_max_key=database.get_roads_max_id()
+                    var start_point_map=database.get_address_of_point(road_start_key);
+                    var new_start_x=start_point_map["addr_x"];
+                    var new_start_y=start_point_map["addr_y"];
+                    var end_point_map=database.get_address_of_point(road_end_key);
+                    var new_end_x=end_point_map["addr_x"];
+                    var new_end_y=end_point_map["addr_y"];
+                    var new_start_name=database.get_point_name(road_start_key)
+                    var new_end_name=database.get_point_name(road_end_key)
+                    console.log(road_length+"   "+road_name+" "+road_start_key+"  "+road_end_key+" "+new_start_x+" "+new_end_x)
+
+                    if(new_start_x!==-1&&new_end_x!==-1)
+                    {
+
+                        database.expand_road(road_max_key+1,road_name,new_start_name,new_end_name,road_length)
+                        pathsMod.append({
+                                            "road_key":road_max_key+1,
+                                            "road_name":road_name,
+                                            "road_length":road_length,
+                                            "start_point_name":database.get_point_name(road_start_key),
+                                            "end_point_name":database.get_point_name(road_end_key),
+                                            "start_point_add":Qt.point(new_start_x,new_start_y),
+                                            "end_point_add":Qt.point(new_end_x,new_end_y)
+
+                                        })
+                        second_path_canvas.requestPaint()
+                        path_canvas.requestPaint()
+                        confirm_add_road.close()
+                    }
+                    else
+                    {
+                        confirm_add_road.close()
+                        not_add_road_success.visible=true
+
+                    }
 
 
+                }
+            }
+        }
 
-        Rectangle{
+        Rectangle{//添加路径
             id:each_option_right
             width: 100
             height: 50
@@ -499,11 +818,11 @@ Window {
             anchors.bottom : parent.bottom
             Text {
                 font.pixelSize: 20
-                font.family: "华文彩云"
+                font.family: "楷体"
                 color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
-                text: qsTr("删除路径")
+                text: qsTr("添加路径")
                 anchors.centerIn: parent
             }
             Button{
@@ -522,6 +841,55 @@ Window {
                 }
                 onExited: {
                     each_option_right.color = chengwuGrey
+                }
+                onClicked: {
+                    confirm_add_road.visible=true
+
+                }
+            }
+        }
+
+
+        Rectangle{
+            id:each_option_right_right
+            width: 100
+            height: 50
+            visible: parent.visible
+            enabled: parent.enabled
+            color: chengwuGrey
+            radius: 20
+            border.color : "gray"
+            anchors.left: each_option_right.right
+            anchors.bottom : parent.bottom
+            Text {
+                font.pixelSize: 20
+                font.family: "楷体"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+                text: qsTr("删除路径")
+                anchors.centerIn: parent
+            }
+            Button{
+                anchors.fill: parent
+
+                opacity: 0
+                enabled: parent.enabled
+                //onClicked:
+            }
+            MouseArea{
+                enabled: parent.enabled
+                hoverEnabled: parent.enabled
+                anchors.fill: parent
+                onEntered: {
+                    each_option_right_right.color = chuntengPurple
+                }
+                onExited: {
+                    each_option_right_right.color = chengwuGrey
+                }
+                onClicked: {
+
+
                 }
             }
         }
@@ -544,10 +912,10 @@ Window {
             audioOutput: AudioOutput{}
         }
         VideoOutput{
-                id:videoOutput
+            id:videoOutput
 
-                width: root.width;
-                anchors.centerIn: parent
+            width: root.width;
+            anchors.centerIn: parent
         }
 
         // Image {
@@ -567,10 +935,10 @@ Window {
             infoContext3: "介绍3"
             Component.onCompleted: {
                 carousel_pics_model = [
-                         {url:"file:///C:/Users/Administrator/Desktop/yinhua1.jpg"},
-                         {url:"file:///C:/Users/Administrator/Desktop/yinhua2.jpg"},
-                         {url:"file:///C:/Users/Administrator/Desktop/yinhua3.jpg"},
-                         {url:"file:///C:/Users/Administrator/Desktop/yinhua4.jpg"}
+                            {url:"file:///C:/Users/Administrator/Desktop/yinhua1.jpg"},
+                            {url:"file:///C:/Users/Administrator/Desktop/yinhua2.jpg"},
+                            {url:"file:///C:/Users/Administrator/Desktop/yinhua3.jpg"},
+                            {url:"file:///C:/Users/Administrator/Desktop/yinhua4.jpg"}
                         ]
             }
         }
@@ -580,7 +948,7 @@ Window {
             id: road_text_label
             visible: false
             Text{
-                font.family: "华文彩云"
+                font.family: "楷体"
                 color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -659,7 +1027,7 @@ Window {
             height: 40
             selectByMouse: true
             font.pointSize: 15
-            font.family: "华文彩云"
+            font.family: "楷体"
             //style: Text.Outline
             //styleColor: "lightblue"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -699,155 +1067,155 @@ Window {
             selective_model: ListModel{}
         }
         Button{
-                    property int clicknum1: 0
-                    id:shortest_search
-                    Text{
-                        font.family: "华文彩云"
-                        font.pixelSize: 20
-                        style: Text.Outline
-                        styleColor: "steelblue"
-                        color: "white"
-                        anchors.centerIn: parent
-                        text: qsTr("显示最短路径")
-                    }
-                    visible: start_pos.visible
-                    enabled: start_pos.enabled
-                    width: 140
-                    height: 30
-                    y : 30
-                    anchors.left: end_pos.right
-                    anchors.leftMargin: 20
-                    onClicked: {
-                        if(clicknum1===0){
-                            if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
-                                var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
-                                var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
-                                var shortest_point_key=database.inquire_shortest_road(tempstartpoint,tempendpoint)
-                                console.log(tempstartpoint+" "+tempendpoint)
-                                temppointnum=shortest_point_key.length-1
-                                for(var i=0;i<shortest_point_key.length-1;i++){
-                                    var temppointxy11=database.get_address_of_point(shortest_point_key[i].point_key)
-                                    var temppointxy22=database.get_address_of_point(shortest_point_key[i+1].point_key)
-                                    console.log(shortest_point_key[i].point_key+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
-                                    console.log(shortest_point_key[i+1].point_key+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
-                                    var component2 = Qt.createComponent("shortestpath_animation.qml");
-                                    if (component2.status === Component.Ready) {
-                                        tempobject2[i]= component2.createObject(parent,{startx:temppointxy11.addr_x,
-                                                                                    starty:temppointxy11.addr_y,
-                                                                                    endx:temppointxy22.addr_x,
-                                                                                    endy:temppointxy22.addr_y});
-                                    }
-                                }
-                                for(var j=0;j<shortest_point_key.length-1;j++){
-                                    var temppointxy1=database.get_address_of_point(shortest_point_key[j].point_key)
-                                    var temppointxy2=database.get_address_of_point(shortest_point_key[j+1].point_key)
-                                    console.log(shortest_point_key[j].point_key+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
-                                    console.log(shortest_point_key[j+1].point_key+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
-                                    var component1 = Qt.createComponent("shortestpath_line.qml");
-                                    if (component1.status === Component.Ready){
-                                        tempobject1[j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
-                                                                                    sy:temppointxy1.addr_y,
-                                                                                    ex:temppointxy2.addr_x,
-                                                                                    ey:temppointxy2.addr_y});
-                                        if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
-                                            tempobject1[j].transformOrigin="BottomRight"
-                                        }
-                                    }
-                                }
-                                clicknum1+=1
+            property int clicknum1: 0
+            id:shortest_search
+            Text{
+                font.family: "楷体"
+                font.pixelSize: 20
+                style: Text.Outline
+                styleColor: "steelblue"
+                color: "white"
+                anchors.centerIn: parent
+                text: qsTr("显示最短路径")
+            }
+            visible: start_pos.visible
+            enabled: start_pos.enabled
+            width: 140
+            height: 30
+            y : 30
+            anchors.left: end_pos.right
+            anchors.leftMargin: 20
+            onClicked: {
+                if(clicknum1===0){
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                        var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                        var shortest_point_key=database.inquire_shortest_road(tempstartpoint,tempendpoint)
+                        console.log(tempstartpoint+" "+tempendpoint)
+                        temppointnum=shortest_point_key.length-1
+                        for(var i=0;i<shortest_point_key.length-1;i++){
+                            var temppointxy11=database.get_address_of_point(shortest_point_key[i].point_key)
+                            var temppointxy22=database.get_address_of_point(shortest_point_key[i+1].point_key)
+                            console.log(shortest_point_key[i].point_key+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
+                            console.log(shortest_point_key[i+1].point_key+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
+                            var component2 = Qt.createComponent("shortestpath_animation.qml");
+                            if (component2.status === Component.Ready) {
+                                tempobject2[i]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                            starty:temppointxy11.addr_y,
+                                                                            endx:temppointxy22.addr_x,
+                                                                            endy:temppointxy22.addr_y});
                             }
                         }
-                        else{
-                            for(var k=0;k<temppointnum;k++){
-                                tempobject1[k].opacity=0
-                                tempobject2[k].opacity=0
+                        for(var j=0;j<shortest_point_key.length-1;j++){
+                            var temppointxy1=database.get_address_of_point(shortest_point_key[j].point_key)
+                            var temppointxy2=database.get_address_of_point(shortest_point_key[j+1].point_key)
+                            console.log(shortest_point_key[j].point_key+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
+                            console.log(shortest_point_key[j+1].point_key+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
+                            var component1 = Qt.createComponent("shortestpath_line.qml");
+                            if (component1.status === Component.Ready){
+                                tempobject1[j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                            sy:temppointxy1.addr_y,
+                                                                            ex:temppointxy2.addr_x,
+                                                                            ey:temppointxy2.addr_y});
+                                if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
+                                    tempobject1[j].transformOrigin="BottomRight"
+                                }
                             }
-                            clicknum1=0
                         }
+                        clicknum1+=1
                     }
                 }
-                Button{
-                    property int clicknum2: 0
-                    id:allpath_search
-                    Text{
-                        font.family: "华文彩云"
-                        font.pixelSize: 20
-                        style: Text.Outline
-                        styleColor: "steelblue"
-                        color: "white"
-                        anchors.centerIn: parent
-                        text: qsTr("显示所有路径")
+                else{
+                    for(var k=0;k<temppointnum;k++){
+                        tempobject1[k].opacity=0
+                        tempobject2[k].opacity=0
                     }
-                    visible: start_pos.visible
-                    enabled: start_pos.enabled
-                    width: 140
-                    height: 30
-                    y : 0
-                    anchors.left: end_pos.right
-                    anchors.leftMargin: 20
-                    onClicked: {
-                        if(clicknum2===0){
-                            if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
-                                var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
-                                var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
-                                var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
-                                console.log(tempstartpoint+" "+tempendpoint)
-                                temppointnum=all_point_key.length
+                    clicknum1=0
+                }
+            }
+        }
+        Button{
+            property int clicknum2: 0
+            id:allpath_search
+            Text{
+                font.family: "楷体"
+                font.pixelSize: 20
+                style: Text.Outline
+                styleColor: "steelblue"
+                color: "white"
+                anchors.centerIn: parent
+                text: qsTr("显示所有路径")
+            }
+            visible: start_pos.visible
+            enabled: start_pos.enabled
+            width: 140
+            height: 30
+            y : 0
+            anchors.left: end_pos.right
+            anchors.leftMargin: 20
+            onClicked: {
+                if(clicknum2===0){
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                        var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                        var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
+                        console.log(tempstartpoint+" "+tempendpoint)
+                        temppointnum=all_point_key.length
 
-                                for(var i=0;i<temppointnum;i++){
-                                    console.log("路径"+(i+1)+":")
-                                    temppointallnum=all_point_key[i].length-1
-                                    console.log(temppointallnum)
-                                    for(var k=0;k<temppointallnum;k++){
-                                        var temppointxy11=database.get_address_of_point(all_point_key[i][k])
-                                        var temppointxy22=database.get_address_of_point(all_point_key[i][k+1])
-                                        console.log(all_point_key[i][k]+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
-                                        console.log(all_point_key[i][k+1]+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
-                                        var component2 = Qt.createComponent("shortestpath_animation.qml");
-                                        if (component2.status === Component.Ready) {
-                                            tempobject3[i][k]= component2.createObject(parent,{startx:temppointxy11.addr_x,
-                                                                                        starty:temppointxy11.addr_y,
-                                                                                        endx:temppointxy22.addr_x,
-                                                                                        endy:temppointxy22.addr_y});
-                                        }
-                                    }
-                                    for(var j=0;j<temppointallnum;j++){
-                                        var temppointxy1=database.get_address_of_point(all_point_key[i][j])
-                                        var temppointxy2=database.get_address_of_point(all_point_key[i][j+1])
-                                        console.log(all_point_key[i][j]+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
-                                        console.log(all_point_key[i][j+1]+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
-                                        var component1 = Qt.createComponent("shortestpath_line.qml");
-                                        if (component1.status === Component.Ready){
-                                            tempobject4[i][j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
-                                                                                        sy:temppointxy1.addr_y,
-                                                                                        ex:temppointxy2.addr_x,
-                                                                                        ey:temppointxy2.addr_y});
-                                            if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
-                                                tempobject4[i][j].transformOrigin="BottomRight"
-                                            }
-                                        }
-                                    }
-                                }
-
-                                clicknum2+=1
-                            }
-                        }
-                        else{
-                            for(var t=0;t<temppointnum;t++){
-                                for(var p=0;p<temppointallnum;p++){
-                                    if(tempobject3[t][p]!==undefined){
-                                        tempobject3[t][p].opacity=0
-                                    }
-                                    if(tempobject4[t][p]!==undefined){
-                                        tempobject4[t][p].opacity=0
-                                    }
-
+                        for(var i=0;i<temppointnum;i++){
+                            console.log("路径"+(i+1)+":")
+                            temppointallnum=all_point_key[i].length-1
+                            console.log(temppointallnum)
+                            for(var k=0;k<temppointallnum;k++){
+                                var temppointxy11=database.get_address_of_point(all_point_key[i][k])
+                                var temppointxy22=database.get_address_of_point(all_point_key[i][k+1])
+                                console.log(all_point_key[i][k]+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
+                                console.log(all_point_key[i][k+1]+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
+                                var component2 = Qt.createComponent("shortestpath_animation.qml");
+                                if (component2.status === Component.Ready) {
+                                    tempobject3[i][k]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                                   starty:temppointxy11.addr_y,
+                                                                                   endx:temppointxy22.addr_x,
+                                                                                   endy:temppointxy22.addr_y});
                                 }
                             }
-                            clicknum2=0
+                            for(var j=0;j<temppointallnum;j++){
+                                var temppointxy1=database.get_address_of_point(all_point_key[i][j])
+                                var temppointxy2=database.get_address_of_point(all_point_key[i][j+1])
+                                console.log(all_point_key[i][j]+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
+                                console.log(all_point_key[i][j+1]+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
+                                var component1 = Qt.createComponent("shortestpath_line.qml");
+                                if (component1.status === Component.Ready){
+                                    tempobject4[i][j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                                   sy:temppointxy1.addr_y,
+                                                                                   ex:temppointxy2.addr_x,
+                                                                                   ey:temppointxy2.addr_y});
+                                    if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
+                                        tempobject4[i][j].transformOrigin="BottomRight"
+                                    }
+                                }
+                            }
                         }
+
+                        clicknum2+=1
                     }
                 }
+                else{
+                    for(var t=0;t<temppointnum;t++){
+                        for(var p=0;p<temppointallnum;p++){
+                            if(tempobject3[t][p]!==undefined){
+                                tempobject3[t][p].opacity=0
+                            }
+                            if(tempobject4[t][p]!==undefined){
+                                tempobject4[t][p].opacity=0
+                            }
+
+                        }
+                    }
+                    clicknum2=0
+                }
+            }
+        }
         Label{
             id : start_pos_label
             visible: end_pos.visible
@@ -856,7 +1224,7 @@ Window {
             height: start_pos.height
             Text{
                 id : start_pos_label_text
-                font.family: "华文彩云"
+                font.family: "楷体"
                 color: "white"
                 font.pixelSize: 15
                 style: Text.Outline
@@ -884,7 +1252,7 @@ Window {
             width: start_pos.width
             height: start_pos.height
             Text{
-                font.family: "华文彩云"
+                font.family: "楷体"
                 font.pixelSize: 15
                 color: "white"
                 style: Text.Outline
@@ -908,7 +1276,7 @@ Window {
         }
         Button {
             Text{
-                font.family: "华文彩云"
+                font.family: "楷体"
                 color: "white"
                 font.pixelSize: 20
                 text: qsTr("搜索")
@@ -967,7 +1335,7 @@ Window {
                         Text {
                             id: displayText
                             text: display // 文本名
-                            font.family: "华文彩云"
+                            font.family: "楷体"
                             color: "white"
                             style: Text.Outline
                             styleColor: "steelblue"
@@ -1054,7 +1422,7 @@ Window {
             Text {
                 font.pixelSize: 20
                 color: "white"
-                font.family: "华文彩云"
+                font.family: "楷体"
                 text: qsTr("查找路线")
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -1098,7 +1466,7 @@ Window {
         Text{
             id:disable_button_text
             font.pixelSize: 20
-            font.family: "华文彩云"
+            font.family: "楷体"
             color: "white"
             style: Text.Outline
             styleColor: "steelblue"
@@ -1122,5 +1490,6 @@ Window {
         }
 
     }
+
 
 }

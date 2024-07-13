@@ -13,6 +13,15 @@ Item {
         confirm_add_point.visible=true;
         database.expand_point(index,point_name,centerX,centerY,"")
     }
+    /*function del_pathMod(index,pathMod)
+    {
+        for(var i=0;i<pathMod.count;i++)
+        {
+            if(pathMod[i].start_point_name==database.get_point_name(index)||pathMod[i].end_point_name==database.get_point_name(index)）
+                    pathMod.remove(i)
+
+        }
+    }*/
 
 
 
@@ -51,6 +60,12 @@ Item {
                     second_window_form.delete_button_pressed = ! second_window_form.delete_button_pressed
                     second_window_form.delete_button_success = true
                     delete_finish_instruction.open()
+
+
+                    database.del_point(index_of_point)
+                    database.del_road(index_of_point)
+
+
                 }
 
             }
@@ -64,8 +79,9 @@ Item {
                 var centerY=circle_rect.y+15
                 var point_name=""
 
+
                 index_of_point>database.get_max_valid_point_key_from_points()?
-                            confirm_new_point(index_of_point,point_name,centerX,centerY):
+                             confirm_new_point(index_of_point,point_name,centerX,centerY):
                             database.update_point_add(index_of_point,centerX,centerY)
 
                 /* confirm_add_point.visible=true;
