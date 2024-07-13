@@ -464,6 +464,31 @@ QVariantList Graph::get_all_names_of_points(int max_num)
     }
 }
 
+int Graph::get_roads_max_id()
+{
+    //查询路径的最大key
+    QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlQuery query=QSqlQuery(database);
+
+    int max_key=0;
+    if(query.exec("select * from road"))
+    {
+        while(query.next())
+        {
+            int n=query.value("road_key").toInt();
+            if(max_key<n)
+            {
+                max_key=n;
+            }
+        }
+        return max_key;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 int Graph::get_road_key(Point *u, Point *v)
 {
     for(int i=0;i<this->roads.size();i++){
@@ -471,6 +496,7 @@ int Graph::get_road_key(Point *u, Point *v)
     }
     return -1;
 }
+
 
 int Graph::get_road_key(QString road_name)
 {
