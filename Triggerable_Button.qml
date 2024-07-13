@@ -28,7 +28,7 @@ Item {
         y:point_y
 
         property int count: 0
-        //Drag.
+        property bool draggable: true
         Drag.active: dragArea.drag.active
         Drag.hotSpot.x: 0
         Drag.hotSpot.y: 0
@@ -38,7 +38,7 @@ Item {
         MouseArea {
             id: dragArea
             anchors.fill: parent
-
+            enabled: circle_rect.draggable | second_window_form.delete_button_pressed
             drag.target: parent
             onClicked: {
                 //console.log(rec.x + " " + rec.y + " " + rec.Drag.hotSpot.x + " " + rec.Drag.hotSpot.y)
@@ -52,6 +52,7 @@ Item {
                     second_window_form.delete_button_success = true
                     delete_finish_instruction.open()
                 }
+
             }
             onReleased: {
 
@@ -71,7 +72,7 @@ Item {
                 point_name=""
                 database.expand_point(point_name,centerX,centerY,"")*/
                  //confirm_new_point(point_name,centerX,centerY)
-
+                circle_rect.draggable = false
 
 
 
