@@ -15,7 +15,9 @@ void data::createConnection()   //初始化创建数据库连接
                                 "point_name text not null,"
                                 "point_intro text,"
                                 "addr_x int not null,"
-                                "addr_y int not null)");
+                                "addr_y int not null,"
+                                "score float,"
+                                "people_num int)");
     sqlQuery.exec(point);
 
     QString make_first_id_zero=QString("UPDATE sqlite_sequence SET seq = -1 WHERE name='%1'").arg("point");

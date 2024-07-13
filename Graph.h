@@ -74,9 +74,13 @@ public:
     Q_INVOKABLE bool update_road_length(int road_key,float length);                    //更改路的长度
 
     Q_INVOKABLE bool del_point(QString point_name);             //删除景点 --> 删除对应的道路
-    Q_INVOKABLE bool del_point(int point_key);                   //删除景点 --> 删除对应的道路
+    Q_INVOKABLE bool del_point(int point_key);                  //删除景点 --> 删除对应的道路
     Q_INVOKABLE bool del_road(QString road_name);               //删除道路
-    Q_INVOKABLE bool del_road(int road_key);                     //删除道路
+    Q_INVOKABLE bool del_road(int road_key);                    //删除道路
+
+    Q_INVOKABLE bool add_score(int point_key,int score);        //输入评分
+    Q_INVOKABLE float get_score(int point_key);                 //查询评分
+    Q_INVOKABLE int get_people_num(int point_key);              //查询评价人数
 };
 
 #endif // GRAPH_H
