@@ -1484,7 +1484,7 @@ Window {
             Text {
                 font.pixelSize: 20
                 color: "white"
-                font.family: "华文彩云"
+                font.family: "楷体"
                 text: qsTr("景点评分")
                 style: Text.Outline
                 styleColor: "steelblue"
@@ -1541,7 +1541,7 @@ Window {
                         Text {
                             font.pixelSize: 20
                             color: "white"
-                            font.family: "华文彩云"
+                            font.family: "楷体"
                             text: point_name
                             style: Text.Outline
                             styleColor: "steelblue"
@@ -1552,7 +1552,7 @@ Window {
                         Text {
                             font.pixelSize: 20
                             color: "white"
-                            font.family: "华文彩云"
+                            font.family: "楷体"
                             text: "历史评分: " + score
                             style: Text.Outline
                             styleColor: "steelblue"
@@ -1563,7 +1563,7 @@ Window {
                         Text {
                             font.pixelSize: 20
                             color: "white"
-                            font.family: "华文彩云"
+                            font.family: "楷体"
                             text: "历史评分人数: " + people_num
                             style: Text.Outline
                             styleColor: "steelblue"
@@ -1586,7 +1586,7 @@ Window {
                             Text {
                                 font.pixelSize: 20
                                 color: "white"
-                                font.family: "华文彩云"
+                                font.family: "楷体"
                                 text: qsTr("评分")
                                 style: Text.Outline
                                 styleColor: "steelblue"
