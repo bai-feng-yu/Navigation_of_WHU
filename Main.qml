@@ -48,6 +48,19 @@ Window {
         unnamed1.play()
         unnamed2.play()
         console.log("play!")
+        /*-------------- 评分listmodel初始化 ----------------------*/
+        var rating_datas = database.get_score()
+        for(var j = 0; j < rating_datas.length; j++){
+            var point_name = rating_datas[j].point_name
+            var score = rating_datas[j].score
+            var people_num = rating_datas[j].people_num
+            rating_model.append({
+                                    "point_name" :point_name,
+                                    "score" : score,
+                                    "people_num" : people_num
+
+                                })
+        }
 
     }
 
@@ -1088,6 +1101,147 @@ Window {
                 }
 
             }
+        }
+        Rectangle{
+            id:rating_scene
+            width: 100
+            height: 50
+            visible: parent.visible
+            enabled: parent.enabled
+            color: chengwuGrey
+            radius: 20
+            border.color : "gray"
+            anchors.left: search_route.right
+            anchors.bottom : parent.bottom
+            Text {
+                font.pixelSize: 20
+                color: "white"
+                font.family: "华文彩云"
+                text: qsTr("景点评分")
+                style: Text.Outline
+                styleColor: "steelblue"
+                anchors.centerIn: parent
+            }
+            MouseArea{
+                enabled: parent.enabled
+                hoverEnabled: parent.enabled
+                anchors.fill: parent
+                onEntered: {
+                    search_route.color = shuangyeRed
+                }
+                onExited: {
+                    search_route.color = chengwuGrey
+                }
+                onClicked: {
+                    /* 调用 待评分 列表框*/
+
+
+                }
+
+            }
+        }
+        ListModel{
+            id : rating_model
+        }
+
+
+        ListView {
+            id: rating_list
+            width: 200  // ListView 的宽度
+            height: 200 // ListView 的高度
+            snapMode: ListView.SnapOneItem // 确保一次只展示一个项目
+            clip: true
+            boundsBehavior: ListView.StopAtBounds
+            orientation: ListView.Horizontal // 水平滚动
+            interactive: true
+            model: rating_model
+            delegate: Item {
+                width: 200 // 每个项目的宽度，确保与 ListView 的宽度一致
+                height: 200 // 每个项目的高度
+
+                Rectangle {
+                    id : show_rate_detail_rec
+                    width: 200
+                    height: 200
+                    color: Qt.rgba(1,1,1,0.6) // 可以设置为你希望的颜色
+                    border.color: "steelblue"
+
+                    Column {
+                        width: parent.width
+                        height: parent.height
+                        spacing: 0.5
+                        Text {
+                            font.pixelSize: 20
+                            color: "white"
+                            font.family: "华文彩云"
+                            text: point_name
+                            style: Text.Outline
+                            styleColor: "steelblue"
+                            x: show_rate_detail_rec.x + (show_rate_detail_rec.width - width) / 2
+                            y: show_rate_detail_rec.y
+                        }
+
+                        Text {
+                            font.pixelSize: 20
+                            color: "white"
+                            font.family: "华文彩云"
+                            text: "历史评分: " + score
+                            style: Text.Outline
+                            styleColor: "steelblue"
+                            x: show_rate_detail_rec.x + (show_rate_detail_rec.width - width) / 2
+                            y: show_rate_detail_rec.y
+                        }
+
+                        Text {
+                            font.pixelSize: 20
+                            color: "white"
+                            font.family: "华文彩云"
+                            text: "历史评分人数: " + people_num
+                            style: Text.Outline
+                            styleColor: "steelblue"
+                            x: show_rate_detail_rec.x + (show_rate_detail_rec.width - width) / 2
+                            y: show_rate_detail_rec.y
+                        }
+
+                        StarRating {
+                            id: rated_star
+                            starCount: score
+                            //anchors.horizontalCenter: parent.horizontalCenter
+                            //anchors.top: Text.bottom
+                            //anchors.topMargin: 10
+                        }
+                        Rectangle{
+                            width: 200
+                            height: 20
+                            color: Qt.rgba(1,1,1,0.6)
+                            border.color: "steelblue"
+                            Text {
+                                font.pixelSize: 20
+                                color: "white"
+                                font.family: "华文彩云"
+                                text: qsTr("评分")
+                                style: Text.Outline
+                                styleColor: "steelblue"
+                                anchors.centerIn: parent
+                            }
+                            MouseArea{
+                                anchors.fill: parent
+                                onClicked: {
+                                    console.log("开始评分!")
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Optional: Adjust the contentWidth to ensure smooth scrolling
+            contentWidth: width * model.count
+        }
+
+        Popup{
+
         }
     }
 

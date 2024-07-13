@@ -19,7 +19,7 @@ Item {
     width: 400
     height: 300
     ListModel{
-        id:content_model
+        id:content_model // 真实存放数据的地方
     }
     // 利用一个 代理的 QtObject 类来实现模型的赋值/初始化
     QtObject{

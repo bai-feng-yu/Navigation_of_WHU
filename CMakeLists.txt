@@ -34,6 +34,7 @@ qt_add_qml_module(appCampus-Guide
         SOURCES connection.h
         SOURCES connection.cpp
         QML_FILES Carousel.qml
+        QML_FILES StarRating.qml
 
 
 

@@ -66,28 +66,7 @@ Rectangle {
             color: Qt.rgba(244/255,255/255,243/255,1.0)
             radius: 10
             border.color: Qt.rgba(20/255,4/255,110/255,0.6)
-            Item{
-                anchors.centerIn: parent
 
-                width: 400
-                height: 300
-                Carousel{
-                    anchors.fill: parent
-                    delegate: Component{
-                        Image {
-                            anchors.fill: parent
-                            source: model.url
-                            asynchronous: true
-                            fillMode:Image.PreserveAspectCrop
-                        }
-                    }
-                    Layout.topMargin: 20
-                    Layout.leftMargin: 5
-                    Component.onCompleted: {
-                        model = carousel_pics_model
-                    }
-                }
-            }
             //支持鼠标滚轮以及滑动条浏览
             ScrollView {
                 anchors.fill: parent
@@ -95,66 +74,96 @@ Rectangle {
                 contentWidth: contentText.width
                 contentHeight: contentText.height
 
-                //标题
-                Text{
-                    y:10
-                    x:5
-                    id:sceneName
-                    text:nameContext
-                    font.family:"楷体"
-                    font.weight:800
-                    font.pointSize: 25
-                    wrapMode: Text.WordWrap
+                Column{
+                    //spacing: 10
+                    Text{
+                        // anchors.top: myCarousel.bottom
+                        id:sceneName
+                        text:nameContext
+                        font.family:"楷体"
+                        font.weight:800
+                        font.pointSize: 25
+                        wrapMode: Text.WordWrap
+                    }
+
+                    Rectangle{
+                        id:lineBelowTitle1
+                        // y:sceneName.y+34
+                        // x:3
+                        width:200
+                        height:1
+                        color:"black"
+
+                    }
+                    Rectangle{
+                        id:lineBelowTitle2
+                        // y:sceneName.y+42
+                        // x:3
+                        width:200
+                        height:1
+                        color:"black"
+
+                    }
+
+                    Item{
+                        //anchors.centerIn: parent
+                        id:myCarousel
+                        width: 400
+                        height: 300
+                        Carousel{
+                            anchors.fill: parent
+                            delegate: Component{
+                                Image {
+                                    anchors.fill: parent
+                                    source: model.url
+                                    asynchronous: true
+                                    fillMode:Image.PreserveAspectCrop
+                                }
+                            }
+                            Layout.topMargin: 20
+                            Layout.leftMargin: 5
+                            Component.onCompleted: {
+                                model = carousel_pics_model
+                            }
+                        }
+                    }
+
+
+                    //图片
+                    // Image {
+                    //     id: sceneImage
+                    //     source:imageSource
+                    //     x:10
+                    //     y:lineBelowTitle2.y+4
+                    //     width:popupComponent.width-50
+                    //     property real aspectRatio: 1 // 默认宽高比，将在图片加载后更新
+                    //     onStatusChanged: {
+                    //         if (status === Image.Ready) {
+                    //             aspectRatio = sourceSize.width / sourceSize.height;
+                    //             height = width / aspectRatio;
+                    //         }
+                    //     }
+                    //     fillMode: Image.PreserveAspectFit // 保持比例的同时填充图片
+                    // }
+
+
+                    //具体信息
+                    Text {
+                        id: contentText
+                        width: 225
+                        // y:sceneImage.y+sceneImage.height+10
+                        // x:5
+                        text:infoContext1+'\n'+infoContext2+'\n'+infoContext3+"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                        font.family:"楷体"
+                        wrapMode: Text.WordWrap
+                    }
+
                 }
-
-                Rectangle{
-                    id:lineBelowTitle1
-                    y:sceneName.y+34
-                    x:3
-                    width:200
-                    height:1
-                    color:"black"
-
-                }
-                Rectangle{
-                    id:lineBelowTitle2
-                    y:sceneName.y+42
-                    x:3
-                    width:200
-                    height:1
-                    color:"black"
-
-                }
-                //图片
-                // Image {
-                //     id: sceneImage
-                //     source:imageSource
-                //     x:10
-                //     y:lineBelowTitle2.y+4
-                //     width:popupComponent.width-50
-                //     property real aspectRatio: 1 // 默认宽高比，将在图片加载后更新
-                //     onStatusChanged: {
-                //         if (status === Image.Ready) {
-                //             aspectRatio = sourceSize.width / sourceSize.height;
-                //             height = width / aspectRatio;
-                //         }
-                //     }
-                //     fillMode: Image.PreserveAspectFit // 保持比例的同时填充图片
-                // }
-
-
-                //具体信息
-                Text {
-                    id: contentText
-                    width: 225
-                    y:sceneImage.y+sceneImage.height+10
-                    x:5
-                    text:infoContext1+'\n'+infoContext2+'\n'+infoContext3+"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-                    font.family:"楷体"
-                    wrapMode: Text.WordWrap
-                }
-
             }
+
+            //标题
+
+
         }
     }
 
