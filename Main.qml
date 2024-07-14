@@ -150,11 +150,11 @@ Window {
             console.log("pointMod count " + pointsMod.count)
         }
         property alias exportedListModel: pathsMod
-        Loader {
-            id: loader
-            source: "Triggerable_Button.qml"
-            anchors.fill: parent
-        }
+        // Loader {
+        //     id: loader
+        //     source: "Triggerable_Button.qml"
+        //     anchors.fill: parent
+        // }
 
 
         Canvas {
@@ -328,8 +328,8 @@ Window {
         }
         Popup{
             id: add_success_instruction
-            width: 130
-            height: 40
+            width: 120
+            height: 80
             modal: true
             visible: parent.visible && second_window_form.add_button_success
             enabled: parent.enabled
@@ -339,29 +339,46 @@ Window {
                 id: add_success_rec
                 width: add_success_instruction.width
                 height: add_success_instruction.height
+                MouseArea{
+                    anchors.fill: add_success_instruction
+
+                }
+
                 Text{
                     id : add_success_text
                     font.family: "楷体"
+                    font.pointSize : 20
                     color: "white"
                     style: Text.Outline
                     styleColor: "steelblue"
                     text: "添加成功!"
                     x : add_success_rec.x + (add_success_rec.width - add_success_text.width) / 2
                 }
-                MouseArea{
-                    anchors.fill: add_success_instruction
 
-                }
                 Button{
+                    width: 80
+                    height: 40
                     id: add_success_instruction_button
-                    text: "OK"
-                    x : add_success_rec.x + (add_success_rec.width - add_success_instruction_button.width) / 2
                     anchors.top: add_success_text.bottom
-                    anchors.topMargin: 0
+                    anchors.topMargin: 5
+                    Text{
+                        font.family: "楷体"
+                        font.pointSize : 20
+                        color: "white"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        text: "OK"
+                        anchors.centerIn: add_success_instruction_button
+                    }
+
+                    x : add_success_rec.x + (add_success_rec.width - add_success_instruction_button.width) / 2
+                    //anchors.bottom: add_success_rec.bottom
+                    //anchors.topMargin: 0
                     onClicked: {
                         add_success_instruction.close()
                     }
                 }
+
             }
 
             Overlay.modal: Rectangle {
@@ -371,8 +388,8 @@ Window {
         }
         Popup{
             id: delete_finish_instruction
-            width: 50
-            height: 40
+            width: 120
+            height: 80
             modal: true
             visible: parent.visible && second_window_form.delete_button_success
             enabled: parent.enabled
@@ -386,6 +403,7 @@ Window {
                     id : delete_finish_text
                     font.family: "楷体"
                     color: "white"
+                    font.pointSize: 20
                     x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_text.width) / 2
                     style: Text.Outline
                     styleColor: "steelblue"
@@ -396,11 +414,22 @@ Window {
 
                 }
                 Button{
+                    width: 80
+                    height: 40
                     id: delete_finish_instruction_button
-                    text: "OK"
-                    x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_instruction_button.width) / 2
                     anchors.top: delete_finish_text.bottom
-                    anchors.topMargin: 0
+                    anchors.topMargin: 5
+                    Text{
+                        font.family: "楷体"
+                        font.pointSize : 20
+                        color: "white"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        text: "OK"
+                        anchors.centerIn: delete_finish_instruction_button
+                    }
+                    x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_instruction_button.width) / 2
+
                     onClicked: {
                         delete_finish_instruction.close()
                         //修改listmodel中的信息
@@ -422,8 +451,8 @@ Window {
 
         Popup{
             id: delete_instruction
-            width: 130
-            height: 40
+            width: 280
+            height: 80
             modal: true
             visible: parent.visible && second_window_form.delete_button_pressed
             enabled: parent.enabled
@@ -437,6 +466,7 @@ Window {
                     id : delete_text
                     color: "white"
                     font.family: "楷体"
+                    font.pointSize : 20
                     style: Text.Outline
                     styleColor: "steelblue"
                     text: "请点击你要删除的景点:"
@@ -448,10 +478,21 @@ Window {
                 }
                 Button{
                     id: delete_instruction_button
-                    text: "OK"
+                    width: 80
+                    height: 40
+                    Text{
+                        font.family: "楷体"
+                        font.pointSize : 20
+                        color: "white"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        text: "OK"
+                        anchors.centerIn: delete_instruction_button
+                    }
+
                     x : delete_instruction_rec.x + (delete_instruction_rec.width - delete_instruction_button.width) / 2
                     anchors.top: delete_text.bottom
-                    anchors.topMargin: 0
+                    anchors.topMargin: 10
                     onClicked: {
                         delete_instruction.close()
                     }
@@ -1503,7 +1544,7 @@ Window {
                 }
                 onClicked: {
                     /* 调用 待评分 列表框*/
-
+                    to_rate_pop_up.open()
 
                 }
 
@@ -1514,106 +1555,234 @@ Window {
         }
 
 
-        ListView {
-            id: rating_list
-            width: 200  // ListView 的宽度
-            height: 200 // ListView 的高度
-            snapMode: ListView.SnapOneItem // 确保一次只展示一个项目
-            clip: true
-            boundsBehavior: ListView.StopAtBounds
-            orientation: ListView.Horizontal // 水平滚动
-            interactive: true
-            model: rating_model
-            delegate: Item {
-                width: 200 // 每个项目的宽度，确保与 ListView 的宽度一致
-                height: 200 // 每个项目的高度
 
-                Rectangle {
-                    id : show_rate_detail_rec
-                    width: 200
-                    height: 200
-                    color: Qt.rgba(1,1,1,0.6) // 可以设置为你希望的颜色
-                    border.color: "steelblue"
+        Popup{
+            id : to_rate_pop_up
+            width: 200
+            height: 200
+            anchors.centerIn: first_window_form
+            // enabled: parent.enabled
+            // visible: parent.visible
+            ListView {
+                id: rating_list
+                width: 200  // ListView 的宽度
+                height: 200 // ListView 的高度
+                snapMode: ListView.SnapOneItem // 确保一次只展示一个项目
+                clip: true
+                boundsBehavior: ListView.StopAtBounds
+                orientation: ListView.Horizontal // 水平滚动
+                interactive: true
+                anchors.centerIn: parent
+                model: rating_model
+                delegate: Item {
+                    width: 200 // 每个项目的宽度，确保与 ListView 的宽度一致
+                    height: rating_list.height // 每个项目的高度
 
-                    Column {
-                        width: parent.width
-                        height: parent.height
-                        spacing: 0.5
-                        Text {
-                            font.pixelSize: 20
-                            color: "white"
-                            font.family: "楷体"
-                            text: point_name
-                            style: Text.Outline
-                            styleColor: "steelblue"
-                            x: show_rate_detail_rec.x + (show_rate_detail_rec.width - width) / 2
-                            y: show_rate_detail_rec.y
-                        }
-
-                        Text {
-                            font.pixelSize: 20
-                            color: "white"
-                            font.family: "楷体"
-                            text: "历史评分: " + score
-                            style: Text.Outline
-                            styleColor: "steelblue"
-                            x: show_rate_detail_rec.x + (show_rate_detail_rec.width - width) / 2
-                            y: show_rate_detail_rec.y
-                        }
-
-                        Text {
-                            font.pixelSize: 20
-                            color: "white"
-                            font.family: "楷体"
-                            text: "历史评分人数: " + people_num
-                            style: Text.Outline
-                            styleColor: "steelblue"
-                            x: show_rate_detail_rec.x + (show_rate_detail_rec.width - width) / 2
-                            y: show_rate_detail_rec.y
-                        }
-
-                        StarRating {
-                            id: rated_star
-                            starCount: score
-                            //anchors.horizontalCenter: parent.horizontalCenter
-                            //anchors.top: Text.bottom
-                            //anchors.topMargin: 10
-                        }
-                        Rectangle{
-                            width: 200
-                            height: 20
-                            color: Qt.rgba(1,1,1,0.6)
-                            border.color: "steelblue"
+                    Rectangle {
+                        id : show_rate_detail_rec
+                        width: 200
+                        height: rating_list.height
+                        color: Qt.rgba(1,1,1,0.5)
+                        border.color: "steelblue"
+                        border.width: 2
+                        Column {
+                            width: parent.width
+                            height: parent.height
+                            spacing: 0
                             Text {
                                 font.pixelSize: 20
                                 color: "white"
                                 font.family: "楷体"
-                                text: qsTr("评分")
+                                text: point_name
                                 style: Text.Outline
                                 styleColor: "steelblue"
-                                anchors.centerIn: parent
+                                x: show_rate_detail_rec.x + (show_rate_detail_rec.width - width) / 2
+                                y: show_rate_detail_rec.y
                             }
-                            MouseArea{
-                                anchors.fill: parent
-                                onClicked: {
-                                    console.log("开始评分!")
 
+                            Text {
+                                font.pixelSize: 20
+                                color: "white"
+                                font.family: "楷体"
+                                text: "历史评分: " + score
+                                style: Text.Outline
+                                styleColor: "steelblue"
+                                x: show_rate_detail_rec.x + (show_rate_detail_rec.width - width) / 2
+                                y: show_rate_detail_rec.y
+                            }
+
+                            Text {
+                                font.pixelSize: 20
+                                color: "white"
+                                font.family: "楷体"
+                                text: "历史评分人数: " + people_num
+                                style: Text.Outline
+                                styleColor: "steelblue"
+                                x: show_rate_detail_rec.x + (show_rate_detail_rec.width - width) / 2
+                                y: show_rate_detail_rec.y
+                            }
+
+                            StarRating {
+                                id: rated_star
+                                starCount: score
+                                editable: false
+                                //anchors.horizontalCenter: parent.horizontalCenter
+                                //anchors.top: Text.bottom
+                                //anchors.topMargin: 10
+
+                            }
+                            Rectangle{
+                                id : rate_button
+                                width: 200
+                                height: 90
+                                color: "transparent"
+                                border.color: "steelblue"
+                                Button{
+                                    Text {
+                                        font.pixelSize: 30
+                                        color: "white"
+                                        font.family: "楷体"
+                                        text: qsTr("点击此处评分:")
+                                        style: Text.Outline
+                                        styleColor: "steelblue"
+                                        anchors.centerIn: parent
+                                    }
+                                    width: parent.width
+                                    height: parent.height
+                                    MouseArea{
+                                        anchors.fill: parent
+                                    }
                                 }
+
+                                MouseArea{
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        console.log("开始评分!")
+                                        to_rate_pop_up.close()
+                                        rating_pop_up.open()
+                                    }
+                                }
+
                             }
                         }
                     }
                 }
+
+                // Optional: Adjust the contentWidth to ensure smooth scrolling
+                contentWidth: width * model.count
             }
 
-            // Optional: Adjust the contentWidth to ensure smooth scrolling
-            contentWidth: width * model.count
         }
 
         Popup{
+            id : rating_pop_up
+            anchors.centerIn: first_window_form
+            Column{
+                spacing: 5
+                Text {
+                    font.pixelSize: 20
+                    color: "white"
+                    font.family: "楷体"
+                    text: "为当前景点打个星吧："
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    //x: rating_pop_up.x + (rating_pop_up.width - width) / 2
 
+                }
+                StarRating{
+                    backgroundColor: "white"
+                }
+                Rectangle{
+                    width: 200
+                    height: 20
+                    color: "transparent"
+                    border.color: "steelblue"
+                    Text {
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        text: qsTr("确定")
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        anchors.centerIn: parent
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: {
+                            console.log("评分成功!")
+                            //to_rate_pop_up.open()
+                            rate_success_instruction.open()
+                            rating_pop_up.close()
+                            /*更新显示数据*/
+
+                        }
+                    }
+                }
+            }
         }
-    }
+        Popup{
+            id: rate_success_instruction
+            width: 120
+            height: 80
+            modal: true
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: first_window_form
+            padding: 0
+            Rectangle{
+                id: rate_success_rec
+                width: rate_success_instruction.width
+                height: rate_success_instruction.height
+                MouseArea{
+                    anchors.fill: rate_success_instruction
 
+                }
+
+                Text{
+                    id : rate_success_text
+                    font.family: "楷体"
+                    font.pointSize : 20
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    text: "评分成功!"
+                    x : rate_success_rec.x + (rate_success_rec.width - rate_success_text.width) / 2
+                }
+
+                Button{
+                    width: 80
+                    height: 40
+                    id: rate_success_instruction_button
+                    anchors.top: rate_success_text.bottom
+                    anchors.topMargin: 5
+                    Text{
+                        font.family: "楷体"
+                        font.pointSize : 20
+                        color: "white"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        text: "OK"
+                        anchors.centerIn: rate_success_instruction_button
+                    }
+
+                    x : rate_success_rec.x + (rate_success_rec.width - rate_success_instruction_button.width) / 2
+                    //anchors.bottom: add_success_rec.bottom
+                    //anchors.topMargin: 0
+                    onClicked: {
+                        rate_success_instruction.close()
+                        to_rate_pop_up.open()
+                    }
+                }
+
+            }
+
+            Overlay.modal: Rectangle {
+                color: chengwuGrey
+            }
+            closePolicy:Popup.CloseOnPressOutside
+        }
+
+    }
     Button{
         id: disable_button
         width:100

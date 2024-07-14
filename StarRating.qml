@@ -18,12 +18,13 @@ Item {
     // 星星之间的间距
     property int spacing: 5
 
+    property color backgroundColor: Qt.rgba(1,1,1,0.6)
     Rectangle {
         id: container
 
         width: parent.width
         height: parent.height
-        color: Qt.rgba(1,1,1,0.6)
+        color:backgroundColor
         border.color: "steelblue"
 
         Canvas {
@@ -49,10 +50,8 @@ Item {
                     var color;
                     if (i < starCount) {
                         color = "gold"; // 已评分的星星颜色
-                    } else if (editable) {
-                        color = "lightgray"; // 未评分的星星颜色（在可编辑模式下）
                     } else {
-                        color = "transparent"; // 未评分的星星颜色（在不可编辑模式下）
+                        color = "lightgray"; // 未评分的星星颜色（在可编辑模式下）
                     }
 
                     ctx.fillStyle = color; // 设置填充颜色
