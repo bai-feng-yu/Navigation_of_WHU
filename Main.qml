@@ -27,6 +27,7 @@ Window {
     property color chengwuGrey: Qt.rgba(193/255,198/255,200/255,0.5)
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
     property int max_point_key : database.get_max_valid_point_key_from_points()
+    property int chosen_to_be_deleted_index: -1
     property var tempobject1: []
     property var tempobject2: []
     property var tempobject3: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
@@ -248,7 +249,6 @@ Window {
         Repeater{
             id : pointsGenarating
             property int init_point_key: init_point_key = root.max_point_key
-
             model:pointsMod.count
             // x : index * 80
             // Triggerable_Button{
