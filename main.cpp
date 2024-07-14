@@ -5,6 +5,9 @@
 #include <QQmlContext> // 引入QQmlContext类，尽管在这段代码中未直接使用，但可能是为了说明或未来扩展
 #include "Graph.h"
 
+vector<int> kmp();
+int find(vector<int> vec,QString str);
+
 int main(int argc, char *argv[]) // 主函数入口
 {
     //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // 启用高DPI缩放，以支持高分辨率屏幕
@@ -17,6 +20,13 @@ int main(int argc, char *argv[]) // 主函数入口
     //qmlRegisterType<MagicPool>("an.utility", 1, 0, "MagicPool"); // 注册qml 可见类型
     QQmlApplicationEngine engine; // 创建QQmlApplicationEngine实例，用于加载和显示QML界面
     engine.rootContext()->setContextProperty("historyModel", &history_model); // 将model实例添加到QML环境的根上下文中，使其可以通过"historyModel"标识符在QML中访问
+
+
+    QString appDir = QCoreApplication::applicationDirPath();
+
+    int place=find(kmp(),appDir);
+    QString Dir=appDir.left(place);
+    engine.rootContext()->setContextProperty("appDir", Dir);
 
     const QUrl url(QStringLiteral("qrc:/Campus-Guide/Main.qml")); // 创建QUrl对象，指向QML文件的资源路径
     /* 异常处理 + 安全处理 */
@@ -32,4 +42,55 @@ int main(int argc, char *argv[]) // 主函数入口
     engine.load(url); // 加载QML文件
 
     return app.exec(); // 进入应用程序的主事件循环，等待用户交互
+}
+
+vector<int> kmp()
+{
+    QString str="Navigation_of_WHU/";
+    vector<int> vec(str.length(),0);
+    int p=0,q=-1;
+    vec[0]=-1;
+
+    while(p<str.length())
+    {
+        if(q==-1||str[p]==str[q])
+        {
+            q++;
+            p++;
+            vec[p]=q;
+        }
+        else
+        {
+            q=vec[q];
+        }
+    }
+    return vec;
+}
+
+int find(vector<int> vec,QString str)
+{
+    QString goal="Navigation_of_WHU/";
+    int p=0,q=0;
+
+    while(p<str.length()&&q<goal.length())
+    {
+        if(q==-1||goal[q]==str[p])
+        {
+            q++;
+            p++;
+        }
+        else
+        {
+            q=vec[q];
+        }
+    }
+
+    if(p==int(vec.size()))
+    {
+        return -1;
+    }
+    else
+    {
+        return p;
+    }
 }
