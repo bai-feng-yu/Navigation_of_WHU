@@ -784,7 +784,7 @@ bool Graph::add_score(int point_key,int score)
         int num=check_score.value("people_num").toInt();
 
         float a_score=score+f_score*num;
-        float t_score=a_score/(num+1);
+        float t_score=float(int(a_score/(num+1)*10))/10;
 
         QSqlQuery ad_score=QSqlQuery(database);
         QString str2=QString("update point set score='%1',people_num='%2' where point_key='%3'")
