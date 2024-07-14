@@ -3,10 +3,8 @@
 #include <QGuiApplication> // 引入QGuiApplication类，用于GUI应用程序
 #include <QQmlApplicationEngine> // 引入QQmlApplicationEngine类，用于加载QML文件
 #include <QQmlContext> // 引入QQmlContext类，尽管在这段代码中未直接使用，但可能是为了说明或未来扩展
+#include <QDir>
 #include "Graph.h"
-
-vector<int> kmp();
-int find(vector<int> vec,QString str);
 
 int main(int argc, char *argv[]) // 主函数入口
 {
@@ -23,10 +21,10 @@ int main(int argc, char *argv[]) // 主函数入口
 
 
     QString appDir = QCoreApplication::applicationDirPath();
-
-    int place=find(kmp(),appDir);
-    QString Dir=appDir.left(place);
-    engine.rootContext()->setContextProperty("appDir", Dir);
+    QDir dir(appDir);
+    dir.cdUp();dir.cdUp();
+    QString DDir=dir.absolutePath();
+    engine.rootContext()->setContextProperty("appDir", DDir);
 
     const QUrl url(QStringLiteral("qrc:/Campus-Guide/Main.qml")); // 创建QUrl对象，指向QML文件的资源路径
     /* 异常处理 + 安全处理 */
@@ -44,53 +42,3 @@ int main(int argc, char *argv[]) // 主函数入口
     return app.exec(); // 进入应用程序的主事件循环，等待用户交互
 }
 
-vector<int> kmp()
-{
-    QString str="Navigation_of_WHU/";
-    vector<int> vec(str.length(),0);
-    int p=0,q=-1;
-    vec[0]=-1;
-
-    while(p<str.length())
-    {
-        if(q==-1||str[p]==str[q])
-        {
-            q++;
-            p++;
-            vec[p]=q;
-        }
-        else
-        {
-            q=vec[q];
-        }
-    }
-    return vec;
-}
-
-int find(vector<int> vec,QString str)
-{
-    QString goal="Navigation_of_WHU/";
-    int p=0,q=0;
-
-    while(p<str.length()&&q<goal.length())
-    {
-        if(q==-1||goal[q]==str[p])
-        {
-            q++;
-            p++;
-        }
-        else
-        {
-            q=vec[q];
-        }
-    }
-
-    if(p==int(vec.size()))
-    {
-        return -1;
-    }
-    else
-    {
-        return p;
-    }
-}
