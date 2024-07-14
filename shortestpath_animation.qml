@@ -6,12 +6,13 @@ Item {
     property int endy
     property int startx
     property int starty
+    property color tc
     Rectangle{
         id:tceee
         x:startx
         y:starty
         width: 15; height: 15
-        color: "blue"
+        color: tc
         opacity: 1.0
         ParallelAnimation {
             id: playbanner
