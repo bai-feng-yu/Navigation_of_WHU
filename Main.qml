@@ -74,6 +74,8 @@ Window {
         property bool delete_button_pressed: false
         property bool delete_button_success: false
         property bool add_button_success: false
+        property bool point_is_onrelease:false
+        property bool start_to_add_point: false
         // Image {
         //     id: unnamed1
         //     anchors.fill: parent
@@ -376,6 +378,8 @@ Window {
                     //anchors.topMargin: 0
                     onClicked: {
                         add_success_instruction.close()
+                         second_window_form.start_to_add_point=true
+                        second_window_form.add_button_success=true
                     }
                 }
 
@@ -510,7 +514,7 @@ Window {
             width:400
             height:200
             modal:true
-            visible: false
+           visible: second_window_form.point_is_onrelease&&second_window_form.start_to_add_point
             enabled: parent.enabled
             anchors.centerIn: second_window_form
             padding: 0
@@ -592,6 +596,9 @@ Window {
                     database.update_point_intro(database.get_max_valid_point_key_from_points(),point_intro)
                     database.update_point_name(database.get_max_valid_point_key_from_points(),point_name)
                     confirm_add_point.close()
+                    second_window_form.add_button_success=false
+                    second_window_form.point_is_onrelease=false
+                    second_window_form.start_to_add_point=false
 
                 }
             }
@@ -815,6 +822,8 @@ Window {
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: {
+                    second_window_form.delete_button_pressed=false
+                    second_window_form.delete_button_success=false
                     var road_length=input_road_length.text
                     var road_name=input_road_name.text
                     var road_start_key=input_road_start.text
@@ -1007,7 +1016,7 @@ Window {
                 color: "white"
                 style: Text.Outline
                 styleColor: "steelblue"
-                text: "点击路径以显示信息"
+
             }
 
             background: Rectangle {
