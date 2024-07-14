@@ -53,7 +53,7 @@ Window {
         var rating_datas = database.get_score()
         for(var j = 0; j < rating_datas.length; j++){
             var point_name = rating_datas[j].point_name
-            var score = rating_datas[j].score
+            var score = Math.floor(rating_datas[j].score * 10) / 10
             var people_num = rating_datas[j].people_num
             rating_model.append({
                                     "point_name" :point_name,
@@ -1564,7 +1564,7 @@ Window {
             // enabled: parent.enabled
             // visible: parent.visible
             ListView {
-                id: rating_list
+                id:rating_list
                 width: 200  // ListView 的宽度
                 height: 200 // ListView 的高度
                 snapMode: ListView.SnapOneItem // 确保一次只展示一个项目
@@ -1670,6 +1670,11 @@ Window {
 
                 // Optional: Adjust the contentWidth to ensure smooth scrolling
                 contentWidth: width * model.count
+
+                onMovementEnded:{
+                    currentIndex = rating_list.contentX/rating_list.width
+
+                }
             }
 
         }
@@ -1690,6 +1695,7 @@ Window {
 
                 }
                 StarRating{
+                    id : new_rate
                     backgroundColor: "white"
                 }
                 Rectangle{
@@ -1711,15 +1717,34 @@ Window {
                         onClicked: {
                             console.log("评分成功!")
                             //to_rate_pop_up.open()
+
+                            /*更新显示数据*/
+                            var currItem = rating_model.get(rating_list.currentIndex)
+                            currItem.people_num += 1
+                            currItem.score = ((currItem.score * (currItem.people_num - 1) + new_rate.starCount) / currItem.people_num)
+                            currItem.score = Math.floor(currItem.score * 10) / 10
+                            var curItem_key = database.get_point_key(currItem.point_name)
+                            database.add_score(curItem_key, currItem.score)
+
                             rate_success_instruction.open()
                             rating_pop_up.close()
-                            /*更新显示数据*/
-
                         }
                     }
                 }
             }
         }
+        // Timer {
+        //         interval: 100
+        //         running: true
+        //         repeat: true
+        //         onTriggered: {
+        //             // Update the visibleIndex based on horizontal scroll
+        //             var visibleIndex = Math.floor(rating_list.contentX / rating_list.delegate.width);
+        //             if (visibleIndex >= 0 && visibleIndex < myModel.count) {
+        //                 rating_list.currentIndex = visibleIndex;
+        //             }
+        //         }
+        //     }
         Popup{
             id: rate_success_instruction
             width: 120
