@@ -33,7 +33,10 @@ Window {
     property var tempobject2: []
     property var tempobject3: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     property var tempobject4: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]//临时储存点
+    property var tempobject5: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+    property var tempobject6: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     property var temppointnum
+    property var temppointnum2
     property var temppointallnum
     property int i1: 0
     property int j1: 0
@@ -70,7 +73,13 @@ Window {
         }
 
     }
-
+    onTemppointnum2Changed: {
+        path_cho.selective_model.clear()
+        for (var i = 0; i < temppointnum2; i++) {
+            path_cho.selective_model.append({ "text": "路径"+i })
+        }
+        path_cho.selective_model.append({ "text": "全部路径" })
+    }
     Rectangle{
         id: second_window_form
         visible: false
@@ -1201,6 +1210,14 @@ Window {
             x:160
             selective_model: ListModel{}
         }
+        SelectiveBox{
+            id:path_cho
+            width: 150
+            height: 30
+            y:0
+            x:500
+            selective_model: ListModel{}
+        }
         Timer{
             id:timer1
             interval: 1000
@@ -1297,8 +1314,7 @@ Window {
                 var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
                 var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
                 var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
-                temppointnum=all_point_key.length
-                if(k1<temppointnum){
+                if(k1<temppointnum2){
                     temppointallnum=all_point_key[k1].length-1
                     if(kk[0]===temppointallnum){
                         timer3.restart()
@@ -1309,7 +1325,7 @@ Window {
                         timer3.restart()
                     }
                 }
-                else if(k1===temppointnum){
+                else if(k1===temppointnum2){
                     timer3.stop()
                 }
             }
@@ -1324,7 +1340,6 @@ Window {
                 var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
                 var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
                 var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
-                temppointnum=all_point_key.length
                 if(kk[0]<temppointallnum){
                     var temppointxy11=database.get_address_of_point(all_point_key[k1][kk[0]])
                     var temppointxy22=database.get_address_of_point(all_point_key[k1][kk[0]+1])
@@ -1353,6 +1368,45 @@ Window {
                 }
             }
         }
+        Timer{
+            id:timer4
+            interval: 1000
+            repeat: true
+            running:false
+            triggeredOnStart: true
+            onTriggered: {
+                var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
+                temppointallnum=all_point_key[path_cho.cur_chosen_key].length-1
+                if(kk[0]<temppointallnum){
+                    var temppointxy11=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]])
+                    var temppointxy22=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]+1])
+                    var component2 = Qt.createComponent("shortestpath_animation.qml");
+                    if (component2.status === Component.Ready) {
+                        tempobject5[path_cho.cur_chosen_key][kk[0]]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                       starty:temppointxy11.addr_y,
+                                                                       endx:temppointxy22.addr_x,
+                                                                       endy:temppointxy22.addr_y,
+                                                                       tc:tempcolor[k1+2]});
+                    }
+                    var temppointxy1=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]])
+                    var temppointxy2=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]+1])
+                    var component1 = Qt.createComponent("shortestpath_line.qml");
+                    if (component1.status === Component.Ready){
+                        tempobject6[path_cho.cur_chosen_key][kk[0]]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                       sy:temppointxy1.addr_y,
+                                                                       ex:temppointxy2.addr_x,
+                                                                       ey:temppointxy2.addr_y,
+                                                                       tc:tempcolor[path_cho.cur_chosen_key]});
+                        if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
+                            tempobject6[path_cho.cur_chosen_key][kk[0]].transformOrigin="BottomRight"
+                        }
+                    }
+                    kk[0]+=1
+                }
+            }
+        }
         Button{
             property int clicknum2: 0
             id:allpath_search
@@ -1375,31 +1429,98 @@ Window {
             onClicked: {
                 if(clicknum2===0){
                     if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        path_cho.visible = !path_cho.visible
+                        var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                        var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                        var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
+                        temppointnum2=all_point_key.length
                         clicknum2+=1
-                        if(k1===temppointnum||k1===0){
-                            timer2.restart()
-                        }
-
-
                     }
-
                 }
                 else{
-                    for(var t=0;t<temppointnum;t++){
-                        for(var p=0;p<temppointallnum;p++){
-                            if(tempobject3[t][p]!==undefined){
-                                tempobject3[t][p].opacity=0
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        path_cho.visible = !path_cho.visible
+                        for(var t=0;t<temppointallnum;t++){
+                            for(var p=0;p<temppointallnum;p++){
+                                if(tempobject3[t][p]!==undefined){
+                                    tempobject3[t][p].opacity=0
+                                }
+                                if(tempobject4[t][p]!==undefined){
+                                    tempobject4[t][p].opacity=0
+                                }
                             }
-                            if(tempobject4[t][p]!==undefined){
-                                tempobject4[t][p].opacity=0
-                            }
-
+                        }
+                        clicknum2=0
+                        timer2.stop()
+                        timer3.stop()
+                        k1=0
+                    }
+                }
+            }
+        }
+        Button{
+            property int clicknum3: 0
+            id:allpath_search_for
+            Text{
+                font.family: "楷体"
+                font.pixelSize: 20
+                style: Text.Outline
+                styleColor: "steelblue"
+                color: "white"
+                anchors.centerIn: parent
+                text: qsTr("显示")
+            }
+            visible: start_pos.visible
+            enabled: start_pos.enabled
+            width: 140
+            height: 30
+            y : 60
+            anchors.left: end_pos.right
+            anchors.leftMargin: 20
+            onClicked: {
+                if(clicknum3===0){
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        if(path_cho.cur_chosen_point==="全部路径"){
+                            kk[0]=0
+                            timer2.start()
+                            clicknum3+=1
+                        }
+                        else if(path_cho.cur_chosen_point===""){kk[0]=0}
+                        else {
+                            kk[0]=0
+                            timer4.restart()
+                            clicknum3+=1
                         }
                     }
-                    clicknum2=0
-                    timer2.stop()
-                    timer3.stop()
-                    k1=0
+                }
+                else{
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        for(var o=0;o<temppointnum2;o++){
+                            for(var l=0;l<20;l++){
+                                if(tempobject3[o][l]!==undefined){
+                                    tempobject3[o][l].opacity=0
+                                }
+                                if(tempobject4[o][l]!==undefined){
+                                    tempobject4[o][l].opacity=0
+                                }
+                            }
+                        }
+                        for(var t=0;t<temppointnum2;t++){
+                            for(var p=0;p<20;p++){
+                                if(tempobject6[t][p]!==undefined){
+                                    tempobject6[t][p].opacity=0
+                                }
+                                if(tempobject5[t][p]!==undefined){
+                                    tempobject5[t][p].opacity=0
+                                }
+                            }
+                        }
+                        clicknum3=0
+                        timer2.stop()
+                        timer3.stop()
+                        timer4.stop()
+                        k1=0
+                    }
                 }
             }
         }
