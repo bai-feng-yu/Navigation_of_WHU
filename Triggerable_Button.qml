@@ -3,10 +3,12 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 
 Item {
-
+    width: 30
+    height: 30
     id : trigger_root
     property alias button_text: circle_text.text
-    property int index_of_point: circle_text.text;
+    property int index_of_point: circle_text.text
+
     property int point_x: 0 // 每个按钮的 X 坐标
     property int point_y: 0 // 每个按钮的 Y 坐标
 
@@ -30,9 +32,15 @@ Item {
         border.color : "blue"
         x:point_x
         y:point_y
+        property real centerX: circle_rect.width / 2
+        property real centerY: circle_rect.height / 2
 
+            // 将 centerX 和 centerY 转换为全局坐标
+        property real globalCenterX: mapToGlobal(Qt.point(centerX, centerY)).x + 15
+        property real globalCenterY: mapToGlobal(Qt.point(centerX, centerY)).y + 15
         property int count: 0
         property bool draggable: true
+
         Drag.active: dragArea.drag.active
         Drag.hotSpot.x: 0
         Drag.hotSpot.y: 0
@@ -46,7 +54,6 @@ Item {
             drag.target: parent
             onClicked: {
                 //console.log(rec.x + " " + rec.y + " " + rec.Drag.hotSpot.x + " " + rec.Drag.hotSpot.y)
-
                 console.log("a test for triggerable button" + index_of_point)
                 console.log("最大点为"+root.max_point_key)
                 /*c++端的删除操作 to be added*/
@@ -61,6 +68,15 @@ Item {
 
                 }
 
+                chosen_to_be_deleted_index = index_of_point
+                if(chosen_to_be_deleted_index >= 0){
+
+                    console.log("chosen_to_be_deleted_index = " + chosen_to_be_deleted_index)
+                }else{
+                    console.log("not set successfully")
+                }
+
+
             }
             onReleased: {
 
@@ -74,7 +90,8 @@ Item {
                     var point_name=""
                     if(index_of_point>database.get_max_valid_point_key_from_points())
                     {
-                        confirm_new_point(index_of_point,point_name,centerX,centerY)
+                        //confirm_new_point(index_of_point,point_name,circle_rect.globalCenterX,circle_rect.globalCenterY)
+                        confirm_new_point(index_of_point,point_name, centerX, centerY)
                         console.log("添加的点坐标为"+centerX+","+centerY)
                         console.log(index_of_point)
                        // second_window_form.point_is_onrelease=true

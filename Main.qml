@@ -3,7 +3,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtMultimedia
-
+import QtQuick.Effects
 //import an.utility
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 import "C:/Users/admin/Desktop/Navigation_of_WHU/Triggerable_Button.qml"
@@ -90,6 +90,8 @@ Window {
         //     /*-------------------------------------------------------------------------------------------------------*/
 
         // }
+
+
         MediaPlayer {
             id: unnamed1
             loops: MediaPlayer.Infinite
@@ -105,7 +107,28 @@ Window {
             width: root.width;
             anchors.centerIn: parent
         }
+        Image {
+            width: 1000
+            height: 700
+            //opacity: 0.2
+            fillMode: Image.PreserveAspectFit
+            id: graph_image_sec
+            anchors.centerIn: parent
+            //source: "file:///C:/Users/Administrator/Desktop/graphImage.jpg" // 0%
+            //source: "file:///D:/Downloads/20240714220422.png" // 50%
+            //source: "file:///D:/Downloads/20240714220353.png" // 66%
+            source: "file:///D:/Downloads/20240714221015.png"
+            //source: "file:///D:/Downloads/20240714220726.png" // 80%
+        }
+        MultiEffect {
+             source: graph_image_sec
+             anchors.fill: graph_image_sec
+             brightness: -0.4
+             saturation: 0
 
+             //contrast: 0.5
+
+         }
         ListModel{
             id: pointsMod
         }
@@ -279,7 +302,6 @@ Window {
                 point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
 
             }
-
         }
         Rectangle{
             id:each_option_left
@@ -325,7 +347,7 @@ Window {
             }
             function createTriggerButton() {
                 var component = Qt.createComponent("Triggerable_Button.qml");
-                var sprite = component.createObject(second_window_form, {x: 100, y: 0});
+                var sprite = component.createObject(root, {x: 0, y: 0});
 
                 if (sprite === null) {
                     // Error Handling
@@ -987,13 +1009,57 @@ Window {
             anchors.centerIn: parent
         }
 
-        // Image {
-        //     id: unnamed2
-        //     anchors.fill: parent
-        //     source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
-        // }
+        Image {
+            width: 1000
+            height: 700
+            //opacity: 0.2
+            fillMode: Image.PreserveAspectFit
+            id: graph_image_fir
+            anchors.centerIn: parent
+            //source: "file:///C:/Users/Administrator/Desktop/graphImage.jpg" // 0%
+            //source: "file:///D:/Downloads/20240714220422.png" // 50%
+            //source: "file:///D:/Downloads/20240714220353.png" // 66%
+            source: "file:///" + appDir + "/20240714221015.png"
+            //source: "file:///D:/Downloads/20240714220726.png" // 80%
+        }
+        MultiEffect {
+             source: graph_image_fir
+             anchors.fill: graph_image_fir
+             brightness: -0.4
+             saturation: 0
+
+             //contrast: 0.5
+
+         }
+        Repeater{
+            id : pointsGenarating_fir
+            property int init_point_key: init_point_key = root.max_point_key
+            model:pointsMod.count
+            // x : index * 80
+            // Triggerable_Button{
+            //     anchors.fill: parent
+
+            //     button_text: index
+
+            // }
+
+            delegate: Triggerable_Button{
+                //console.log(pointsMod.get(index).point_key)
+                //y : 20
+                //id : index
+
+                index_of_point :pointsMod.get(index).point_key
+                button_text: pointsMod.get(index).point_key
+                //anchors.left: parent.left
+                //anchors.leftMargin: index * 40
 
 
+                point_x: pointsMod.get(index).point_addr_x-15 // 使用当前元素的 point_x
+
+                point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
+
+            }
+        }
         ButtonWithComponent{
             id:myButton_yinghuachengbao
             originalX:100
