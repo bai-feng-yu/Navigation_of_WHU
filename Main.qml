@@ -1402,6 +1402,7 @@ Window {
                 var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
                 var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
                 var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
+                console.log(path_cho.cur_chosen_key)
                 temppointallnum=all_point_key[path_cho.cur_chosen_key].length-1
                 if(kk[0]<temppointallnum){
                     var temppointxy11=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]])
@@ -1463,20 +1464,31 @@ Window {
                 }
                 else{
                     if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
-                        path_cho.visible = !path_cho.visible
-                        for(var t=0;t<temppointallnum;t++){
-                            for(var p=0;p<temppointallnum;p++){
-                                if(tempobject3[t][p]!==undefined){
-                                    tempobject3[t][p].opacity=0
+                         path_cho.visible = !path_cho.visible
+                        for(var o=0;o<temppointnum2;o++){
+                            for(var l=0;l<20;l++){
+                                if(tempobject3[o][l]!==undefined){
+                                    tempobject3[o][l].opacity=0
                                 }
-                                if(tempobject4[t][p]!==undefined){
-                                    tempobject4[t][p].opacity=0
+                                if(tempobject4[o][l]!==undefined){
+                                    tempobject4[o][l].opacity=0
+                                }
+                            }
+                        }
+                        for(var t=0;t<temppointnum2;t++){
+                            for(var p=0;p<20;p++){
+                                if(tempobject6[t][p]!==undefined){
+                                    tempobject6[t][p].opacity=0
+                                }
+                                if(tempobject5[t][p]!==undefined){
+                                    tempobject5[t][p].opacity=0
                                 }
                             }
                         }
                         clicknum2=0
                         timer2.stop()
                         timer3.stop()
+                        timer4.stop()
                         k1=0
                     }
                 }

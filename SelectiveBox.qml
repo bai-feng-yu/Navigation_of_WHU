@@ -4,6 +4,7 @@ import QtQuick.Controls.Windows
 Item {
     property alias selective_model: optional_points.model
     property alias cur_chosen_point: optional_points.currentText
+    property alias cur_chosen_key: optional_points.currentIndex
     visible: false
     x : 0
     y : 0

@@ -9,8 +9,8 @@ Item {
     property color tc
     Rectangle{
         id:tceee
-        x:startx
-        y:starty
+        x:startx-7.5
+        y:starty-7.5
         width: 15; height: 15
         color: tc
         opacity: 1.0
@@ -22,14 +22,14 @@ Item {
                 id: animateOpacity
                 target: tceee
                 properties: "x"
-                to: endx
+                to: endx-7.5
                 duration: 1000
            }
             NumberAnimation {
                 id: animateOpacity2
                 target: tceee
                 properties: "y"
-                to: endy
+                to: endy-7.5
                 duration: 1000
            }
         }
