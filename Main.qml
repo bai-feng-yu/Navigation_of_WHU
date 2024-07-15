@@ -28,7 +28,6 @@ Window {
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
     property var tempcolor: ["#E3170D","#9C661F","#FF8000","#A020F0","#DA70D6","#00C78C","#C76114","#228B22","#03A89E"]
     property int max_point_key : database.get_max_valid_point_key_from_points()
-    property int chosen_to_be_deleted_index: -1
     property var tempobject1: []
     property var tempobject2: []
     property var tempobject3: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
@@ -38,6 +37,9 @@ Window {
     property var temppointnum
     property var temppointnum2
     property var temppointallnum
+    property int choosen_del_point_index: -1
+
+
     property int i1: 0
     property int j1: 0
     property int k1: 0
@@ -99,11 +101,20 @@ Window {
         enabled: false
         width: parent.width
         height: parent.height
+        Image {
+            id: myImage
+            anchors.centerIn: parent
+            source: "file:///D:/QTproject/new/Navigation_of_WHU/ditu.jpg"
+        }
         property bool delete_button_pressed: false
         property bool delete_button_success: false
+        property bool delete_road_success: false
         property bool add_button_success: false
         property bool point_is_onrelease:false
         property bool start_to_add_point: false
+
+        property int path_num
+
         // Image {
         //     id: unnamed1
         //     anchors.fill: parent
@@ -193,6 +204,8 @@ Window {
                                             "road_name":database.get_road_name(road_key),
                                             "road_length":database.get_road_length(road_key),
                                             "start_point_name":database.get_point_name(i),
+                                            "start_point_key":i,
+                                            "end_point_key":j,
                                             "end_point_name":database.get_point_name(j),
                                             "start_point_add":Qt.point(start_x,start_y),
                                             "end_point_add":Qt.point(end_x,end_y)
@@ -201,23 +214,22 @@ Window {
                 }
             }
             console.log("pointMod count " + pointsMod.count)
+            console.log("path.count"+pathsMod.count)
+
         }
-        property alias exportedListModel: pathsMod
-        // Loader {
-        //     id: loader
-        //     source: "Triggerable_Button.qml"
-        //     anchors.fill: parent
-        // }
+
 
 
         Canvas {
             id: second_path_canvas
             anchors.fill: parent
+            property int clicked_count: 0
 
             onPaint: {
                 var ctx = getContext("2d");
                 ctx.strokeStyle = shuangyeRed;//颜色调整
                 ctx.lineWidth = 5;//路径宽度
+                second_window_form.path_num = pathsMod.count
                 for (var i = 0; i <pathsMod.count; ++i) {
                     var startPoint = pathsMod.get(i).start_point_add;
                     var endPoint = pathsMod.get(i).end_point_add;
@@ -229,6 +241,8 @@ Window {
             }
 
         }
+
+
 
 
         Rectangle{
@@ -299,7 +313,8 @@ Window {
         Repeater{
             id : pointsGenarating
             property int init_point_key: init_point_key = root.max_point_key
-            model:pointsMod.count
+
+            model:pointsMod
             // x : index * 80
             // Triggerable_Button{
             //     anchors.fill: parent
@@ -309,9 +324,7 @@ Window {
             // }
 
             delegate: Triggerable_Button{
-                //console.log(pointsMod.get(index).point_key)
-                //y : 20
-                //id : index
+
 
                 index_of_point :pointsMod.get(index).point_key
                 button_text: pointsMod.get(index).point_key
@@ -319,9 +332,11 @@ Window {
                 //anchors.leftMargin: index * 40
 
 
-                point_x: pointsMod.get(index).point_addr_x-15 // 使用当前元素的 point_x
+                point_x: pointsMod.get(index).point_addr_x-15// 使用当前元素的 point_x
 
                 point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
+
+
 
             }
         }
@@ -427,7 +442,7 @@ Window {
                     //anchors.topMargin: 0
                     onClicked: {
                         add_success_instruction.close()
-                         second_window_form.start_to_add_point=true
+                        second_window_form.start_to_add_point=true
                         second_window_form.add_button_success=true
                     }
                 }
@@ -448,6 +463,8 @@ Window {
             enabled: parent.enabled
             anchors.centerIn: second_window_form
             padding: 0
+            property int max_point_num: delete_finish_instruction.max_point_num=pointsMod.count
+
             Rectangle{
                 id: delete_finish_instruction_rec
                 width: delete_finish_instruction.width
@@ -484,15 +501,64 @@ Window {
                     x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_instruction_button.width) / 2
 
                     onClicked: {
+                        console.log("初始路数：：：："+second_window_form.path_num)
+                        // console.log("初始路数"+delete_finish_instruction.max_path_num)
+                        var del_point_name=database.get_point_name(choosen_del_point_index)
+
                         delete_finish_instruction.close()
+                        for(var i=0;i<delete_finish_instruction.max_point_num;i++)
+                        {
+                            if(pointsMod.get(i).point_key===choosen_del_point_index)
+                            {
+                                pointsMod.remove(i)
+                            }
+                        }
+                        database.del_point(del_point_name)
+                        console.log(choosen_del_point_index)
+
+                        for(var z=second_window_form.path_num-1;z>-1;z--)
+                        {
+                            console.log("当前下标"+z)
+                            console.log("各个起点"+pathsMod.get(z).start_point_name)
+                            console.log("各个终点"+pathsMod.get(z).end_point_name)
+                        }
+                        for(var j=second_window_form.path_num-1;j>-1;j--)
+                        {
+                            if(pathsMod.get(j) !== undefined && pathsMod.get(j).start_point_name===del_point_name)
+                            {
+                                console.log("被删除的起点："+pathsMod.get(j).start_point_name+","+del_point_name)
+                                var del_road_name=pathsMod.get(j).road_name
+                                console.log("删除的路线名"+del_road_name)
+
+
+                                pathsMod.remove(j)
+                                console.log("起点下标"+j)
+                                database.del_road(del_road_name)
+                                // console.log(delete_finish_instruction.max_path_num)
+                            }
+                            if(pathsMod.get(j) !== undefined&&pathsMod.get(j).end_point_name===del_point_name)
+                                //if(pathsMod.get(j).end_point_key==choosen_del_point_index)
+                            {
+                                console.log("被删除的重点："+pathsMod.get(j).start_point_name+","+del_point_name)
+                                //var del_road_name_two=pathsMod.get(j).road_name
+                                console.log("终点下标"+j)
+
+                                pathsMod.remove(j)
+                            }
+                        }
+                        console.log("删除完成后路的数量"+pathsMod.count)
+                        console.log("原本路数"+second_window_form.path_num)
+                        var ctx_1=second_path_canvas.getContext("2d")
+                        ctx_1.clearRect(0,0,second_path_canvas.width,second_path_canvas.height)
+                        second_path_canvas.requestPaint()
+                        var ctx_2=path_canvas.getContext("2d")
+                        ctx_2.clearRect(0,0,path_canvas.width,path_canvas.height)
+                        path_canvas.requestPaint()
+                        console.log("被删除的点"+choosen_del_point_index)
+
+
                         //修改listmodel中的信息
 
-
-
-
-
-
-                        //second_path_canvas.requestPaint()
                     }
                 }
             }
@@ -563,7 +629,7 @@ Window {
             width:400
             height:200
             modal:true
-           visible: second_window_form.point_is_onrelease&&second_window_form.start_to_add_point
+            visible: second_window_form.point_is_onrelease&&second_window_form.start_to_add_point
             enabled: parent.enabled
             anchors.centerIn: second_window_form
             padding: 0
@@ -887,6 +953,7 @@ Window {
                     var new_start_name=database.get_point_name(road_start_key)
                     var new_end_name=database.get_point_name(road_end_key)
                     console.log(road_length+"   "+road_name+" "+road_start_key+"  "+road_end_key+" "+new_start_x+" "+new_end_x)
+                    console.log(new_start_name+"   "+new_end_name)
 
                     if(new_start_x!==-1&&new_end_x!==-1)
                     {
@@ -898,6 +965,16 @@ Window {
                                             "road_length":road_length,
                                             "start_point_name":database.get_point_name(road_start_key),
                                             "end_point_name":database.get_point_name(road_end_key),
+                                            "start_point_add":Qt.point(new_start_x,new_start_y),
+                                            "end_point_add":Qt.point(new_end_x,new_end_y)
+
+                                        })
+                        pathsMod.append({
+                                            "road_key":road_max_key+1,
+                                            "road_name":road_name,
+                                            "road_length":road_length,
+                                            "start_point_name":database.get_point_name(road_end_key),
+                                            "end_point_name":database.get_point_name(road_start_key),
                                             "start_point_add":Qt.point(new_start_x,new_start_y),
                                             "end_point_add":Qt.point(new_end_x,new_end_y)
 
@@ -961,7 +1038,184 @@ Window {
                 }
             }
         }
+        Popup{//有误提示弹窗
+            id:not_del_road_success
+            width: 400
+            height:200
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: not_del_road_success_rec
+                width: not_del_road_success.width
+                height: not_del_road_success.height
 
+                Text {
+                    id: not_del_road_success_text
+                    text: "景点编号输入有误或不存在，请重新输入"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_del_road_success_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_del_road_success.close()
+                    }
+                }
+
+            }
+        }
+
+        Popup{//删除路径
+            id:delete_road_start
+            width: 400
+            height: 200
+            modal: true
+            visible: parent.visible && second_window_form.delete_road_success
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: delete_road_rec
+                width: delete_road_start.width
+                height: delete_road_start.height
+                Text{
+                    id : delete_road_text
+                    color: "white"
+                    font.family: "楷体"
+                    font.pointSize : 20
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    text: "请输入你要删除的路径信息:"
+                    x : delete_road_rec.x + (delete_road_rec.width - delete_road_text.width) / 2
+                }
+                MouseArea{
+                    anchors.fill: delete_road_start
+
+                }
+                Text {
+                    id: del_road_start
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    text: "起点编号："
+                    font.pointSize: 20
+                    x : delete_road_rec.x
+                    y:delete_road_text.y + delete_road_text.height+15
+                }
+                TextField{
+                    id:input_del_road_start
+                    visible: parent.visible
+                    enabled: parent.enabled
+                    width: 250
+                    height:add_road_name.hight
+                    x:del_road_start.width+delete_road_rec.x+10
+                    y:delete_road_text.y + delete_road_text.height+20
+                    background: Rectangle {
+                        radius: 4
+                        border.color: "steelblue"
+                    }
+                }
+                Text {
+                    id: del_road_end
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    text: "终点编号："
+                    font.pointSize: 20
+                    x : delete_road_rec.x
+                    y:input_del_road_start.y+input_del_road_start.height+25
+                }
+                TextField{
+                    id:input_del_road_end
+                    visible: parent.visible
+                    enabled: parent.enabled
+                    width: 250
+                    height:add_road_name.hight
+                    x:del_road_start.width+delete_road_rec.x+10
+                    y:input_del_road_start.y+input_del_road_start.height+30
+                    background: Rectangle {
+                        radius: 4
+                        border.color: "steelblue"
+                    }
+                }
+                Button{
+                    id: delete_road_button
+                    width: 80
+                    height: 40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    Text{
+                        font.family: "楷体"
+                        font.pointSize : 20
+                        color: "white"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        text: "OK"
+                        anchors.centerIn: delete_road_button
+                    }
+
+                    onClicked: {
+                        var del_road_start_key=input_del_road_start.text
+                        var del_road_end_key=input_del_road_end.text
+                        var del_road_key=database.get_road_key(del_road_start_key,del_road_end_key)
+                        // var del_road_key_two=database.get_road_key(del_road_end_key,del_road_start_key)
+                        //console.log(del_road_start_key+","+del_road_end_key)
+                        //console.log("删除路key"+del_road_key)
+                        var start_point_map=database.get_address_of_point(del_road_start_key);
+                        var del_start_x=start_point_map["addr_x"];
+                        var del_start_y=start_point_map["addr_y"];
+                        var end_point_map=database.get_address_of_point(del_road_end_key);
+                        var del_end_x=end_point_map["addr_x"];
+                        var del_end_y=end_point_map["addr_y"];
+                        if(del_road_key!==-1)
+                        {
+                            for(var i=pathsMod.count-1;i>-1;i--)
+                            {
+                                console.log("当前路key"+pathsMod.get(i).road_key)
+                                if(pathsMod.get(i).road_key===del_road_key)
+                                {
+                                    pathsMod.remove(i)
+                                    return;
+                                }
+                            }
+                            database.del_road(database.get_road_name(del_road_key))
+                            var ctx_1=second_path_canvas.getContext("2d")
+                            ctx_1.clearRect(0,0,second_path_canvas.width,second_path_canvas.height)
+                            second_path_canvas.requestPaint()
+                            var ctx_2=path_canvas.getContext("2d")
+                            ctx_2.clearRect(0,0,path_canvas.width,path_canvas.height)
+                            path_canvas.requestPaint()
+                        }
+                        else{
+                            not_del_road_success.visible=true
+
+                        }
+
+                        delete_road_start.close()
+
+                        second_window_form.delete_road_success=false
+                    }
+                }
+
+            }
+        }
 
         Rectangle{
             id:each_option_right_right
@@ -1001,12 +1255,17 @@ Window {
                     each_option_right_right.color = chengwuGrey
                 }
                 onClicked: {
+                    second_window_form.delete_road_success=true
+
 
 
                 }
             }
         }
+
+
     }
+
 
 
     Rectangle{
@@ -1015,6 +1274,11 @@ Window {
         enabled: true
         width: parent.width
         height: parent.height
+        /* Image {
+               id: first_myImage
+               anchors.centerIn: parent
+               source: "file:///D:/QTproject/new/Navigation_of_WHU/ditu.jpg"
+           }*/
         MediaPlayer {
             id: unnamed2
             loops: MediaPlayer.Infinite
@@ -1110,9 +1374,36 @@ Window {
                 carousel_pics_model: all_images_model[index]
             }
         }
+        Repeater{
+            id : first_pointsGenarating
+            //property int init_point_key: init_point_key = root.max_point_key
+
+            model:pointsMod
+            // x : index * 80
+            // Triggerable_Button{
+            //     anchors.fill: parent
+
+            //     button_text: index
+
+            // }
+
+            delegate: Triggerable_Button{
 
 
-        Label {
+                index_of_point :pointsMod.get(index).point_key
+                button_text: pointsMod.get(index).point_key
+                //anchors.left: parent.left
+                //anchors.leftMargin: index * 40
+
+
+                point_x: pointsMod.get(index).point_addr_x-15// 使用当前元素的 point_x
+
+                point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
+            }
+        }
+
+
+        /*Label {
             id: road_text_label
             visible: false
             Text{
@@ -1130,7 +1421,75 @@ Window {
                     GradientStop { position: 1.0; color: "lightblue" }
                 }
             }
+        }*/
+        Popup{
+            id:road_text
+            width: 200
+            height: 110
+            visible: false
+            Rectangle {
+                id : show_road_text_rec
+                anchors.centerIn: parent
+                width: 200
+                height: 110
+                color: Qt.rgba(1,1,1,0.5)
+                border.color: "steelblue"
+                border.width: 2
+                Column {
+                    //spacing: 10
+                    width: parent.width
+                    height: parent.height
+                    spacing: 6
+                    Text {
+                        id: show_road_name
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: show_road_text_rec.x + (show_road_text_rec.width - width) / 2
+                        y: show_road_text_rec.y+5
+                    }
+                    Text {
+                        id:show_road_length
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: show_road_text_rec.x + (show_road_text_rec.width - width) / 2
+                        y: show_road_text_rec.y
+                    }
+                    Text{
+                        id:show_road_start
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: show_road_text_rec.x + (show_road_text_rec.width - width) / 2
+                        y: show_road_text_rec.y
+
+                    }
+                    Text{
+                        id:show_road_end
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: show_road_text_rec.x + (show_road_text_rec.width - width) / 2
+                        y: show_road_text_rec.y
+
+                    }
+
+                }
+
+            }
         }
+
+
 
         Canvas {
             id: path_canvas
@@ -1173,14 +1532,22 @@ Window {
                             var clickRadius = 4; // 按需要调整
                             if (Math.abs(x - mouseX) <= clickRadius && Math.abs(y - mouseY) <= clickRadius) {
                                 // 调整label弹出的位置，目前在点击区域附件
-                                road_text_label.x = mouseX + 10;
-                                road_text_label.y = mouseY - road_text_label.height - 10;
-                                road_text_label.visible = true;
-                                road_text_label.text = "路名: " + pathsMod.get(i).road_name +
+                                road_text.x = mouseX + 10;
+                                road_text.y = mouseY - road_text.height - 10;
+                                road_text.visible = true;
+
+                                /*road_text_label.text = "路名: " + pathsMod.get(i).road_name +
                                         "\n长度: " + pathsMod.get(i).road_length +"米"+
                                         "\n起点: " + pathsMod.get(i).start_point_name +
-                                        "\n终点: " + pathsMod.get(i).end_point_name;
+                                        "\n终点: " + pathsMod.get(i).end_point_name;*/
+                                show_road_name.text="路名:"+pathsMod.get(i).road_name
+                                show_road_length.text="长度:"+pathsMod.get(i).road_length +"米"
+                                show_road_start.text="起点:"+pathsMod.get(i).start_point_name
+                                show_road_end.text="终点:"+pathsMod.get(i).end_point_name
                                 return;
+                            }
+                            else{
+                                road_text.visible=false
                             }
                         }
                     }
@@ -1842,9 +2209,6 @@ Window {
         ListModel{
             id : rating_model
         }
-
-
-
         Popup{
             id : to_rate_pop_up
             width: 200
@@ -2117,6 +2481,10 @@ Window {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom : parent.bottom
         onClicked: {
+            second_window_form.delete_button_success=false
+            second_window_form.delete_button_pressed=false
+            second_window_form.delete_road_success=false
+            //second_window_form.add_button_success=false
             disable_button_text.text = disable_button_text.text === "游客访问" ? "管理员访问" : "游客访问"
             first_window_form.visible = !first_window_form.visible;
             first_window_form.enabled = !first_window_form.enabled;
