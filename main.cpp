@@ -3,6 +3,7 @@
 #include <QGuiApplication> // 引入QGuiApplication类，用于GUI应用程序
 #include <QQmlApplicationEngine> // 引入QQmlApplicationEngine类，用于加载QML文件
 #include <QQmlContext> // 引入QQmlContext类，尽管在这段代码中未直接使用，但可能是为了说明或未来扩展
+#include <QDir>
 #include "Graph.h"
 
 int main(int argc, char *argv[]) // 主函数入口
@@ -17,6 +18,13 @@ int main(int argc, char *argv[]) // 主函数入口
     //qmlRegisterType<MagicPool>("an.utility", 1, 0, "MagicPool"); // 注册qml 可见类型
     QQmlApplicationEngine engine; // 创建QQmlApplicationEngine实例，用于加载和显示QML界面
     engine.rootContext()->setContextProperty("historyModel", &history_model); // 将model实例添加到QML环境的根上下文中，使其可以通过"historyModel"标识符在QML中访问
+
+
+    QString appDir = QCoreApplication::applicationDirPath();
+    QDir dir(appDir);
+    dir.cdUp();dir.cdUp();
+    QString DDir=dir.absolutePath();
+    engine.rootContext()->setContextProperty("appDir", DDir);
 
     const QUrl url(QStringLiteral("qrc:/Campus-Guide/Main.qml")); // 创建QUrl对象，指向QML文件的资源路径
     /* 异常处理 + 安全处理 */
@@ -33,3 +41,4 @@ int main(int argc, char *argv[]) // 主函数入口
 
     return app.exec(); // 进入应用程序的主事件循环，等待用户交互
 }
+

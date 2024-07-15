@@ -22,8 +22,20 @@ Item {
         console.log(index)
     }
 
+    function confirm_new_point(index,point_name,centerX,centerY){
+        //confirm_add_point.visible=true;
+        second_window_form.point_is_onrelease=true
+        database.expand_point(index,point_name,centerX,centerY,"")
+        console.log(index)
+
+    }
+
+
+
+
     Rectangle{
         id: circle_rect
+<<<<<<< HEAD
         width: buttonSize
         height: buttonSize
         radius:buttonSize/2

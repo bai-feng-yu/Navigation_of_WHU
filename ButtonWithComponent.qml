@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
-
+import QtQuick.Layouts
+import "D:/Documents/QTDocuments/downloadTest/Carousel.qml"
 /*
 创建组件语法：
 ButtonWithComponent{
@@ -28,6 +29,7 @@ Rectangle {
     property int originalY:0
     // 设置较高的z值
     property int zPriority: 1000
+
     x:originalX
     y:originalY
     z:zPriority
@@ -51,6 +53,120 @@ Rectangle {
     property string infoContext1:"暂无信息"
     property string infoContext2:""
     property string infoContext3:""//景点信息
+    property var carousel_pics_model
+
+
+    //点击按钮后显示的详细信息大弹窗
+    Component {
+        id: popupComponent
+        //固定弹窗大小
+        Rectangle {
+            width: 400
+            height: 300
+            color: Qt.rgba(244/255,255/255,243/255,1.0)
+            radius: 10
+            border.color: Qt.rgba(20/255,4/255,110/255,0.6)
+
+            //支持鼠标滚轮以及滑动条浏览
+            ScrollView {
+                anchors.fill: parent
+
+                contentWidth: contentText.width
+                contentHeight: contentText.height
+
+                Column{
+                    //spacing: 10
+                    Text{
+                        // anchors.top: myCarousel.bottom
+                        id:sceneName
+                        text:nameContext
+                        font.family:"楷体"
+                        font.weight:800
+                        font.pointSize: 25
+                        wrapMode: Text.WordWrap
+                    }
+
+                    Rectangle{
+                        id:lineBelowTitle1
+                        // y:sceneName.y+34
+                        // x:3
+                        width:200
+                        height:1
+                        color:"black"
+
+                    }
+                    Rectangle{
+                        id:lineBelowTitle2
+                        // y:sceneName.y+42
+                        // x:3
+                        width:200
+                        height:1
+                        color:"black"
+
+                    }
+
+                    Item{
+                        //anchors.centerIn: parent
+                        id:myCarousel
+                        width: 400
+                        height: 300
+                        Carousel{
+                            anchors.fill: parent
+                            delegate: Component{
+                                Image {
+                                    anchors.fill: parent
+                                    source: model.url
+                                    asynchronous: true
+                                    fillMode:Image.PreserveAspectCrop
+                                }
+                            }
+                            Layout.topMargin: 20
+                            Layout.leftMargin: 5
+                            Component.onCompleted: {
+                                model = carousel_pics_model
+                            }
+                        }
+                    }
+
+
+                    //图片
+                    // Image {
+                    //     id: sceneImage
+                    //     source:imageSource
+                    //     x:10
+                    //     y:lineBelowTitle2.y+4
+                    //     width:popupComponent.width-50
+                    //     property real aspectRatio: 1 // 默认宽高比，将在图片加载后更新
+                    //     onStatusChanged: {
+                    //         if (status === Image.Ready) {
+                    //             aspectRatio = sourceSize.width / sourceSize.height;
+                    //             height = width / aspectRatio;
+                    //         }
+                    //     }
+                    //     fillMode: Image.PreserveAspectFit // 保持比例的同时填充图片
+                    // }
+
+
+                    //具体信息
+                    Text {
+                        id: contentText
+                        width: 225
+                        // y:sceneImage.y+sceneImage.height+10
+                        // x:5
+                        text:infoContext1+'\n'+infoContext2+'\n'+infoContext3+"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                        font.family:"楷体"
+                        wrapMode: Text.WordWrap
+                    }
+
+                }
+            }
+
+            //标题
+
+
+        }
+    }
+
 
     //鼠标悬浮未点击时显示的小弹窗 显示坐标名字
     Component {
@@ -77,85 +193,7 @@ Rectangle {
         //}
     }
 
-    //点击按钮后显示的详细信息大弹窗
-    Component {
-        id: popupComponent
-        //固定弹窗大小
-        Rectangle {
-            width: 250
-            height: 300
-            color: Qt.rgba(244/255,255/255,243/255,1.0)
-            radius: 10
-            border.color: Qt.rgba(20/255,4/255,110/255,0.6)
 
-            //支持鼠标滚轮以及滑动条浏览
-            ScrollView {
-                anchors.fill: parent
-
-                contentWidth: contentText.width
-                contentHeight: contentText.height
-
-                //标题
-                Text{
-                    y:10
-                    x:5
-                    id:sceneName
-                    text:nameContext
-                    font.family:"楷体"
-                    font.weight:800
-                    font.pointSize: 25
-                    wrapMode: Text.WordWrap
-                }
-
-                Rectangle{
-                    id:lineBelowTitle1
-                    y:sceneName.y+34
-                    x:3
-                    width:200
-                    height:1
-                    color:"black"
-
-                }
-                Rectangle{
-                    id:lineBelowTitle2
-                    y:sceneName.y+42
-                    x:3
-                    width:200
-                    height:1
-                    color:"black"
-
-                }
-                //图片
-                Image {
-                    id: sceneImage
-                    source:imageSource
-                    x:10
-                    y:lineBelowTitle2.y+4
-                    width:popupComponent.width-50
-                    property real aspectRatio: 1 // 默认宽高比，将在图片加载后更新
-                    onStatusChanged: {
-                        if (status === Image.Ready) {
-                            aspectRatio = sourceSize.width / sourceSize.height;
-                            height = width / aspectRatio;
-                        }
-                    }
-                    fillMode: Image.PreserveAspectFit // 保持比例的同时填充图片
-                }
-
-                //具体信息
-                Text {
-                    id: contentText
-                    width: 225
-                    y:sceneImage.y+sceneImage.height+10
-                    x:5
-                    text:infoContext1+'\n'+infoContext2+'\n'+infoContext3+"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-                    font.family:"楷体"
-                    wrapMode: Text.WordWrap
-                }
-
-            }
-        }
-    }
 
 
 
