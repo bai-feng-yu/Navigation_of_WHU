@@ -55,35 +55,40 @@ Item {
                     second_window_form.delete_button_pressed = ! second_window_form.delete_button_pressed
                     second_window_form.delete_button_success = true
                     delete_finish_instruction.open()
-                    database.del_point(index_of_point)
-                    database.del_road(index_of_point)
+                    choosen_del_point_index=index_of_point
+                    console.log("被选择"+choosen_del_point_index)
+
+
+
 
 
                 }
+
+
+
 
             }
             onReleased: {
 
                 console.log("确认" + (++circle_rect.count))
                 console.log("最大点为"+root.max_point_key)
+                var centerX=circle_rect.x+15
+                var centerY=circle_rect.y+15
+                var point_name=""
 
                 if(second_window_form.add_button_success)
                 {
-                    var centerX=circle_rect.x+15
-                    var centerY=circle_rect.y+15
-                    var point_name=""
-                    if(index_of_point>database.get_max_valid_point_key_from_points())
-                    {
-                        confirm_new_point(index_of_point,point_name,centerX,centerY)
-                        console.log("添加的点坐标为"+centerX+","+centerY)
-                        console.log(index_of_point)
-                       // second_window_form.point_is_onrelease=true
 
-                    }
-                    else
-                    {        console.log("更新原有的点，新点坐标为"+centerX+","+centerY)
+                    index_of_point>database.get_max_valid_point_key_from_points()?
+                        confirm_new_point(index_of_point,point_name,centerX,centerY):
                         database.update_point_add(index_of_point,centerX,centerY)
-                    }
+
+                   //console.log("更新原有的点，新点坐标为"+centerX+","+centerY)
+                }
+                 //console.log("更新原有的点坐标"+centerX+","+centerY)
+                if(index_of_point<=database.get_max_valid_point_key_from_points())
+                {
+                    console.log("更新原有的点坐标"+centerX+","+centerY)
                 }
 
 
