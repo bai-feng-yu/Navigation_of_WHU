@@ -200,7 +200,7 @@ Item {
 
                         // circle_rect.x+=/*point_x + */(afterSize - originalSize) / 2
                         // circle_rect.y+=/*point_y + */(afterSize - originalSize) / 2
-                        circle_rect.draggable=true
+                        //circle_rect.draggable=true
                     }
                     else {
                         // 否则，显示大弹窗
@@ -224,7 +224,7 @@ Item {
 
                         circle_rect.x -=/* point_x - */(afterSize - originalSize) / 2
                         circle_rect.y -=/* point_y - */(afterSize - originalSize) / 2
-                        circle_rect.draggable=false
+                        //circle_rect.draggable=false
 
                     }
                 }
