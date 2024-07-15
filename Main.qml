@@ -3,7 +3,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtMultimedia
-
+import QtQuick.Effects
 //import an.utility
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 import "C:/Users/admin/Desktop/Navigation_of_WHU/Triggerable_Button.qml"
@@ -26,17 +26,24 @@ Window {
     property color qiuguiYellow: Qt.rgba(255/255,163/255,0/255,0.5)
     property color chengwuGrey: Qt.rgba(193/255,198/255,200/255,0.5)
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
+    property var tempcolor: ["#E3170D","#9C661F","#FF8000","#A020F0","#DA70D6","#00C78C","#C76114","#228B22","#03A89E"]
     property int max_point_key : database.get_max_valid_point_key_from_points()
-
     property var tempobject1: []
     property var tempobject2: []
     property var tempobject3: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     property var tempobject4: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]//临时储存点
+    property var tempobject5: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+    property var tempobject6: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     property var temppointnum
+    property var temppointnum2
     property var temppointallnum
     property int choosen_del_point_index: -1
 
 
+    property int i1: 0
+    property int j1: 0
+    property int k1: 0
+    property var kk: [0,0]
 
 
     Graph{
@@ -57,7 +64,7 @@ Window {
         var rating_datas = database.get_score()
         for(var j = 0; j < rating_datas.length; j++){
             var point_name = rating_datas[j].point_name
-            var score = rating_datas[j].score
+            var score = Math.floor(rating_datas[j].score * 10) / 10
             var people_num = rating_datas[j].people_num
             rating_model.append({
                                     "point_name" :point_name,
@@ -68,7 +75,13 @@ Window {
         }
 
     }
-
+    onTemppointnum2Changed: {
+        path_cho.selective_model.clear()
+        for (var i = 0; i < temppointnum2; i++) {
+            path_cho.selective_model.append({ "text": "路径"+i })
+        }
+        path_cho.selective_model.append({ "text": "全部路径" })
+    }
     Rectangle{
         id: second_window_form
         visible: false
@@ -97,6 +110,8 @@ Window {
         //     /*-------------------------------------------------------------------------------------------------------*/
 
         // }
+
+
         MediaPlayer {
             id: unnamed1
             loops: MediaPlayer.Infinite
@@ -112,7 +127,28 @@ Window {
             width: root.width;
             anchors.centerIn: parent
         }
+        Image {
+            width: 1000
+            height: 700
+            //opacity: 0.2
+            fillMode: Image.PreserveAspectFit
+            id: graph_image_sec
+            anchors.centerIn: parent
+            //source: "file:///C:/Users/Administrator/Desktop/graphImage.jpg" // 0%
+            //source: "file:///D:/Downloads/20240714220422.png" // 50%
+            //source: "file:///D:/Downloads/20240714220353.png" // 66%
+            source: "file:///D:/Downloads/20240714221015.png"
+            //source: "file:///D:/Downloads/20240714220726.png" // 80%
+        }
+        MultiEffect {
+             source: graph_image_sec
+             anchors.fill: graph_image_sec
+             brightness: -0.4
+             saturation: 0
 
+             //contrast: 0.5
+
+         }
         ListModel{
             id: pointsMod
         }
@@ -290,9 +326,6 @@ Window {
 
 
             }
-
-
-
         }
         Rectangle{
             id:each_option_left
@@ -1249,13 +1282,57 @@ Window {
             anchors.centerIn: parent
         }
 
-        // Image {
-        //     id: unnamed2
-        //     anchors.fill: parent
-        //     source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
-        // }
+        Image {
+            width: 1000
+            height: 700
+            //opacity: 0.2
+            fillMode: Image.PreserveAspectFit
+            id: graph_image_fir
+            anchors.centerIn: parent
+            //source: "file:///C:/Users/Administrator/Desktop/graphImage.jpg" // 0%
+            //source: "file:///D:/Downloads/20240714220422.png" // 50%
+            //source: "file:///D:/Downloads/20240714220353.png" // 66%
+            source: "file:///" + appDir + "/20240714221015.png"
+            //source: "file:///D:/Downloads/20240714220726.png" // 80%
+        }
+        MultiEffect {
+             source: graph_image_fir
+             anchors.fill: graph_image_fir
+             brightness: -0.4
+             saturation: 0
+
+             //contrast: 0.5
+
+         }
+        Repeater{
+            id : pointsGenarating_fir
+            property int init_point_key: init_point_key = root.max_point_key
+            model:pointsMod.count
+            // x : index * 80
+            // Triggerable_Button{
+            //     anchors.fill: parent
+
+            //     button_text: index
+
+            // }
+
+            delegate: Triggerable_Button{
+                //console.log(pointsMod.get(index).point_key)
+                //y : 20
+                //id : index
+
+                index_of_point :pointsMod.get(index).point_key
+                button_text: pointsMod.get(index).point_key
+                //anchors.left: parent.left
+                //anchors.leftMargin: index * 40
 
 
+                point_x: pointsMod.get(index).point_addr_x-15 // 使用当前元素的 point_x
+
+                point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
+
+            }
+        }
         ButtonWithComponent{
             id:myButton_yinghuachengbao
             originalX:100
@@ -1500,6 +1577,61 @@ Window {
             x:160
             selective_model: ListModel{}
         }
+        SelectiveBox{
+            id:path_cho
+            width: 150
+            height: 30
+            y:0
+            x:500
+            selective_model: ListModel{}
+        }
+        Timer{
+            id:timer1
+            interval: 1000
+            repeat: true
+            running:false
+            triggeredOnStart: true
+            onTriggered: {
+                var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                var shortest_point_key=database.inquire_shortest_road(tempstartpoint,tempendpoint)
+                console.log(tempstartpoint+" "+tempendpoint)
+                temppointnum=shortest_point_key.length-1
+                if(i1<temppointnum){
+                    var temppointxy11=database.get_address_of_point(shortest_point_key[i1].point_key)
+                    var temppointxy22=database.get_address_of_point(shortest_point_key[i1+1].point_key)
+                    console.log(shortest_point_key[i1].point_key+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
+                    console.log(shortest_point_key[i1+1].point_key+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
+                    var component2 = Qt.createComponent("shortestpath_animation.qml");
+                    if (component2.status === Component.Ready) {
+                        tempobject2[i1]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                    starty:temppointxy11.addr_y,
+                                                                    endx:temppointxy22.addr_x,
+                                                                    endy:temppointxy22.addr_y,
+                                                                    tc:tempcolor[8]});
+                    }
+                    i1+=1
+                }
+                if(j1<temppointnum){
+                    var temppointxy1=database.get_address_of_point(shortest_point_key[j1].point_key)
+                    var temppointxy2=database.get_address_of_point(shortest_point_key[j1+1].point_key)
+                    console.log(shortest_point_key[j1].point_key+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
+                    console.log(shortest_point_key[j1+1].point_key+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
+                    var component1 = Qt.createComponent("shortestpath_line.qml");
+                    if (component1.status === Component.Ready){
+                        tempobject1[j1]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                    sy:temppointxy1.addr_y,
+                                                                    ex:temppointxy2.addr_x,
+                                                                    ey:temppointxy2.addr_y,
+                                                                    tc:tempcolor[3]});
+                        if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
+                            tempobject1[j1].transformOrigin="BottomRight"
+                        }
+                    }
+                    j1+=1
+                }
+            }
+        }
         Button{
             property int clicknum1: 0
             id:shortest_search
@@ -1522,40 +1654,7 @@ Window {
             onClicked: {
                 if(clicknum1===0){
                     if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
-                        var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
-                        var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
-                        var shortest_point_key=database.inquire_shortest_road(tempstartpoint,tempendpoint)
-                        console.log(tempstartpoint+" "+tempendpoint)
-                        temppointnum=shortest_point_key.length-1
-                        for(var i=0;i<shortest_point_key.length-1;i++){
-                            var temppointxy11=database.get_address_of_point(shortest_point_key[i].point_key)
-                            var temppointxy22=database.get_address_of_point(shortest_point_key[i+1].point_key)
-                            console.log(shortest_point_key[i].point_key+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
-                            console.log(shortest_point_key[i+1].point_key+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
-                            var component2 = Qt.createComponent("shortestpath_animation.qml");
-                            if (component2.status === Component.Ready) {
-                                tempobject2[i]= component2.createObject(parent,{startx:temppointxy11.addr_x,
-                                                                            starty:temppointxy11.addr_y,
-                                                                            endx:temppointxy22.addr_x,
-                                                                            endy:temppointxy22.addr_y});
-                            }
-                        }
-                        for(var j=0;j<shortest_point_key.length-1;j++){
-                            var temppointxy1=database.get_address_of_point(shortest_point_key[j].point_key)
-                            var temppointxy2=database.get_address_of_point(shortest_point_key[j+1].point_key)
-                            console.log(shortest_point_key[j].point_key+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
-                            console.log(shortest_point_key[j+1].point_key+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
-                            var component1 = Qt.createComponent("shortestpath_line.qml");
-                            if (component1.status === Component.Ready){
-                                tempobject1[j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
-                                                                            sy:temppointxy1.addr_y,
-                                                                            ex:temppointxy2.addr_x,
-                                                                            ey:temppointxy2.addr_y});
-                                if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
-                                    tempobject1[j].transformOrigin="BottomRight"
-                                }
-                            }
-                        }
+                        timer1.restart()
                         clicknum1+=1
                     }
                 }
@@ -1565,6 +1664,113 @@ Window {
                         tempobject2[k].opacity=0
                     }
                     clicknum1=0
+                    timer1.stop()
+                    i1=0
+                    j1=0
+                }
+
+            }
+        }
+        Timer{
+            id:timer2
+            interval: 1000
+            repeat: true
+            running:false
+            triggeredOnStart: true
+            onTriggered: {
+                var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
+                if(k1<temppointnum2){
+                    temppointallnum=all_point_key[k1].length-1
+                    if(kk[0]===temppointallnum){
+                        timer3.restart()
+                        k1+=1
+                        kk[0]=0
+                    }
+                    else if(k1===0){
+                        timer3.restart()
+                    }
+                }
+                else if(k1===temppointnum2){
+                    timer3.stop()
+                }
+            }
+        }
+        Timer{
+            id:timer3
+            interval: 1000
+            repeat: true
+            running:false
+            triggeredOnStart: true
+            onTriggered: {
+                var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
+                if(kk[0]<temppointallnum){
+                    var temppointxy11=database.get_address_of_point(all_point_key[k1][kk[0]])
+                    var temppointxy22=database.get_address_of_point(all_point_key[k1][kk[0]+1])
+                    var component2 = Qt.createComponent("shortestpath_animation.qml");
+                    if (component2.status === Component.Ready) {
+                        tempobject3[k1][kk[0]]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                       starty:temppointxy11.addr_y,
+                                                                       endx:temppointxy22.addr_x,
+                                                                       endy:temppointxy22.addr_y,
+                                                                       tc:tempcolor[k1+2]});
+                    }
+                    var temppointxy1=database.get_address_of_point(all_point_key[k1][kk[0]])
+                    var temppointxy2=database.get_address_of_point(all_point_key[k1][kk[0]+1])
+                    var component1 = Qt.createComponent("shortestpath_line.qml");
+                    if (component1.status === Component.Ready){
+                        tempobject4[k1][kk[0]]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                       sy:temppointxy1.addr_y,
+                                                                       ex:temppointxy2.addr_x,
+                                                                       ey:temppointxy2.addr_y,
+                                                                       tc:tempcolor[k1]});
+                        if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
+                            tempobject4[k1][kk[0]].transformOrigin="BottomRight"
+                        }
+                    }
+                    kk[0]+=1
+                }
+            }
+        }
+        Timer{
+            id:timer4
+            interval: 1000
+            repeat: true
+            running:false
+            triggeredOnStart: true
+            onTriggered: {
+                var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
+                temppointallnum=all_point_key[path_cho.cur_chosen_key].length-1
+                if(kk[0]<temppointallnum){
+                    var temppointxy11=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]])
+                    var temppointxy22=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]+1])
+                    var component2 = Qt.createComponent("shortestpath_animation.qml");
+                    if (component2.status === Component.Ready) {
+                        tempobject5[path_cho.cur_chosen_key][kk[0]]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                       starty:temppointxy11.addr_y,
+                                                                       endx:temppointxy22.addr_x,
+                                                                       endy:temppointxy22.addr_y,
+                                                                       tc:tempcolor[k1+2]});
+                    }
+                    var temppointxy1=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]])
+                    var temppointxy2=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]+1])
+                    var component1 = Qt.createComponent("shortestpath_line.qml");
+                    if (component1.status === Component.Ready){
+                        tempobject6[path_cho.cur_chosen_key][kk[0]]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                       sy:temppointxy1.addr_y,
+                                                                       ex:temppointxy2.addr_x,
+                                                                       ey:temppointxy2.addr_y,
+                                                                       tc:tempcolor[path_cho.cur_chosen_key]});
+                        if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
+                            tempobject6[path_cho.cur_chosen_key][kk[0]].transformOrigin="BottomRight"
+                        }
+                    }
+                    kk[0]+=1
                 }
             }
         }
@@ -1590,63 +1796,98 @@ Window {
             onClicked: {
                 if(clicknum2===0){
                     if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        path_cho.visible = !path_cho.visible
                         var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
                         var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
                         var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
-                        console.log(tempstartpoint+" "+tempendpoint)
-                        temppointnum=all_point_key.length
-
-                        for(var i=0;i<temppointnum;i++){
-                            console.log("路径"+(i+1)+":")
-                            temppointallnum=all_point_key[i].length-1
-                            console.log(temppointallnum)
-                            for(var k=0;k<temppointallnum;k++){
-                                var temppointxy11=database.get_address_of_point(all_point_key[i][k])
-                                var temppointxy22=database.get_address_of_point(all_point_key[i][k+1])
-                                console.log(all_point_key[i][k]+":"+temppointxy11.addr_x+","+temppointxy11.addr_y)
-                                console.log(all_point_key[i][k+1]+":"+temppointxy22.addr_x+","+temppointxy22.addr_y)
-                                var component2 = Qt.createComponent("shortestpath_animation.qml");
-                                if (component2.status === Component.Ready) {
-                                    tempobject3[i][k]= component2.createObject(parent,{startx:temppointxy11.addr_x,
-                                                                                   starty:temppointxy11.addr_y,
-                                                                                   endx:temppointxy22.addr_x,
-                                                                                   endy:temppointxy22.addr_y});
-                                }
-                            }
-                            for(var j=0;j<temppointallnum;j++){
-                                var temppointxy1=database.get_address_of_point(all_point_key[i][j])
-                                var temppointxy2=database.get_address_of_point(all_point_key[i][j+1])
-                                console.log(all_point_key[i][j]+":"+temppointxy1.addr_x+","+temppointxy1.addr_y)
-                                console.log(all_point_key[i][j+1]+":"+temppointxy2.addr_x+","+temppointxy2.addr_y)
-                                var component1 = Qt.createComponent("shortestpath_line.qml");
-                                if (component1.status === Component.Ready){
-                                    tempobject4[i][j]= component1.createObject(parent,{sx:temppointxy1.addr_x,
-                                                                                   sy:temppointxy1.addr_y,
-                                                                                   ex:temppointxy2.addr_x,
-                                                                                   ey:temppointxy2.addr_y});
-                                    if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
-                                        tempobject4[i][j].transformOrigin="BottomRight"
-                                    }
-                                }
-                            }
-                        }
-
+                        temppointnum2=all_point_key.length
                         clicknum2+=1
                     }
                 }
                 else{
-                    for(var t=0;t<temppointnum;t++){
-                        for(var p=0;p<temppointallnum;p++){
-                            if(tempobject3[t][p]!==undefined){
-                                tempobject3[t][p].opacity=0
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        path_cho.visible = !path_cho.visible
+                        for(var t=0;t<temppointallnum;t++){
+                            for(var p=0;p<temppointallnum;p++){
+                                if(tempobject3[t][p]!==undefined){
+                                    tempobject3[t][p].opacity=0
+                                }
+                                if(tempobject4[t][p]!==undefined){
+                                    tempobject4[t][p].opacity=0
+                                }
                             }
-                            if(tempobject4[t][p]!==undefined){
-                                tempobject4[t][p].opacity=0
-                            }
-
+                        }
+                        clicknum2=0
+                        timer2.stop()
+                        timer3.stop()
+                        k1=0
+                    }
+                }
+            }
+        }
+        Button{
+            property int clicknum3: 0
+            id:allpath_search_for
+            Text{
+                font.family: "楷体"
+                font.pixelSize: 20
+                style: Text.Outline
+                styleColor: "steelblue"
+                color: "white"
+                anchors.centerIn: parent
+                text: qsTr("显示")
+            }
+            visible: start_pos.visible
+            enabled: start_pos.enabled
+            width: 140
+            height: 30
+            y : 60
+            anchors.left: end_pos.right
+            anchors.leftMargin: 20
+            onClicked: {
+                if(clicknum3===0){
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        if(path_cho.cur_chosen_point==="全部路径"){
+                            kk[0]=0
+                            timer2.start()
+                            clicknum3+=1
+                        }
+                        else if(path_cho.cur_chosen_point===""){kk[0]=0}
+                        else {
+                            kk[0]=0
+                            timer4.restart()
+                            clicknum3+=1
                         }
                     }
-                    clicknum2=0
+                }
+                else{
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        for(var o=0;o<temppointnum2;o++){
+                            for(var l=0;l<20;l++){
+                                if(tempobject3[o][l]!==undefined){
+                                    tempobject3[o][l].opacity=0
+                                }
+                                if(tempobject4[o][l]!==undefined){
+                                    tempobject4[o][l].opacity=0
+                                }
+                            }
+                        }
+                        for(var t=0;t<temppointnum2;t++){
+                            for(var p=0;p<20;p++){
+                                if(tempobject6[t][p]!==undefined){
+                                    tempobject6[t][p].opacity=0
+                                }
+                                if(tempobject5[t][p]!==undefined){
+                                    tempobject5[t][p].opacity=0
+                                }
+                            }
+                        }
+                        clicknum3=0
+                        timer2.stop()
+                        timer3.stop()
+                        timer4.stop()
+                        k1=0
+                    }
                 }
             }
         }
@@ -1940,7 +2181,7 @@ Window {
             // enabled: parent.enabled
             // visible: parent.visible
             ListView {
-                id: rating_list
+                id:rating_list
                 width: 200  // ListView 的宽度
                 height: 200 // ListView 的高度
                 snapMode: ListView.SnapOneItem // 确保一次只展示一个项目
@@ -2046,6 +2287,11 @@ Window {
 
                 // Optional: Adjust the contentWidth to ensure smooth scrolling
                 contentWidth: width * model.count
+
+                onMovementEnded:{
+                    currentIndex = rating_list.contentX/rating_list.width
+
+                }
             }
 
         }
@@ -2066,6 +2312,7 @@ Window {
 
                 }
                 StarRating{
+                    id : new_rate
                     backgroundColor: "white"
                 }
                 Rectangle{
@@ -2087,15 +2334,34 @@ Window {
                         onClicked: {
                             console.log("评分成功!")
                             //to_rate_pop_up.open()
+
+                            /*更新显示数据*/
+                            var currItem = rating_model.get(rating_list.currentIndex)
+                            currItem.people_num += 1
+                            currItem.score = ((currItem.score * (currItem.people_num - 1) + new_rate.starCount) / currItem.people_num)
+                            currItem.score = Math.floor(currItem.score * 10) / 10
+                            var curItem_key = database.get_point_key(currItem.point_name)
+                            database.add_score(curItem_key, currItem.score)
+
                             rate_success_instruction.open()
                             rating_pop_up.close()
-                            /*更新显示数据*/
-
                         }
                     }
                 }
             }
         }
+        // Timer {
+        //         interval: 100
+        //         running: true
+        //         repeat: true
+        //         onTriggered: {
+        //             // Update the visibleIndex based on horizontal scroll
+        //             var visibleIndex = Math.floor(rating_list.contentX / rating_list.delegate.width);
+        //             if (visibleIndex >= 0 && visibleIndex < myModel.count) {
+        //                 rating_list.currentIndex = visibleIndex;
+        //             }
+        //         }
+        //     }
         Popup{
             id: rate_success_instruction
             width: 120
