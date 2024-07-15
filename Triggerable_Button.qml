@@ -32,12 +32,6 @@ Item {
         border.color : "blue"
         x:point_x
         y:point_y
-        property real centerX: circle_rect.width / 2
-        property real centerY: circle_rect.height / 2
-
-            // 将 centerX 和 centerY 转换为全局坐标
-        property real globalCenterX: mapToGlobal(Qt.point(centerX, centerY)).x + 15
-        property real globalCenterY: mapToGlobal(Qt.point(centerX, centerY)).y + 15
         property int count: 0
         property bool draggable: true
 
@@ -90,7 +84,6 @@ Item {
                     var point_name=""
                     if(index_of_point>database.get_max_valid_point_key_from_points())
                     {
-                        //confirm_new_point(index_of_point,point_name,circle_rect.globalCenterX,circle_rect.globalCenterY)
                         confirm_new_point(index_of_point,point_name, centerX, centerY)
                         console.log("添加的点坐标为"+centerX+","+centerY)
                         console.log(index_of_point)

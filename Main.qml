@@ -39,7 +39,13 @@ Window {
     property int j1: 0
     property int k1: 0
     property var kk: [0,0]
-
+    property string images_common_prefix: "file:///" + appDir + "/SceneryPics/"
+    property var images_special_prefix_arr: ["dielou/","jisuanjixueyuan/","laotushuguan/","linbomen/","luojiashan/",
+                                             "paifang/","wanlin/","xinghu/","xingzhenlou/","zhangzhidongdiaoxiang/","zongtushuguan/"]
+    property var temp_image_model
+    property var all_images_model: [ // string_array
+        [], [], [], [], [], [],[], [], [], [], []
+    ]
 
     Graph{
         id:database
@@ -67,6 +73,13 @@ Window {
                                     "people_num" : people_num
 
                                 })
+        }
+        /*------------- 景点所有图片路径初始化 -----------------------*/
+        for(var k = 0; k< 11;k++){
+            for(var z=0;z<3;z++){
+                all_images_model[k][z] = {"url": Qt.resolvedUrl(images_common_prefix + images_special_prefix_arr[k] + (z+1) + ".jpg")}
+                //console.log(all_images_model[k][z].url)
+            }
         }
 
     }
@@ -96,7 +109,7 @@ Window {
             id: unnamed1
             loops: MediaPlayer.Infinite
             //anchors.fill: parent
-            source: "file:///D:/Downloads/Lone_Cherry_Blossom.mp4"
+            source: "file:///" + appDir + "/Lone_Cherry_Blossom.mp4"
             videoOutput: videoOutput2
 
             audioOutput: AudioOutput{}
@@ -117,7 +130,7 @@ Window {
             //source: "file:///C:/Users/Administrator/Desktop/graphImage.jpg" // 0%
             //source: "file:///D:/Downloads/20240714220422.png" // 50%
             //source: "file:///D:/Downloads/20240714220353.png" // 66%
-            source: "file:///D:/Downloads/20240714221015.png"
+            source: "file:///" + appDir + "/GraphImage.png"
             //source: "file:///D:/Downloads/20240714220726.png" // 80%
         }
         MultiEffect {
@@ -997,7 +1010,7 @@ Window {
             id: unnamed2
             loops: MediaPlayer.Infinite
             //anchors.fill: parent
-            source: "file:///D:/Downloads/68363-528670466_small.mp4"
+            source: "file:///" + appDir + "/68363-528670466_small.mp4"
             videoOutput: videoOutput
 
             audioOutput: AudioOutput{}
@@ -1019,7 +1032,7 @@ Window {
             //source: "file:///C:/Users/Administrator/Desktop/graphImage.jpg" // 0%
             //source: "file:///D:/Downloads/20240714220422.png" // 50%
             //source: "file:///D:/Downloads/20240714220353.png" // 66%
-            source: "file:///" + appDir + "/20240714221015.png"
+            source: "file:///" + appDir + "/GraphImage.png"
             //source: "file:///D:/Downloads/20240714220726.png" // 80%
         }
         MultiEffect {
@@ -1060,21 +1073,32 @@ Window {
 
             }
         }
-        ButtonWithComponent{
-            id:myButton_yinghuachengbao
-            originalX:100
-            originalY:100
-            nameContext: "武汉大学"
-            infoContext1: "介绍1"
-            infoContext2: "介绍2"
-            infoContext3: "介绍3"
-            Component.onCompleted: {
-                carousel_pics_model = [
-                            {url:"file:///C:/Users/Administrator/Desktop/yinhua1.jpg"},
-                            {url:"file:///C:/Users/Administrator/Desktop/yinhua2.jpg"},
-                            {url:"file:///C:/Users/Administrator/Desktop/yinhua3.jpg"},
-                            {url:"file:///C:/Users/Administrator/Desktop/yinhua4.jpg"}
-                        ]
+
+
+        // ButtonWithComponent{
+        //     id:myButton_yinghuachengbao
+        //     originalX:100
+        //     originalY:100
+        //     nameContext: "武汉大学"
+        //     infoContext1: "介绍1"
+        //     infoContext2: "介绍2"
+        //     infoContext3: "介绍3"
+
+        //     carousel_pics_model : [
+        //                 {url:"file:///" + appDir + "/yinhua1.jpg"},
+        //                 {url:"file:///" + appDir + "/yinhua2.jpg"},
+        //                 {url:"file:///" + appDir + "/yinhua3.jpg"},
+        //                 {url:"file:///" + appDir + "/yinhua4.jpg"},
+        //     ]
+
+        // }
+        Repeater{
+            id : carousel_image_init
+            model: all_images_model
+            delegate: ButtonWithComponent{
+                originalY : 100
+                originalX : index * 100
+                carousel_pics_model: all_images_model[index]
             }
         }
 
