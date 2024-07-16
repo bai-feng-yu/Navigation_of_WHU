@@ -38,7 +38,9 @@ Window {
     property var temppointnum2
     property var temppointallnum
     property int choosen_del_point_index: -1
-
+    property var searched_point_name
+    property int searched_score
+    property int searched_scored_people_num
 
     property int i1: 0
     property int j1: 0
@@ -76,7 +78,7 @@ Window {
     }
 
     Component.onCompleted: {
-        var locations = database.get_all_names_of_points(10)
+        var locations = database.get_all_names_of_points(11)
         start_pos.selective_model.clear()
         for (var i = 0; i < locations.length; i++) {
             start_pos.selective_model.append({ "text": locations[i] })
@@ -2073,6 +2075,114 @@ Window {
                 }
             }
         }
+
+        Popup{
+            id : to_search_for_point_info
+            anchors.centerIn: first_window_form
+            width: 200
+            height: 200
+            Rectangle {
+                id : to_search_for_point_info_rec
+                width: 200
+                height: to_search_for_point_info.height
+                color: Qt.rgba(1,1,1,0.5)
+                border.color: "steelblue"
+                border.width: 2
+                anchors.centerIn: parent
+                Column {
+                    width: parent.width
+                    height: parent.height
+                    spacing: 0
+                    Text {
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        text: searched_point_name
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: to_search_for_point_info_rec.x + (to_search_for_point_info_rec.width - width) / 2
+                        y: to_search_for_point_info_rec.y
+                    }
+
+                    Text {
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        text: "历史评分: " + searched_score
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: to_search_for_point_info_rec.x + (to_search_for_point_info_rec.width - width) / 2
+                        y: to_search_for_point_info_rec.y
+                    }
+
+                    Text {
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        text: "历史评分人数: " + searched_scored_people_num
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: to_search_for_point_info_rec.x + (to_search_for_point_info_rec.width - width) / 2
+                        y: to_search_for_point_info_rec.y
+                    }
+
+                    StarRating {
+                        id: rated_star_for_search
+                        starCount: searched_score
+                        editable: false
+                        //anchors.horizontalCenter: parent.horizontalCenter
+                        //anchors.top: Text.bottom
+                        //anchors.topMargin: 10
+
+                    }
+                }
+            }
+
+
+        }
+        Popup{
+            id : search_failed
+
+            anchors.centerIn: first_window_form
+            Column{
+                spacing: 5
+                Text {
+                    font.pixelSize: 20
+                    color: "white"
+                    font.family: "楷体"
+                    text: "景点不存在！"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    //x: rating_pop_up.x + (rating_pop_up.width - width) / 2
+
+                }
+
+                Rectangle{
+                    width: 200
+                    height: 20
+                    color: "transparent"
+                    border.color: "steelblue"
+                    Text {
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        text: qsTr("确定")
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        anchors.centerIn: parent
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked:{
+                            search_failed.close()
+                        }
+                    }
+                }
+            }
+
+
+        }
+
         Button {
             Text{
                 font.family: "楷体"
@@ -2087,8 +2197,31 @@ Window {
             visible: parent.visible
             enabled: parent.enabled
             onClicked: {
-                if(inputField.text !== ""){
-                    console.log(inputField.text)
+                if(inputField.text === ""){
+                    console.log("error!")
+                    search_failed.open()
+
+                }
+                var id = -1
+                for(var i = 0; i<rating_model.count;i++){
+                    if(rating_model.get(i).point_name === inputField.text){
+                        id = i;
+                        break;
+                    }
+                }
+
+                console.log(id) // 从 1 开始
+                if(id !== -1){
+                    searched_point_name = inputField.text
+                    searched_score = rating_model.get(id).score
+                    searched_scored_people_num = rating_model.get(id).people_num
+                    to_search_for_point_info.open()
+
+                }else{
+                    searched_point_name = "undefined"
+                    searched_score = -1
+                    searched_scored_people_num = -1
+                    search_failed.open()
                 }
             }
 
