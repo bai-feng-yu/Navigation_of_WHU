@@ -165,7 +165,7 @@ Item {
                         //具体信息
                         Text {
                             id: contentText
-                            width: 225
+                            width: 400
                             // y:sceneImage.y+sceneImage.height+10
                             // x:5
                             font.pixelSize: 25

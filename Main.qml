@@ -45,8 +45,19 @@ Window {
     property int k1: 0
     property var kk: [0,0]
     property string images_common_prefix: "file:///" + appDir + "/SceneryPics/"
-    property var images_special_prefix_arr: ["dielou/","jisuanjixueyuan/","laotushuguan/","linbomen/","luojiashan/",
-                                             "paifang/","wanlin/","xinghu/","xingzhenlou/","zhangzhidongdiaoxiang/","zongtushuguan/"]
+    property var images_special_prefix_arr: [
+        "jisuanjixueyuan/",
+        "paifang/",
+        "luojiashan/",
+        "xinghu/",
+        "laotushuguan/",
+        "linbomen/",
+        "xingzhenlou/",
+        "wanlin/",
+        "zongtushuguan/",
+        "zhangzhidongdiaoxiang/",
+        "dielou/"
+    ]
     property var temp_image_model
     property var all_images_model: [ // string_array
         [], [], [], [], [], [],[], [], [], [], []
@@ -1420,7 +1431,7 @@ Window {
                 nameContext: database.get_point_name(pointsMod.get(index).point_key)
                 carousel_pics_model: all_images_model[index]
                 point_x: pointsMod.get(index).point_addr_x-15 // 使用当前元素的 point_x
-
+                infoContext1: database.get_point_intro(pointsMod.get(index).point_key)
                 point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
 
             }
