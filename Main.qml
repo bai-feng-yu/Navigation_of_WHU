@@ -2206,6 +2206,7 @@ Window {
             NumberAnimation { target: start_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
             NumberAnimation { target: end_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
             NumberAnimation { target: allpath_search; property: "opacity"; from : 0;to: 1.0; duration: 400}
+            NumberAnimation { target: allpath_search_for ; property: "opacity"; from : 0;to: 1.0; duration: 400}
         }
         Rectangle{
             id:search_route
