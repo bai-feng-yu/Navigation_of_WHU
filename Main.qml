@@ -56,6 +56,14 @@ Window {
         id:database
     }
 
+    ListModel{
+        id : refresh_pointGenarating
+
+    }
+    ListModel{
+        id : refresh_path
+    }
+
     Component.onCompleted: {
         var locations = database.get_all_names_of_points(10)
         start_pos.selective_model.clear()
@@ -185,33 +193,33 @@ Window {
                                          "point_key":i
                                      })
                 }
-                for(var j=1;j<=max_point_key;j++)
-                {
+                // for(var j=1;j<=max_point_key;j++)
+                // {
 
-                    if(database.get_road_key(i,j)!==-1)
-                    {
-                        var start_point_name=database.get_point_name(i);
-                        var end_point_name=database.get_point_name(j);
-                        var start_point_map=database.get_address_of_point(i);
-                        var start_x=start_point_map["addr_x"];
-                        var start_y=start_point_map["addr_y"];
-                        var end_point_map=database.get_address_of_point(j);
-                        var end_x=end_point_map["addr_x"];
-                        var end_y=end_point_map["addr_y"];
-                        var road_key=database.get_road_key(i,j);
-                        pathsMod.append({
-                                            "road_key":road_key,
-                                            "road_name":database.get_road_name(road_key),
-                                            "road_length":database.get_road_length(road_key),
-                                            "start_point_name":database.get_point_name(i),
-                                            "start_point_key":i,
-                                            "end_point_key":j,
-                                            "end_point_name":database.get_point_name(j),
-                                            "start_point_add":Qt.point(start_x,start_y),
-                                            "end_point_add":Qt.point(end_x,end_y)
-                                        })
-                    }
-                }
+                //     if(database.get_road_key(i,j)!==-1)
+                //     {
+                //         var start_point_name=database.get_point_name(i);
+                //         var end_point_name=database.get_point_name(j);
+                //         var start_point_map=database.get_address_of_point(i);
+                //         var start_x=start_point_map["addr_x"];
+                //         var start_y=start_point_map["addr_y"];
+                //         var end_point_map=database.get_address_of_point(j);
+                //         var end_x=end_point_map["addr_x"];
+                //         var end_y=end_point_map["addr_y"];
+                //         var road_key=database.get_road_key(i,j);
+                //         pathsMod.append({
+                //                             "road_key":road_key,
+                //                             "road_name":database.get_road_name(road_key),
+                //                             "road_length":database.get_road_length(road_key),
+                //                             "start_point_name":database.get_point_name(i),
+                //                             "start_point_key":i,
+                //                             "end_point_key":j,
+                //                             "end_point_name":database.get_point_name(j),
+                //                             "start_point_add":Qt.point(start_x,start_y),
+                //                             "end_point_add":Qt.point(end_x,end_y)
+                //                         })
+                //     }
+                // }
             }
             console.log("pointMod count " + pointsMod.count)
             console.log("path.count"+pathsMod.count)
@@ -547,6 +555,9 @@ Window {
                                 pathsMod.remove(j)
                             }
                         }
+
+                        refreshFirstWindowSig()
+
                         console.log("删除完成后路的数量"+pathsMod.count)
                         console.log("原本路数"+second_window_form.path_num)
                         var ctx_1=second_path_canvas.getContext("2d")
@@ -557,7 +568,7 @@ Window {
                         path_canvas.requestPaint()
                         console.log("被删除的点"+choosen_del_point_index)
 
-                        refreshFirstWindowSig()
+
                         //修改listmodel中的信息
 
                     }
@@ -1395,7 +1406,7 @@ Window {
 
             //     button_text: index
 
-            // }
+            // }00
 
             delegate: Triggerable_Button{
                 //console.log(pointsMod.get(index).point_key)
@@ -1417,12 +1428,62 @@ Window {
 
         }
 
+
+
         Connections{
             target: delete_finish_instruction_button
             function onRefreshFirstWindowSig(){
                 console.log("signal")
+                var max_point_key=database.get_max_valid_point_key_from_points();
+                refresh_pointGenarating.clear()
+                refresh_path.clear()
+                for(var i=1;i<=max_point_key;i++)
+                {
+                    var point_map=database.get_address_of_point(i);
+                    var point_x=point_map["addr_x"];
+                    var point_y=point_map["addr_y"];
+                    // console.log(point_x+","+point_y)
+                    if(point_x!==-1)
+                    {
+
+                        refresh_pointGenarating.append({
+                                             "point_addr_x":point_x,
+                                             "point_addr_y":point_y,
+                                             "point_key":i
+                                         })
+                    }
+                    for(var j=1;j<=max_point_key;j++)
+                    {
+
+                        if(database.get_road_key(i,j)!==-1)
+                        {
+                            var start_point_name=database.get_point_name(i);
+                            var end_point_name=database.get_point_name(j);
+                            var start_point_map=database.get_address_of_point(i);
+                            var start_x=start_point_map["addr_x"];
+                            var start_y=start_point_map["addr_y"];
+                            var end_point_map=database.get_address_of_point(j);
+                            var end_x=end_point_map["addr_x"];
+                            var end_y=end_point_map["addr_y"];
+                            var road_key=database.get_road_key(i,j);
+                            refresh_path.append({
+                                                "road_key":road_key,
+                                                "road_name":database.get_road_name(road_key),
+                                                "road_length":database.get_road_length(road_key),
+                                                "start_point_name":database.get_point_name(i),
+                                                "start_point_key":i,
+                                                "end_point_key":j,
+                                                "end_point_name":database.get_point_name(j),
+                                                "start_point_add":Qt.point(start_x,start_y),
+                                                "end_point_add":Qt.point(end_x,end_y)
+                                            })
+                        }
+                    }
+                }
                 //pointsGenarating_fir.model = null
-                pointsGenarating_fir.model = pointsMod
+                pointsGenarating_fir.model = refresh_pointGenarating
+
+                pathsMod = refresh_path
 
             }
         }
