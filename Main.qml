@@ -26,7 +26,7 @@ Window {
     property color qiuguiYellow: Qt.rgba(255/255,163/255,0/255,0.5)
     property color chengwuGrey: Qt.rgba(193/255,198/255,200/255,0.5)
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
-    property var tempcolor: ["#E3170D","#9C661F","#FF8000","#A020F0","#DA70D6","#00C78C","#C76114","#228B22","#03A89E"]
+    property var tempcolor: ["#9C661F","#FF8000","#DA70D6","#00C78C","#C76114","#228B22","#03A89E","#9C661F","#FF8000","#DA70D6","#00C78C","#C76114","#228B22","#03A89E"]
     property int max_point_key : database.get_max_valid_point_key_from_points()
     property var tempobject1: []
     property var tempobject2: []
@@ -206,33 +206,33 @@ Window {
                                          "point_key":i
                                      })
                 }
-                // for(var j=1;j<=max_point_key;j++)
-                // {
+                 for(var j=1;j<=max_point_key;j++)
+                 {
 
-                //     if(database.get_road_key(i,j)!==-1)
-                //     {
-                //         var start_point_name=database.get_point_name(i);
-                //         var end_point_name=database.get_point_name(j);
-                //         var start_point_map=database.get_address_of_point(i);
-                //         var start_x=start_point_map["addr_x"];
-                //         var start_y=start_point_map["addr_y"];
-                //         var end_point_map=database.get_address_of_point(j);
-                //         var end_x=end_point_map["addr_x"];
-                //         var end_y=end_point_map["addr_y"];
-                //         var road_key=database.get_road_key(i,j);
-                //         pathsMod.append({
-                //                             "road_key":road_key,
-                //                             "road_name":database.get_road_name(road_key),
-                //                             "road_length":database.get_road_length(road_key),
-                //                             "start_point_name":database.get_point_name(i),
-                //                             "start_point_key":i,
-                //                             "end_point_key":j,
-                //                             "end_point_name":database.get_point_name(j),
-                //                             "start_point_add":Qt.point(start_x,start_y),
-                //                             "end_point_add":Qt.point(end_x,end_y)
-                //                         })
-                //     }
-                // }
+                     if(database.get_road_key(i,j)!==-1)
+                     {
+                         var start_point_name=database.get_point_name(i);
+                         var end_point_name=database.get_point_name(j);
+                         var start_point_map=database.get_address_of_point(i);
+                         var start_x=start_point_map["addr_x"];
+                         var start_y=start_point_map["addr_y"];
+                         var end_point_map=database.get_address_of_point(j);
+                         var end_x=end_point_map["addr_x"];
+                         var end_y=end_point_map["addr_y"];
+                         var road_key=database.get_road_key(i,j);
+                         pathsMod.append({
+                                             "road_key":road_key,
+                                             "road_name":database.get_road_name(road_key),
+                                             "road_length":database.get_road_length(road_key),
+                                             "start_point_name":database.get_point_name(i),
+                                             "start_point_key":i,
+                                             "end_point_key":j,
+                                             "end_point_name":database.get_point_name(j),
+                                             "start_point_add":Qt.point(start_x,start_y),
+                                             "end_point_add":Qt.point(end_x,end_y)
+                                         })
+                     }
+                 }
             }
             console.log("pointMod count " + pointsMod.count)
             console.log("path.count"+pathsMod.count)
@@ -980,7 +980,7 @@ Window {
                     console.log(road_length+"   "+road_name+" "+road_start_key+"  "+road_end_key+" "+new_start_x+" "+new_end_x)
                     console.log(new_start_name+"   "+new_end_name)
 
-                    if(new_start_x!==-1&&new_end_x!==-1)
+                    if(new_start_x!==-1&&new_end_x!==-1&&database.get_road_key(road_start_key,road_end_key)===-1&&database.get_road_key(road_end_key,road_start_key)===-1)
                     {
 
                         database.expand_road(road_max_key+1,road_name,new_start_name,new_end_name,road_length)
@@ -1746,6 +1746,47 @@ Window {
                 }
             }
         }
+        Popup{
+            id:not_get_road_success
+            width: 200
+            height:100
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: first_window_form
+            padding: 0
+            Rectangle{
+                id: not_get_road_success_rec
+                width: not_get_road_success.width
+                height: not_get_road_success.height
+
+                Text {
+                    id: not_get_road_success_text
+                    text: "请选择起点和终点"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_get_road_success_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_get_road_success.close()
+                    }
+                }
+
+            }
+        }
         Button{
             property int clicknum1: 0
             id:shortest_search
@@ -1770,6 +1811,9 @@ Window {
                     if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
                         timer1.restart()
                         clicknum1+=1
+                    }
+                    else{
+                        not_get_road_success.open()
                     }
                 }
                 else{
@@ -1830,7 +1874,7 @@ Window {
                                                                        starty:temppointxy11.addr_y,
                                                                        endx:temppointxy22.addr_x,
                                                                        endy:temppointxy22.addr_y,
-                                                                       tc:tempcolor[k1+2]});
+                                                                       });
                     }
                     var temppointxy1=database.get_address_of_point(all_point_key[k1][kk[0]])
                     var temppointxy2=database.get_address_of_point(all_point_key[k1][kk[0]+1])
@@ -1870,7 +1914,7 @@ Window {
                                                                        starty:temppointxy11.addr_y,
                                                                        endx:temppointxy22.addr_x,
                                                                        endy:temppointxy22.addr_y,
-                                                                       tc:tempcolor[k1+2]});
+                                                                       });
                     }
                     var temppointxy1=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]])
                     var temppointxy2=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]+1])
@@ -1918,6 +1962,9 @@ Window {
                         temppointnum2=all_point_key.length
                         clicknum2+=1
                     }
+                    else{
+                        not_get_road_success.open()
+                    }
                 }
                 else{
                     if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
@@ -1951,6 +1998,47 @@ Window {
                 }
             }
         }
+        Popup{
+            id:not_get_road_success2
+            width: 200
+            height:100
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: first_window_form
+            padding: 0
+            Rectangle{
+                id: not_get_road_success2_rec
+                width: not_get_road_success2.width
+                height: not_get_road_success2.height
+
+                Text {
+                    id: not_get_road_success2_text
+                    text: "请选择路径"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_get_road_success2_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_get_road_success2.close()
+                    }
+                }
+
+            }
+        }
         Button{
             property int clicknum3: 0
             id:allpath_search_for
@@ -1978,7 +2066,7 @@ Window {
                             timer2.start()
                             clicknum3+=1
                         }
-                        else if(path_cho.cur_chosen_point===""){kk[0]=0}
+                        else if(path_cho.cur_chosen_point===""){not_get_road_success2.open()}
                         else {
                             kk[0]=0
                             timer4.restart()
@@ -2339,6 +2427,7 @@ Window {
             NumberAnimation { target: start_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
             NumberAnimation { target: end_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
             NumberAnimation { target: allpath_search; property: "opacity"; from : 0;to: 1.0; duration: 400}
+            NumberAnimation { target: allpath_search_for ; property: "opacity"; from : 0;to: 1.0; duration: 400}
         }
         Rectangle{
             id:search_route
