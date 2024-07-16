@@ -3,7 +3,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtMultimedia
-
+import QtQuick.Effects
 //import an.utility
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 import "C:/Users/admin/Desktop/Navigation_of_WHU/Triggerable_Button.qml"
@@ -26,22 +26,53 @@ Window {
     property color qiuguiYellow: Qt.rgba(255/255,163/255,0/255,0.5)
     property color chengwuGrey: Qt.rgba(193/255,198/255,200/255,0.5)
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
-    property var tempcolor: ["#E3170D","#9C661F","#FF8000","#A020F0","#DA70D6","#00C78C","#C76114","#228B22","#03A89E"]
+    property var tempcolor: ["#9C661F","#FF8000","#DA70D6","#00C78C","#C76114","#228B22","#03A89E","#9C661F","#FF8000","#DA70D6","#00C78C","#C76114","#228B22","#03A89E"]
     property int max_point_key : database.get_max_valid_point_key_from_points()
     property var tempobject1: []
     property var tempobject2: []
     property var tempobject3: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     property var tempobject4: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]//临时储存点
+    property var tempobject5: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+    property var tempobject6: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     property var temppointnum
+    property var temppointnum2
     property var temppointallnum
+    property int choosen_del_point_index: -1
+
+
     property int i1: 0
     property int j1: 0
     property int k1: 0
     property var kk: [0,0]
-
+    property string images_common_prefix: "file:///" + appDir + "/SceneryPics/"
+    property var images_special_prefix_arr: [
+        "jisuanjixueyuan/",
+        "paifang/",
+        "luojiashan/",
+        "xinghu/",
+        "laotushuguan/",
+        "linbomen/",
+        "xingzhenlou/",
+        "wanlin/",
+        "zongtushuguan/",
+        "zhangzhidongdiaoxiang/",
+        "dielou/"
+    ]
+    property var temp_image_model
+    property var all_images_model: [ // string_array
+        [], [], [], [], [], [],[], [], [], [], []
+    ]
 
     Graph{
         id:database
+    }
+
+    ListModel{
+        id : refresh_pointGenarating
+
+    }
+    ListModel{
+        id : refresh_path
     }
 
     Component.onCompleted: {
@@ -67,20 +98,42 @@ Window {
 
                                 })
         }
+        /*------------- 景点所有图片路径初始化 -----------------------*/
+        for(var k = 0; k< 11;k++){
+            for(var z=0;z<3;z++){
+                all_images_model[k][z] = {"url": Qt.resolvedUrl(images_common_prefix + images_special_prefix_arr[k] + (z+1) + ".jpg")}
+                //console.log(all_images_model[k][z].url)
+            }
+        }
 
     }
-
+    onTemppointnum2Changed: {
+        path_cho.selective_model.clear()
+        for (var i = 0; i < temppointnum2; i++) {
+            path_cho.selective_model.append({ "text": "路径"+i })
+        }
+        path_cho.selective_model.append({ "text": "全部路径" })
+    }
     Rectangle{
         id: second_window_form
         visible: false
         enabled: false
         width: parent.width
         height: parent.height
+        // Image {
+        //     id: myImage
+        //     anchors.centerIn: parent
+        //     source: "file:///D:/QTproject/new/Navigation_of_WHU/ditu.jpg"
+        // }
         property bool delete_button_pressed: false
         property bool delete_button_success: false
+        property bool delete_road_success: false
         property bool add_button_success: false
         property bool point_is_onrelease:false
         property bool start_to_add_point: false
+
+        property int path_num
+
         // Image {
         //     id: unnamed1
         //     anchors.fill: parent
@@ -89,11 +142,13 @@ Window {
         //     /*-------------------------------------------------------------------------------------------------------*/
 
         // }
+
+
         MediaPlayer {
             id: unnamed1
             loops: MediaPlayer.Infinite
             //anchors.fill: parent
-            source: "file:///D:/Downloads/Lone_Cherry_Blossom.mp4"
+            source: "file:///" + appDir + "/Lone_Cherry_Blossom.mp4"
             videoOutput: videoOutput2
 
             audioOutput: AudioOutput{}
@@ -104,7 +159,28 @@ Window {
             width: root.width;
             anchors.centerIn: parent
         }
+        Image {
+            width: 1000
+            height: 700
+            //opacity: 0.2
+            fillMode: Image.PreserveAspectFit
+            id: graph_image_sec
+            anchors.centerIn: parent
+            //source: "file:///C:/Users/Administrator/Desktop/graphImage.jpg" // 0%
+            //source: "file:///D:/Downloads/20240714220422.png" // 50%
+            //source: "file:///D:/Downloads/20240714220353.png" // 66%
+            source: "file:///" + appDir + "/GraphImage.png"
+            //source: "file:///D:/Downloads/20240714220726.png" // 80%
+        }
+        MultiEffect {
+             source: graph_image_sec
+             anchors.fill: graph_image_sec
+             brightness: -0.4
+             saturation: 0
 
+             //contrast: 0.5
+
+         }
         ListModel{
             id: pointsMod
         }
@@ -128,50 +204,51 @@ Window {
                                          "point_key":i
                                      })
                 }
-                for(var j=1;j<=max_point_key;j++)
-                {
+                 for(var j=1;j<=max_point_key;j++)
+                 {
 
-                    if(database.get_road_key(i,j)!==-1)
-                    {
-                        var start_point_name=database.get_point_name(i);
-                        var end_point_name=database.get_point_name(j);
-                        var start_point_map=database.get_address_of_point(i);
-                        var start_x=start_point_map["addr_x"];
-                        var start_y=start_point_map["addr_y"];
-                        var end_point_map=database.get_address_of_point(j);
-                        var end_x=end_point_map["addr_x"];
-                        var end_y=end_point_map["addr_y"];
-                        var road_key=database.get_road_key(i,j);
-                        pathsMod.append({
-                                            "road_key":road_key,
-                                            "road_name":database.get_road_name(road_key),
-                                            "road_length":database.get_road_length(road_key),
-                                            "start_point_name":database.get_point_name(i),
-                                            "end_point_name":database.get_point_name(j),
-                                            "start_point_add":Qt.point(start_x,start_y),
-                                            "end_point_add":Qt.point(end_x,end_y)
-                                        })
-                    }
-                }
+                     if(database.get_road_key(i,j)!==-1)
+                     {
+                         var start_point_name=database.get_point_name(i);
+                         var end_point_name=database.get_point_name(j);
+                         var start_point_map=database.get_address_of_point(i);
+                         var start_x=start_point_map["addr_x"];
+                         var start_y=start_point_map["addr_y"];
+                         var end_point_map=database.get_address_of_point(j);
+                         var end_x=end_point_map["addr_x"];
+                         var end_y=end_point_map["addr_y"];
+                         var road_key=database.get_road_key(i,j);
+                         pathsMod.append({
+                                             "road_key":road_key,
+                                             "road_name":database.get_road_name(road_key),
+                                             "road_length":database.get_road_length(road_key),
+                                             "start_point_name":database.get_point_name(i),
+                                             "start_point_key":i,
+                                             "end_point_key":j,
+                                             "end_point_name":database.get_point_name(j),
+                                             "start_point_add":Qt.point(start_x,start_y),
+                                             "end_point_add":Qt.point(end_x,end_y)
+                                         })
+                     }
+                 }
             }
             console.log("pointMod count " + pointsMod.count)
+            console.log("path.count"+pathsMod.count)
+
         }
-        property alias exportedListModel: pathsMod
-        // Loader {
-        //     id: loader
-        //     source: "Triggerable_Button.qml"
-        //     anchors.fill: parent
-        // }
+
 
 
         Canvas {
             id: second_path_canvas
             anchors.fill: parent
+            property int clicked_count: 0
 
             onPaint: {
                 var ctx = getContext("2d");
                 ctx.strokeStyle = shuangyeRed;//颜色调整
                 ctx.lineWidth = 5;//路径宽度
+                second_window_form.path_num = pathsMod.count
                 for (var i = 0; i <pathsMod.count; ++i) {
                     var startPoint = pathsMod.get(i).start_point_add;
                     var endPoint = pathsMod.get(i).end_point_add;
@@ -183,6 +260,8 @@ Window {
             }
 
         }
+
+
 
 
         Rectangle{
@@ -254,7 +333,7 @@ Window {
             id : pointsGenarating
             property int init_point_key: init_point_key = root.max_point_key
 
-            model:pointsMod.count
+            model:pointsMod
             // x : index * 80
             // Triggerable_Button{
             //     anchors.fill: parent
@@ -264,22 +343,21 @@ Window {
             // }
 
             delegate: Triggerable_Button{
-                //console.log(pointsMod.get(index).point_key)
-                //y : 20
-                //id : index
+
 
                 index_of_point :pointsMod.get(index).point_key
                 button_text: pointsMod.get(index).point_key
                 //anchors.left: parent.left
                 //anchors.leftMargin: index * 40
+                enabled: true
 
-
-                point_x: pointsMod.get(index).point_addr_x-15 // 使用当前元素的 point_x
+                point_x: pointsMod.get(index).point_addr_x-15// 使用当前元素的 point_x
 
                 point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
 
-            }
 
+
+            }
         }
         Rectangle{
             id:each_option_left
@@ -325,7 +403,7 @@ Window {
             }
             function createTriggerButton() {
                 var component = Qt.createComponent("Triggerable_Button.qml");
-                var sprite = component.createObject(second_window_form, {x: 100, y: 0});
+                var sprite = component.createObject(root, {x: 0, y: 0});
 
                 if (sprite === null) {
                     // Error Handling
@@ -383,7 +461,7 @@ Window {
                     //anchors.topMargin: 0
                     onClicked: {
                         add_success_instruction.close()
-                         second_window_form.start_to_add_point=true
+                        second_window_form.start_to_add_point=true
                         second_window_form.add_button_success=true
                     }
                 }
@@ -404,6 +482,8 @@ Window {
             enabled: parent.enabled
             anchors.centerIn: second_window_form
             padding: 0
+            property int max_point_num: delete_finish_instruction.max_point_num=pointsMod.count
+
             Rectangle{
                 id: delete_finish_instruction_rec
                 width: delete_finish_instruction.width
@@ -428,6 +508,7 @@ Window {
                     id: delete_finish_instruction_button
                     anchors.top: delete_finish_text.bottom
                     anchors.topMargin: 5
+                    signal refreshFirstWindowSig()
                     Text{
                         font.family: "楷体"
                         font.pointSize : 20
@@ -440,15 +521,67 @@ Window {
                     x : delete_finish_instruction_rec.x + (delete_finish_instruction_rec.width - delete_finish_instruction_button.width) / 2
 
                     onClicked: {
+                        console.log("初始路数：：：："+second_window_form.path_num)
+                        // console.log("初始路数"+delete_finish_instruction.max_path_num)
+                        var del_point_name=database.get_point_name(choosen_del_point_index)
+
                         delete_finish_instruction.close()
+                        for(var i=0;i<delete_finish_instruction.max_point_num;i++)
+                        {
+                            if(pointsMod.get(i).point_key===choosen_del_point_index)
+                            {
+                                pointsMod.remove(i)
+                            }
+                        }
+                        database.del_point(del_point_name)
+                        console.log(choosen_del_point_index)
+
+                        for(var z=second_window_form.path_num-1;z>-1;z--)
+                        {
+                            console.log("当前下标"+z)
+                            console.log("各个起点"+pathsMod.get(z).start_point_name)
+                            console.log("各个终点"+pathsMod.get(z).end_point_name)
+                        }
+                        for(var j=second_window_form.path_num-1;j>-1;j--)
+                        {
+                            if(pathsMod.get(j) !== undefined && pathsMod.get(j).start_point_name===del_point_name)
+                            {
+                                console.log("被删除的起点："+pathsMod.get(j).start_point_name+","+del_point_name)
+                                var del_road_name=pathsMod.get(j).road_name
+                                console.log("删除的路线名"+del_road_name)
+
+
+                                pathsMod.remove(j)
+                                console.log("起点下标"+j)
+                                database.del_road(del_road_name)
+                                // console.log(delete_finish_instruction.max_path_num)
+                            }
+                            if(pathsMod.get(j) !== undefined&&pathsMod.get(j).end_point_name===del_point_name)
+                                //if(pathsMod.get(j).end_point_key==choosen_del_point_index)
+                            {
+                                console.log("被删除的重点："+pathsMod.get(j).start_point_name+","+del_point_name)
+                                //var del_road_name_two=pathsMod.get(j).road_name
+                                console.log("终点下标"+j)
+
+                                pathsMod.remove(j)
+                            }
+                        }
+
+                        refreshFirstWindowSig()
+
+                        console.log("删除完成后路的数量"+pathsMod.count)
+                        console.log("原本路数"+second_window_form.path_num)
+                        var ctx_1=second_path_canvas.getContext("2d")
+                        ctx_1.clearRect(0,0,second_path_canvas.width,second_path_canvas.height)
+                        second_path_canvas.requestPaint()
+                        var ctx_2=path_canvas.getContext("2d")
+                        ctx_2.clearRect(0,0,path_canvas.width,path_canvas.height)
+                        path_canvas.requestPaint()
+                        console.log("被删除的点"+choosen_del_point_index)
+
+
                         //修改listmodel中的信息
 
-
-
-
-
-
-                        //second_path_canvas.requestPaint()
                     }
                 }
             }
@@ -519,7 +652,7 @@ Window {
             width:400
             height:200
             modal:true
-           visible: second_window_form.point_is_onrelease&&second_window_form.start_to_add_point
+            visible: second_window_form.point_is_onrelease&&second_window_form.start_to_add_point
             enabled: parent.enabled
             anchors.centerIn: second_window_form
             padding: 0
@@ -629,7 +762,7 @@ Window {
                 anchors.centerIn: parent
             }
             Button{
-                anchors.fill: parent``````````
+                anchors.fill: parent
                 opacity: 0
                 enabled: parent.enabled
 
@@ -843,8 +976,9 @@ Window {
                     var new_start_name=database.get_point_name(road_start_key)
                     var new_end_name=database.get_point_name(road_end_key)
                     console.log(road_length+"   "+road_name+" "+road_start_key+"  "+road_end_key+" "+new_start_x+" "+new_end_x)
+                    console.log(new_start_name+"   "+new_end_name)
 
-                    if(new_start_x!==-1&&new_end_x!==-1)
+                    if(new_start_x!==-1&&new_end_x!==-1&&database.get_road_key(road_start_key,road_end_key)===-1&&database.get_road_key(road_end_key,road_start_key)===-1)
                     {
 
                         database.expand_road(road_max_key+1,road_name,new_start_name,new_end_name,road_length)
@@ -854,6 +988,16 @@ Window {
                                             "road_length":road_length,
                                             "start_point_name":database.get_point_name(road_start_key),
                                             "end_point_name":database.get_point_name(road_end_key),
+                                            "start_point_add":Qt.point(new_start_x,new_start_y),
+                                            "end_point_add":Qt.point(new_end_x,new_end_y)
+
+                                        })
+                        pathsMod.append({
+                                            "road_key":road_max_key+1,
+                                            "road_name":road_name,
+                                            "road_length":road_length,
+                                            "start_point_name":database.get_point_name(road_end_key),
+                                            "end_point_name":database.get_point_name(road_start_key),
                                             "start_point_add":Qt.point(new_start_x,new_start_y),
                                             "end_point_add":Qt.point(new_end_x,new_end_y)
 
@@ -917,7 +1061,184 @@ Window {
                 }
             }
         }
+        Popup{//有误提示弹窗
+            id:not_del_road_success
+            width: 400
+            height:200
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: not_del_road_success_rec
+                width: not_del_road_success.width
+                height: not_del_road_success.height
 
+                Text {
+                    id: not_del_road_success_text
+                    text: "景点编号输入有误或不存在，请重新输入"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_del_road_success_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_del_road_success.close()
+                    }
+                }
+
+            }
+        }
+
+        Popup{//删除路径
+            id:delete_road_start
+            width: 400
+            height: 200
+            modal: true
+            visible: parent.visible && second_window_form.delete_road_success
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+            padding: 0
+            Rectangle{
+                id: delete_road_rec
+                width: delete_road_start.width
+                height: delete_road_start.height
+                Text{
+                    id : delete_road_text
+                    color: "white"
+                    font.family: "楷体"
+                    font.pointSize : 20
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    text: "请输入你要删除的路径信息:"
+                    x : delete_road_rec.x + (delete_road_rec.width - delete_road_text.width) / 2
+                }
+                MouseArea{
+                    anchors.fill: delete_road_start
+
+                }
+                Text {
+                    id: del_road_start
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    text: "起点编号："
+                    font.pointSize: 20
+                    x : delete_road_rec.x
+                    y:delete_road_text.y + delete_road_text.height+15
+                }
+                TextField{
+                    id:input_del_road_start
+                    visible: parent.visible
+                    enabled: parent.enabled
+                    width: 250
+                    height:add_road_name.hight
+                    x:del_road_start.width+delete_road_rec.x+10
+                    y:delete_road_text.y + delete_road_text.height+20
+                    background: Rectangle {
+                        radius: 4
+                        border.color: "steelblue"
+                    }
+                }
+                Text {
+                    id: del_road_end
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    text: "终点编号："
+                    font.pointSize: 20
+                    x : delete_road_rec.x
+                    y:input_del_road_start.y+input_del_road_start.height+25
+                }
+                TextField{
+                    id:input_del_road_end
+                    visible: parent.visible
+                    enabled: parent.enabled
+                    width: 250
+                    height:add_road_name.hight
+                    x:del_road_start.width+delete_road_rec.x+10
+                    y:input_del_road_start.y+input_del_road_start.height+30
+                    background: Rectangle {
+                        radius: 4
+                        border.color: "steelblue"
+                    }
+                }
+                Button{
+                    id: delete_road_button
+                    width: 80
+                    height: 40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    Text{
+                        font.family: "楷体"
+                        font.pointSize : 20
+                        color: "white"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        text: "OK"
+                        anchors.centerIn: delete_road_button
+                    }
+
+                    onClicked: {
+                        var del_road_start_key=input_del_road_start.text
+                        var del_road_end_key=input_del_road_end.text
+                        var del_road_key=database.get_road_key(del_road_start_key,del_road_end_key)
+                        // var del_road_key_two=database.get_road_key(del_road_end_key,del_road_start_key)
+                        //console.log(del_road_start_key+","+del_road_end_key)
+                        //console.log("删除路key"+del_road_key)
+                        var start_point_map=database.get_address_of_point(del_road_start_key);
+                        var del_start_x=start_point_map["addr_x"];
+                        var del_start_y=start_point_map["addr_y"];
+                        var end_point_map=database.get_address_of_point(del_road_end_key);
+                        var del_end_x=end_point_map["addr_x"];
+                        var del_end_y=end_point_map["addr_y"];
+                        if(del_road_key!==-1)
+                        {
+                            for(var i=pathsMod.count-1;i>-1;i--)
+                            {
+                                console.log("当前路key"+pathsMod.get(i).road_key)
+                                if(pathsMod.get(i).road_key===del_road_key)
+                                {
+                                    pathsMod.remove(i)
+                                    return;
+                                }
+                            }
+                            database.del_road(database.get_road_name(del_road_key))
+                            var ctx_1=second_path_canvas.getContext("2d")
+                            ctx_1.clearRect(0,0,second_path_canvas.width,second_path_canvas.height)
+                            second_path_canvas.requestPaint()
+                            var ctx_2=path_canvas.getContext("2d")
+                            ctx_2.clearRect(0,0,path_canvas.width,path_canvas.height)
+                            path_canvas.requestPaint()
+                        }
+                        else{
+                            not_del_road_success.visible=true
+
+                        }
+
+                        delete_road_start.close()
+
+                        second_window_form.delete_road_success=false
+                    }
+                }
+
+            }
+        }
 
         Rectangle{
             id:each_option_right_right
@@ -957,12 +1278,17 @@ Window {
                     each_option_right_right.color = chengwuGrey
                 }
                 onClicked: {
+                    second_window_form.delete_road_success=true
+
 
 
                 }
             }
         }
+
+
     }
+
 
 
     Rectangle{
@@ -971,11 +1297,17 @@ Window {
         enabled: true
         width: parent.width
         height: parent.height
+        /* Image {
+               id: first_myImage
+               anchors.centerIn: parent
+               source: "file:///D:/QTproject/new/Navigation_of_WHU/ditu.jpg"
+           }*/
+
         MediaPlayer {
             id: unnamed2
             loops: MediaPlayer.Infinite
             //anchors.fill: parent
-            source: "file:///D:/Downloads/68363-528670466_small.mp4"
+            source: "file:///" + appDir + "/68363-528670466_small.mp4"
             videoOutput: videoOutput
 
             audioOutput: AudioOutput{}
@@ -987,50 +1319,27 @@ Window {
             anchors.centerIn: parent
         }
 
-        // Image {
-        //     id: unnamed2
-        //     anchors.fill: parent
-        //     source: "file:D:/Documents/QTDocuments/test_for_history_edit/TestImage.jpg"
-        // }
-
-
-        ButtonWithComponent{
-            id:myButton_yinghuachengbao
-            originalX:100
-            originalY:100
-            nameContext: "武汉大学"
-            infoContext1: "介绍1"
-            infoContext2: "介绍2"
-            infoContext3: "介绍3"
-            Component.onCompleted: {
-                carousel_pics_model = [
-                            {url:"file:///C:/Users/Administrator/Desktop/yinhua1.jpg"},
-                            {url:"file:///C:/Users/Administrator/Desktop/yinhua2.jpg"},
-                            {url:"file:///C:/Users/Administrator/Desktop/yinhua3.jpg"},
-                            {url:"file:///C:/Users/Administrator/Desktop/yinhua4.jpg"}
-                        ]
-            }
+        Image {
+            width: 1000
+            height: 700
+            //opacity: 0.2
+            fillMode: Image.PreserveAspectFit
+            id: graph_image_fir
+            anchors.centerIn: parent
+            //source: "file:///C:/Users/Administrator/Desktop/graphImage.jpg" // 0%
+            //source: "file:///D:/Downloads/20240714220422.png" // 50%
+            //source: "file:///D:/Downloads/20240714220353.png" // 66%
+            source: "file:///" + appDir + "/GraphImage.png"
+            //source: "file:///D:/Downloads/20240714220726.png" // 80%
         }
+        MultiEffect {
+             source: graph_image_fir
+             anchors.fill: graph_image_fir
+             brightness: -0.4
+             saturation: 0
 
+             //contrast: 0.5
 
-        Label {
-            id: road_text_label
-            visible: false
-            Text{
-                font.family: "楷体"
-                color: "white"
-                style: Text.Outline
-                styleColor: "steelblue"
-
-            }
-
-            background: Rectangle {
-                width: road_text_label.width + 10; height: road_text_label.height + 10
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: "white" }
-                    GradientStop { position: 1.0; color: "lightblue" }
-                }
-            }
         }
 
         Canvas {
@@ -1074,20 +1383,265 @@ Window {
                             var clickRadius = 4; // 按需要调整
                             if (Math.abs(x - mouseX) <= clickRadius && Math.abs(y - mouseY) <= clickRadius) {
                                 // 调整label弹出的位置，目前在点击区域附件
-                                road_text_label.x = mouseX + 10;
-                                road_text_label.y = mouseY - road_text_label.height - 10;
-                                road_text_label.visible = true;
-                                road_text_label.text = "路名: " + pathsMod.get(i).road_name +
+                                road_text.x = mouseX + 10;
+                                road_text.y = mouseY - road_text.height - 10;
+                                road_text.visible = true;
+
+                                /*road_text_label.text = "路名: " + pathsMod.get(i).road_name +
                                         "\n长度: " + pathsMod.get(i).road_length +"米"+
                                         "\n起点: " + pathsMod.get(i).start_point_name +
-                                        "\n终点: " + pathsMod.get(i).end_point_name;
+                                        "\n终点: " + pathsMod.get(i).end_point_name;*/
+                                show_road_name.text="路名:"+pathsMod.get(i).road_name
+                                show_road_length.text="长度:"+pathsMod.get(i).road_length +"米"
+                                show_road_start.text="起点:"+pathsMod.get(i).start_point_name
+                                show_road_end.text="终点:"+pathsMod.get(i).end_point_name
                                 return;
+                            }
+                            else{
+                                road_text.visible=false
                             }
                         }
                     }
                 }
             }
         }
+
+
+        Repeater{
+            id : pointsGenarating_fir
+            property int init_point_key: init_point_key = root.max_point_key
+            model:pointsMod
+            // x : index * 80
+            // Triggerable_Button{
+            //     anchors.fill: parent
+
+            //     button_text: index
+
+            // }00
+
+            delegate: Triggerable_Button{
+                //console.log(pointsMod.get(index).point_key)
+                //y : 20
+                //id : index
+                enabled: true
+                index_of_point :pointsMod.get(index).point_key
+                button_text: pointsMod.get(index).point_key
+                //anchors.left: parent.left
+                //anchors.leftMargin: index * 40
+                nameContext: database.get_point_name(pointsMod.get(index).point_key)
+                carousel_pics_model: all_images_model[index]
+                point_x: pointsMod.get(index).point_addr_x-15 // 使用当前元素的 point_x
+                infoContext1: database.get_point_intro(pointsMod.get(index).point_key)
+                point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
+
+            }
+
+
+        }
+
+
+
+        Connections{
+            target: delete_finish_instruction_button
+            function onRefreshFirstWindowSig(){
+                console.log("signal")
+                var max_point_key=database.get_max_valid_point_key_from_points();
+                refresh_pointGenarating.clear()
+                pathsMod.clear()
+                for(var i=1;i<=max_point_key;i++)
+                {
+                    var point_map=database.get_address_of_point(i);
+                    var point_x=point_map["addr_x"];
+                    var point_y=point_map["addr_y"];
+                    // console.log(point_x+","+point_y)
+                    if(point_x!==-1)
+                    {
+
+                        refresh_pointGenarating.append({
+                                             "point_addr_x":point_x,
+                                             "point_addr_y":point_y,
+                                             "point_key":i
+                                         })
+                    }
+                    for(var j=1;j<=max_point_key;j++)
+                    {
+
+                        if(database.get_road_key(i,j)!==-1)
+                        {
+                            var start_point_name=database.get_point_name(i);
+                            var end_point_name=database.get_point_name(j);
+                            var start_point_map=database.get_address_of_point(i);
+                            var start_x=start_point_map["addr_x"];
+                            var start_y=start_point_map["addr_y"];
+                            var end_point_map=database.get_address_of_point(j);
+                            var end_x=end_point_map["addr_x"];
+                            var end_y=end_point_map["addr_y"];
+                            var road_key=database.get_road_key(i,j);
+                            pathsMod.append({
+                                                "road_key":road_key,
+                                                "road_name":database.get_road_name(road_key),
+                                                "road_length":database.get_road_length(road_key),
+                                                "start_point_name":database.get_point_name(i),
+                                                "start_point_key":i,
+                                                "end_point_key":j,
+                                                "end_point_name":database.get_point_name(j),
+                                                "start_point_add":Qt.point(start_x,start_y),
+                                                "end_point_add":Qt.point(end_x,end_y)
+                                            })
+                        }
+                    }
+                }
+                //pointsGenarating_fir.model = null
+                pointsGenarating_fir.model = refresh_pointGenarating
+
+
+
+            }
+        }
+
+        // ButtonWithComponent{
+        //     id:myButton_yinghuachengbao
+        //     originalX:100
+        //     originalY:100
+        //     nameContext: "武汉大学"
+        //     infoContext1: "介绍1"
+        //     infoContext2: "介绍2"
+        //     infoContext3: "介绍3"
+
+        //     carousel_pics_model : [
+        //                 {url:"file:///" + appDir + "/yinhua1.jpg"},
+        //                 {url:"file:///" + appDir + "/yinhua2.jpg"},
+        //                 {url:"file:///" + appDir + "/yinhua3.jpg"},
+        //                 {url:"file:///" + appDir + "/yinhua4.jpg"},
+        //     ]
+
+        // }
+        // Repeater{
+        //     id : carousel_image_init
+        //     model: all_images_model
+        //     delegate: Triggerable_Button{
+        //         originalY : 100
+        //         originalX : index * 100
+        //         carousel_pics_model: all_images_model[index]
+        //     }
+        // }
+        // Repeater{
+        //     id : first_pointsGenarating
+        //     //property int init_point_key: init_point_key = root.max_point_key
+
+        //     model:all_images_model
+        //     // x : index * 80
+        //     // Triggerable_Button{
+        //     //     anchors.fill: parent
+
+        //     //     button_text: index
+
+        //     // }
+
+        //     delegate: Triggerable_Button{
+
+
+        //         index_of_point :pointsMod.get(index).point_key
+        //         button_text: pointsMod.get(index).point_key
+        //         //anchors.left: parent.left
+        //         //anchors.leftMargin: index * 40
+        //         carousel_pics_model: all_images_model[index]
+
+        //         point_x: pointsMod.get(index).point_addr_x-15// 使用当前元素的 point_x
+
+        //         point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
+        //     }
+        // }
+
+
+        /*Label {
+            id: road_text_label
+            visible: false
+            Text{
+                font.family: "楷体"
+                color: "white"
+                style: Text.Outline
+                styleColor: "steelblue"
+
+            }
+
+            background: Rectangle {
+                width: road_text_label.width + 10; height: road_text_label.height + 10
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "white" }
+                    GradientStop { position: 1.0; color: "lightblue" }
+                }
+            }
+        }*/
+        Popup{
+            id:road_text
+            width: 200
+            height: 110
+            visible: false
+            Rectangle {
+                id : show_road_text_rec
+                anchors.centerIn: parent
+                width: 200
+                height: 110
+                color: Qt.rgba(1,1,1,0.5)
+                border.color: "steelblue"
+                border.width: 2
+                Column {
+                    //spacing: 10
+                    width: parent.width
+                    height: parent.height
+                    spacing: 6
+                    Text {
+                        id: show_road_name
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: show_road_text_rec.x + (show_road_text_rec.width - width) / 2
+                        y: show_road_text_rec.y+5
+                    }
+                    Text {
+                        id:show_road_length
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: show_road_text_rec.x + (show_road_text_rec.width - width) / 2
+                        y: show_road_text_rec.y
+                    }
+                    Text{
+                        id:show_road_start
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: show_road_text_rec.x + (show_road_text_rec.width - width) / 2
+                        y: show_road_text_rec.y
+
+                    }
+                    Text{
+                        id:show_road_end
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: show_road_text_rec.x + (show_road_text_rec.width - width) / 2
+                        y: show_road_text_rec.y
+
+                    }
+
+                }
+
+            }
+        }
+
+
+
         TextField { // 文本输入框
             id: inputField
             visible: parent.visible
@@ -1133,6 +1687,14 @@ Window {
             height: 30
             y:30
             x:160
+            selective_model: ListModel{}
+        }
+        SelectiveBox{
+            id:path_cho
+            width: 150
+            height: 30
+            y:0
+            x:500
             selective_model: ListModel{}
         }
         Timer{
@@ -1182,6 +1744,47 @@ Window {
                 }
             }
         }
+        Popup{
+            id:not_get_road_success
+            width: 200
+            height:100
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: first_window_form
+            padding: 0
+            Rectangle{
+                id: not_get_road_success_rec
+                width: not_get_road_success.width
+                height: not_get_road_success.height
+
+                Text {
+                    id: not_get_road_success_text
+                    text: "请选择起点和终点"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_get_road_success_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_get_road_success.close()
+                    }
+                }
+
+            }
+        }
         Button{
             property int clicknum1: 0
             id:shortest_search
@@ -1207,6 +1810,9 @@ Window {
                         timer1.restart()
                         clicknum1+=1
                     }
+                    else{
+                        not_get_road_success.open()
+                    }
                 }
                 else{
                     for(var k=0;k<temppointnum;k++){
@@ -1231,8 +1837,7 @@ Window {
                 var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
                 var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
                 var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
-                temppointnum=all_point_key.length
-                if(k1<temppointnum){
+                if(k1<temppointnum2){
                     temppointallnum=all_point_key[k1].length-1
                     if(kk[0]===temppointallnum){
                         timer3.restart()
@@ -1243,7 +1848,7 @@ Window {
                         timer3.restart()
                     }
                 }
-                else if(k1===temppointnum){
+                else if(k1===temppointnum2){
                     timer3.stop()
                 }
             }
@@ -1258,7 +1863,6 @@ Window {
                 var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
                 var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
                 var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
-                temppointnum=all_point_key.length
                 if(kk[0]<temppointallnum){
                     var temppointxy11=database.get_address_of_point(all_point_key[k1][kk[0]])
                     var temppointxy22=database.get_address_of_point(all_point_key[k1][kk[0]+1])
@@ -1268,7 +1872,7 @@ Window {
                                                                        starty:temppointxy11.addr_y,
                                                                        endx:temppointxy22.addr_x,
                                                                        endy:temppointxy22.addr_y,
-                                                                       tc:tempcolor[k1+2]});
+                                                                       });
                     }
                     var temppointxy1=database.get_address_of_point(all_point_key[k1][kk[0]])
                     var temppointxy2=database.get_address_of_point(all_point_key[k1][kk[0]+1])
@@ -1281,6 +1885,46 @@ Window {
                                                                        tc:tempcolor[k1]});
                         if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
                             tempobject4[k1][kk[0]].transformOrigin="BottomRight"
+                        }
+                    }
+                    kk[0]+=1
+                }
+            }
+        }
+        Timer{
+            id:timer4
+            interval: 1000
+            repeat: true
+            running:false
+            triggeredOnStart: true
+            onTriggered: {
+                var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
+                console.log(path_cho.cur_chosen_key)
+                temppointallnum=all_point_key[path_cho.cur_chosen_key].length-1
+                if(kk[0]<temppointallnum){
+                    var temppointxy11=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]])
+                    var temppointxy22=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]+1])
+                    var component2 = Qt.createComponent("shortestpath_animation.qml");
+                    if (component2.status === Component.Ready) {
+                        tempobject5[path_cho.cur_chosen_key][kk[0]]= component2.createObject(parent,{startx:temppointxy11.addr_x,
+                                                                       starty:temppointxy11.addr_y,
+                                                                       endx:temppointxy22.addr_x,
+                                                                       endy:temppointxy22.addr_y,
+                                                                       });
+                    }
+                    var temppointxy1=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]])
+                    var temppointxy2=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]+1])
+                    var component1 = Qt.createComponent("shortestpath_line.qml");
+                    if (component1.status === Component.Ready){
+                        tempobject6[path_cho.cur_chosen_key][kk[0]]= component1.createObject(parent,{sx:temppointxy1.addr_x,
+                                                                       sy:temppointxy1.addr_y,
+                                                                       ex:temppointxy2.addr_x,
+                                                                       ey:temppointxy2.addr_y,
+                                                                       tc:tempcolor[path_cho.cur_chosen_key]});
+                        if((temppointxy1.addr_x-temppointxy2.addr_x)>0){
+                            tempobject6[path_cho.cur_chosen_key][kk[0]].transformOrigin="BottomRight"
                         }
                     }
                     kk[0]+=1
@@ -1309,31 +1953,153 @@ Window {
             onClicked: {
                 if(clicknum2===0){
                     if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        path_cho.visible = !path_cho.visible
+                        var tempstartpoint=database.get_point_key(start_pos.cur_chosen_point)
+                        var tempendpoint=database.get_point_key(end_pos.cur_chosen_point)
+                        var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
+                        temppointnum2=all_point_key.length
                         clicknum2+=1
-                        if(k1===temppointnum||k1===0){
-                            timer2.restart()
-                        }
-
-
                     }
-
+                    else{
+                        not_get_road_success.open()
+                    }
                 }
                 else{
-                    for(var t=0;t<temppointnum;t++){
-                        for(var p=0;p<temppointallnum;p++){
-                            if(tempobject3[t][p]!==undefined){
-                                tempobject3[t][p].opacity=0
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                         path_cho.visible = !path_cho.visible
+                        for(var o=0;o<temppointnum2;o++){
+                            for(var l=0;l<20;l++){
+                                if(tempobject3[o][l]!==undefined){
+                                    tempobject3[o][l].opacity=0
+                                }
+                                if(tempobject4[o][l]!==undefined){
+                                    tempobject4[o][l].opacity=0
+                                }
                             }
-                            if(tempobject4[t][p]!==undefined){
-                                tempobject4[t][p].opacity=0
+                        }
+                        for(var t=0;t<temppointnum2;t++){
+                            for(var p=0;p<20;p++){
+                                if(tempobject6[t][p]!==undefined){
+                                    tempobject6[t][p].opacity=0
+                                }
+                                if(tempobject5[t][p]!==undefined){
+                                    tempobject5[t][p].opacity=0
+                                }
                             }
+                        }
+                        clicknum2=0
+                        timer2.stop()
+                        timer3.stop()
+                        timer4.stop()
+                        k1=0
+                    }
+                }
+            }
+        }
+        Popup{
+            id:not_get_road_success2
+            width: 200
+            height:100
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: first_window_form
+            padding: 0
+            Rectangle{
+                id: not_get_road_success2_rec
+                width: not_get_road_success2.width
+                height: not_get_road_success2.height
 
+                Text {
+                    id: not_get_road_success2_text
+                    text: "请选择路径"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_get_road_success2_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_get_road_success2.close()
+                    }
+                }
+
+            }
+        }
+        Button{
+            property int clicknum3: 0
+            id:allpath_search_for
+            Text{
+                font.family: "楷体"
+                font.pixelSize: 20
+                style: Text.Outline
+                styleColor: "steelblue"
+                color: "white"
+                anchors.centerIn: parent
+                text: qsTr("显示")
+            }
+            visible: start_pos.visible
+            enabled: start_pos.enabled
+            width: 140
+            height: 30
+            y : 60
+            anchors.left: end_pos.right
+            anchors.leftMargin: 20
+            onClicked: {
+                if(clicknum3===0){
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        if(path_cho.cur_chosen_point==="全部路径"){
+                            kk[0]=0
+                            timer2.start()
+                            clicknum3+=1
+                        }
+                        else if(path_cho.cur_chosen_point===""){not_get_road_success2.open()}
+                        else {
+                            kk[0]=0
+                            timer4.restart()
+                            clicknum3+=1
                         }
                     }
-                    clicknum2=0
-                    timer2.stop()
-                    timer3.stop()
-                    k1=0
+                }
+                else{
+                    if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
+                        for(var o=0;o<temppointnum2;o++){
+                            for(var l=0;l<20;l++){
+                                if(tempobject3[o][l]!==undefined){
+                                    tempobject3[o][l].opacity=0
+                                }
+                                if(tempobject4[o][l]!==undefined){
+                                    tempobject4[o][l].opacity=0
+                                }
+                            }
+                        }
+                        for(var t=0;t<temppointnum2;t++){
+                            for(var p=0;p<20;p++){
+                                if(tempobject6[t][p]!==undefined){
+                                    tempobject6[t][p].opacity=0
+                                }
+                                if(tempobject5[t][p]!==undefined){
+                                    tempobject5[t][p].opacity=0
+                                }
+                            }
+                        }
+                        clicknum3=0
+                        timer2.stop()
+                        timer3.stop()
+                        timer4.stop()
+                        k1=0
+                    }
                 }
             }
         }
@@ -1528,6 +2294,7 @@ Window {
             NumberAnimation { target: start_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
             NumberAnimation { target: end_pos; property: "opacity"; from : 0;to: 1.0; duration: 400}
             NumberAnimation { target: allpath_search; property: "opacity"; from : 0;to: 1.0; duration: 400}
+            NumberAnimation { target: allpath_search_for ; property: "opacity"; from : 0;to: 1.0; duration: 400}
         }
         Rectangle{
             id:search_route
@@ -1619,9 +2386,6 @@ Window {
         ListModel{
             id : rating_model
         }
-
-
-
         Popup{
             id : to_rate_pop_up
             width: 200
@@ -1894,6 +2658,10 @@ Window {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom : parent.bottom
         onClicked: {
+            second_window_form.delete_button_success=false
+            second_window_form.delete_button_pressed=false
+            second_window_form.delete_road_success=false
+            //second_window_form.add_button_success=false
             disable_button_text.text = disable_button_text.text === "游客访问" ? "管理员访问" : "游客访问"
             first_window_form.visible = !first_window_form.visible;
             first_window_form.enabled = !first_window_form.enabled;
@@ -1902,6 +2670,8 @@ Window {
             /*max_point_key++;*/
             console.log("当前最大点为：" + root.max_point_key)
             console.log("init_max_key: " + pointsGenarating.init_point_key)
+            /*动态创建组件*/
+            //RefreshFirstWindowSig()
         }
 
     }

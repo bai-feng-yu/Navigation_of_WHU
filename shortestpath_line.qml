@@ -9,11 +9,11 @@ Item {
     Rectangle{
         id:rect1
         x:sx
-        y:sy
+        y:sy-5
         height:10
         width:0
         color:tc
-        transformOrigin: "TopLeft"
+        transformOrigin: "Left"
         rotation: Math.atan((ey-sy)/(ex-sx))/(Math.PI/180)
         NumberAnimation {
             id: animatewidth1
