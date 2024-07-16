@@ -889,6 +889,7 @@ Window {
                 font.pointSize: 20
                 x : confirm_add_road_rec.x
                 y: add_road_text.y + add_road_text.height+10+input_road_name.height+25
+
             }
             TextField{
                 id:input_road_length
@@ -902,7 +903,17 @@ Window {
                     radius: 4
                     border.color: "steelblue"
                 }
+                validator: IntValidator
+                {
+                    bottom:1
+                }
+                onTextChanged: {
+                        if (!validator.validate(text, inputField.text.length)) {
+                            inputField.text = ""
+                        }
+                    }
             }
+
             Text {
                 id: add_road_start
                 font.family: "楷体"
@@ -926,6 +937,15 @@ Window {
                     radius: 4
                     border.color: "steelblue"
                 }
+                validator: IntValidator
+                {
+                    bottom:1
+                }
+                onTextChanged: {
+                        if (!validator.validate(text, inputField.text.length)) {
+                            inputField.text = ""
+                        }
+                    }
             }
             Text {
                 id: add_road_end
@@ -950,6 +970,15 @@ Window {
                     radius: 4
                     border.color: "steelblue"
                 }
+                validator: IntValidator
+                {
+                    bottom:1
+                }
+                onTextChanged: {
+                        if (!validator.validate(text, inputField.text.length)) {
+                            inputField.text = ""
+                        }
+                    }
             }
 
             Button{
@@ -1153,6 +1182,15 @@ Window {
                         radius: 4
                         border.color: "steelblue"
                     }
+                    validator: IntValidator
+                    {
+                        bottom:1
+                    }
+                    onTextChanged: {
+                            if (!validator.validate(text, inputField.text.length)) {
+                                inputField.text = ""
+                            }
+                        }
                 }
                 Text {
                     id: del_road_end
@@ -1177,6 +1215,15 @@ Window {
                         radius: 4
                         border.color: "steelblue"
                     }
+                    validator: IntValidator
+                    {
+                        bottom:1
+                    }
+                    onTextChanged: {
+                            if (!validator.validate(text, inputField.text.length)) {
+                                inputField.text = ""
+                            }
+                        }
                 }
                 Button{
                     id: delete_road_button
@@ -1285,12 +1332,7 @@ Window {
                 }
             }
         }
-
-
     }
-
-
-
     Rectangle{
         id: first_window_form
         visible: true
