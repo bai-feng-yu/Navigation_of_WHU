@@ -204,33 +204,33 @@ Window {
                                          "point_key":i
                                      })
                 }
-                // for(var j=1;j<=max_point_key;j++)
-                // {
+                 for(var j=1;j<=max_point_key;j++)
+                 {
 
-                //     if(database.get_road_key(i,j)!==-1)
-                //     {
-                //         var start_point_name=database.get_point_name(i);
-                //         var end_point_name=database.get_point_name(j);
-                //         var start_point_map=database.get_address_of_point(i);
-                //         var start_x=start_point_map["addr_x"];
-                //         var start_y=start_point_map["addr_y"];
-                //         var end_point_map=database.get_address_of_point(j);
-                //         var end_x=end_point_map["addr_x"];
-                //         var end_y=end_point_map["addr_y"];
-                //         var road_key=database.get_road_key(i,j);
-                //         pathsMod.append({
-                //                             "road_key":road_key,
-                //                             "road_name":database.get_road_name(road_key),
-                //                             "road_length":database.get_road_length(road_key),
-                //                             "start_point_name":database.get_point_name(i),
-                //                             "start_point_key":i,
-                //                             "end_point_key":j,
-                //                             "end_point_name":database.get_point_name(j),
-                //                             "start_point_add":Qt.point(start_x,start_y),
-                //                             "end_point_add":Qt.point(end_x,end_y)
-                //                         })
-                //     }
-                // }
+                     if(database.get_road_key(i,j)!==-1)
+                     {
+                         var start_point_name=database.get_point_name(i);
+                         var end_point_name=database.get_point_name(j);
+                         var start_point_map=database.get_address_of_point(i);
+                         var start_x=start_point_map["addr_x"];
+                         var start_y=start_point_map["addr_y"];
+                         var end_point_map=database.get_address_of_point(j);
+                         var end_x=end_point_map["addr_x"];
+                         var end_y=end_point_map["addr_y"];
+                         var road_key=database.get_road_key(i,j);
+                         pathsMod.append({
+                                             "road_key":road_key,
+                                             "road_name":database.get_road_name(road_key),
+                                             "road_length":database.get_road_length(road_key),
+                                             "start_point_name":database.get_point_name(i),
+                                             "start_point_key":i,
+                                             "end_point_key":j,
+                                             "end_point_name":database.get_point_name(j),
+                                             "start_point_add":Qt.point(start_x,start_y),
+                                             "end_point_add":Qt.point(end_x,end_y)
+                                         })
+                     }
+                 }
             }
             console.log("pointMod count " + pointsMod.count)
             console.log("path.count"+pathsMod.count)
@@ -978,7 +978,7 @@ Window {
                     console.log(road_length+"   "+road_name+" "+road_start_key+"  "+road_end_key+" "+new_start_x+" "+new_end_x)
                     console.log(new_start_name+"   "+new_end_name)
 
-                    if(new_start_x!==-1&&new_end_x!==-1)
+                    if(new_start_x!==-1&&new_end_x!==-1&&database.get_road_key(road_start_key,road_end_key)===-1&&database.get_road_key(road_end_key,road_start_key)===-1)
                     {
 
                         database.expand_road(road_max_key+1,road_name,new_start_name,new_end_name,road_length)
