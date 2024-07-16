@@ -1996,6 +1996,47 @@ Window {
                 }
             }
         }
+        Popup{
+            id:not_get_road_success2
+            width: 200
+            height:100
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: first_window_form
+            padding: 0
+            Rectangle{
+                id: not_get_road_success2_rec
+                width: not_get_road_success2.width
+                height: not_get_road_success2.height
+
+                Text {
+                    id: not_get_road_success2_text
+                    text: "请选择路径"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_get_road_success2_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_get_road_success2.close()
+                    }
+                }
+
+            }
+        }
         Button{
             property int clicknum3: 0
             id:allpath_search_for
@@ -2023,7 +2064,7 @@ Window {
                             timer2.start()
                             clicknum3+=1
                         }
-                        else if(path_cho.cur_chosen_point===""){kk[0]=0}
+                        else if(path_cho.cur_chosen_point===""){not_get_road_success2.open()}
                         else {
                             kk[0]=0
                             timer4.restart()
