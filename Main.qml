@@ -26,7 +26,7 @@ Window {
     property color qiuguiYellow: Qt.rgba(255/255,163/255,0/255,0.5)
     property color chengwuGrey: Qt.rgba(193/255,198/255,200/255,0.5)
     property color shuangyeRed: Qt.rgba(255/255,8/255,0/255,0.5)
-    property var tempcolor: ["#E3170D","#9C661F","#FF8000","#A020F0","#DA70D6","#00C78C","#C76114","#228B22","#03A89E"]
+    property var tempcolor: ["#9C661F","#FF8000","#DA70D6","#00C78C","#C76114","#228B22","#03A89E","#9C661F","#FF8000","#DA70D6","#00C78C","#C76114","#228B22","#03A89E"]
     property int max_point_key : database.get_max_valid_point_key_from_points()
     property var tempobject1: []
     property var tempobject2: []
@@ -1828,7 +1828,7 @@ Window {
                                                                        starty:temppointxy11.addr_y,
                                                                        endx:temppointxy22.addr_x,
                                                                        endy:temppointxy22.addr_y,
-                                                                       tc:tempcolor[k1+2]});
+                                                                       });
                     }
                     var temppointxy1=database.get_address_of_point(all_point_key[k1][kk[0]])
                     var temppointxy2=database.get_address_of_point(all_point_key[k1][kk[0]+1])
@@ -1868,7 +1868,7 @@ Window {
                                                                        starty:temppointxy11.addr_y,
                                                                        endx:temppointxy22.addr_x,
                                                                        endy:temppointxy22.addr_y,
-                                                                       tc:tempcolor[k1+2]});
+                                                                       });
                     }
                     var temppointxy1=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]])
                     var temppointxy2=database.get_address_of_point(all_point_key[path_cho.cur_chosen_key][kk[0]+1])
