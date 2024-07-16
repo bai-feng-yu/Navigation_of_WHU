@@ -1436,7 +1436,7 @@ Window {
                 console.log("signal")
                 var max_point_key=database.get_max_valid_point_key_from_points();
                 refresh_pointGenarating.clear()
-                refresh_path.clear()
+                pathsMod.clear()
                 for(var i=1;i<=max_point_key;i++)
                 {
                     var point_map=database.get_address_of_point(i);
@@ -1466,7 +1466,7 @@ Window {
                             var end_x=end_point_map["addr_x"];
                             var end_y=end_point_map["addr_y"];
                             var road_key=database.get_road_key(i,j);
-                            refresh_path.append({
+                            pathsMod.append({
                                                 "road_key":road_key,
                                                 "road_name":database.get_road_name(road_key),
                                                 "road_length":database.get_road_length(road_key),
@@ -1483,7 +1483,7 @@ Window {
                 //pointsGenarating_fir.model = null
                 pointsGenarating_fir.model = refresh_pointGenarating
 
-                pathsMod = refresh_path
+
 
             }
         }

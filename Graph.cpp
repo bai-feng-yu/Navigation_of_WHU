@@ -47,21 +47,21 @@ vector<int> Graph::__dijkstra(int from)
     priority_queue<vector<int>,vector<vector<int>>, Cmp>pq;
     pq.push({from,0});
     while(!pq.empty()){
-            vector<int>top = pq.top();
-            int v = top[0]; //w = top[1];
-            pq.pop();
-            if(!visited[v]){
-                //尝试用该记录优化后面路径
-                visited[v] = true;
-                for(auto egde : graph[v]){
-                    int nex = egde[0];
-                    if(!visited[nex] && dist[v] + egde[1] < dist[nex]){
-                        dist[nex] = dist[v] + egde[1];
-                        pq.push({nex, dist[nex]});
-                        points_path[nex] = v; // nex 的前一个节点是 v
-                    }
+        vector<int>top = pq.top();
+        int v = top[0]; //w = top[1];
+        pq.pop();
+        if(!visited[v]){
+            //尝试用该记录优化后面路径
+            visited[v] = true;
+            for(auto egde : graph[v]){
+                int nex = egde[0];
+                if(!visited[nex] && dist[v] + egde[1] < dist[nex]){
+                    dist[nex] = dist[v] + egde[1];
+                    pq.push({nex, dist[nex]});
+                    points_path[nex] = v; // nex 的前一个节点是 v
                 }
             }
+        }
     }
     return points_path; // 全信息的 path
 }
@@ -92,7 +92,7 @@ QVariantList Graph::inquire_shortest_road(int point_key1, int point_key2)
     while(cur != -1){
         res.push_back(cur);
         cur = points_path[cur];
-    } 
+    }
     reverse(res.begin(), res.end());
 
     QVariantList list;
@@ -712,7 +712,7 @@ bool Graph::del_point(QString point_name)
 
     QString d_p=QString("DELETE FROM point where point_name='%1' ").arg(point_name);
     int key=this->get_point_key(point_name);
-    QString d_r=QString("DELETE FROM road where lp_key='%1' or rp_key='%2'").arg(key,key);
+    QString d_r=QString("DELETE FROM road where pl_key='%1' or pr_key='%2'").arg(QString::number(key),QString::number(key));
 
     if(del_p.exec(d_p)&&del_r.exec(d_r))
     {
@@ -729,8 +729,8 @@ bool Graph::del_point(int point_key)
     QSqlQuery del_p=QSqlQuery(database);
     QSqlQuery del_r=QSqlQuery(database);
 
-    QString d_p=QString("DELETE FROM point where point_key='%1' ").arg(point_key);
-    QString d_r=QString("DELETE FROM road where lp_key='%1' or rp_key='%2'").arg(point_key,point_key);
+    QString d_p=QString("DELETE FROM point where point_key='%1' ").arg(QString::number(point_key));
+    QString d_r=QString("DELETE FROM road where pl_key='%1' or pr_key='%2'").arg(QString::number(point_key),QString::number(point_key));
 
     if(del_p.exec(d_p)&&del_r.exec(d_r))
     {
@@ -760,7 +760,7 @@ bool Graph::del_road(int road_key)
     //删除道路
     QSqlDatabase database = QSqlDatabase::database("qt_sql_default_connection");
     QSqlQuery del_r=QSqlQuery(database);
-    QString d_r=QString("DELETE FROM road where road_key='%1'").arg(road_key);
+    QString d_r=QString("DELETE FROM road where road_key='%1'").arg(QString::number(road_key));
 
     if(del_r.exec(d_r))
     {
