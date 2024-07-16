@@ -19,7 +19,7 @@ HistoryModel::HistoryModel()
     //     m_historyData.push_back("测试" + randStr);
     // }
     Graph g;
-    QVariantList list=g.get_all_names_of_points();
+    QVariantList list=g.get_all_names_of_points(11);
     for(int i=0;i<list.length();i++)
     {
         m_historyData.push_back(list[i].toString());

@@ -2,9 +2,13 @@
 
 void data::createConnection()   //初始化创建数据库连接
 {
-    QSqlDatabase database;                              //创建操作对象
-    database = QSqlDatabase::addDatabase("QSQLITE");    //添加数据库驱动
-    database.setDatabaseName("DataBase.db");          //设置数据库名称
+    QSqlDatabase database;        //创建操作对象
+    database = QSqlDatabase::addDatabase("QMYSQL");    //添加数据库驱动
+    database.setHostName("110.42.189.57");                    //远程连接的数据库IP地址
+    database.setPort(3306);                                 //数据库提供的端口
+    database.setUserName("far");                             //远程连接的用户
+    database.setPassword("123456");                            // 密码
+    database.setDatabaseName("mydatabase");          //设置数据库名称
     database.open();                 //打开数据库
 
     QSqlQuery sqlQuery;              //创建操作对象

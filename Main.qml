@@ -38,7 +38,9 @@ Window {
     property var temppointnum2
     property var temppointallnum
     property int choosen_del_point_index: -1
-
+    property var searched_point_name
+    property int searched_score
+    property int searched_scored_people_num
 
     property int i1: 0
     property int j1: 0
@@ -76,7 +78,7 @@ Window {
     }
 
     Component.onCompleted: {
-        var locations = database.get_all_names_of_points(10)
+        var locations = database.get_all_names_of_points(11)
         start_pos.selective_model.clear()
         for (var i = 0; i < locations.length; i++) {
             start_pos.selective_model.append({ "text": locations[i] })
@@ -1828,6 +1830,47 @@ Window {
                 }
             }
         }
+        Popup{
+            id:not_get_road_success
+            width: 200
+            height:100
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: first_window_form
+            padding: 0
+            Rectangle{
+                id: not_get_road_success_rec
+                width: not_get_road_success.width
+                height: not_get_road_success.height
+
+                Text {
+                    id: not_get_road_success_text
+                    text: "请选择起点和终点"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_get_road_success_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_get_road_success.close()
+                    }
+                }
+
+            }
+        }
         Button{
             property int clicknum1: 0
             id:shortest_search
@@ -1852,6 +1895,9 @@ Window {
                     if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
                         timer1.restart()
                         clicknum1+=1
+                    }
+                    else{
+                        not_get_road_success.open()
                     }
                 }
                 else{
@@ -2000,6 +2046,9 @@ Window {
                         temppointnum2=all_point_key.length
                         clicknum2+=1
                     }
+                    else{
+                        not_get_road_success.open()
+                    }
                 }
                 else{
                     if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
@@ -2033,6 +2082,47 @@ Window {
                 }
             }
         }
+        Popup{
+            id:not_get_road_success2
+            width: 200
+            height:100
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: first_window_form
+            padding: 0
+            Rectangle{
+                id: not_get_road_success2_rec
+                width: not_get_road_success2.width
+                height: not_get_road_success2.height
+
+                Text {
+                    id: not_get_road_success2_text
+                    text: "请选择路径"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_get_road_success2_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_get_road_success2.close()
+                    }
+                }
+
+            }
+        }
         Button{
             property int clicknum3: 0
             id:allpath_search_for
@@ -2060,7 +2150,7 @@ Window {
                             timer2.start()
                             clicknum3+=1
                         }
-                        else if(path_cho.cur_chosen_point===""){kk[0]=0}
+                        else if(path_cho.cur_chosen_point===""){not_get_road_success2.open()}
                         else {
                             kk[0]=0
                             timer4.restart()
@@ -2157,6 +2247,114 @@ Window {
                 }
             }
         }
+
+        Popup{
+            id : to_search_for_point_info
+            anchors.centerIn: first_window_form
+            width: 200
+            height: 200
+            Rectangle {
+                id : to_search_for_point_info_rec
+                width: 200
+                height: to_search_for_point_info.height
+                color: Qt.rgba(1,1,1,0.5)
+                border.color: "steelblue"
+                border.width: 2
+                anchors.centerIn: parent
+                Column {
+                    width: parent.width
+                    height: parent.height
+                    spacing: 0
+                    Text {
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        text: searched_point_name
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: to_search_for_point_info_rec.x + (to_search_for_point_info_rec.width - width) / 2
+                        y: to_search_for_point_info_rec.y
+                    }
+
+                    Text {
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        text: "历史评分: " + searched_score
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: to_search_for_point_info_rec.x + (to_search_for_point_info_rec.width - width) / 2
+                        y: to_search_for_point_info_rec.y
+                    }
+
+                    Text {
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        text: "历史评分人数: " + searched_scored_people_num
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        x: to_search_for_point_info_rec.x + (to_search_for_point_info_rec.width - width) / 2
+                        y: to_search_for_point_info_rec.y
+                    }
+
+                    StarRating {
+                        id: rated_star_for_search
+                        starCount: searched_score
+                        editable: false
+                        //anchors.horizontalCenter: parent.horizontalCenter
+                        //anchors.top: Text.bottom
+                        //anchors.topMargin: 10
+
+                    }
+                }
+            }
+
+
+        }
+        Popup{
+            id : search_failed
+
+            anchors.centerIn: first_window_form
+            Column{
+                spacing: 5
+                Text {
+                    font.pixelSize: 20
+                    color: "white"
+                    font.family: "楷体"
+                    text: "景点不存在！"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    //x: rating_pop_up.x + (rating_pop_up.width - width) / 2
+
+                }
+
+                Rectangle{
+                    width: 200
+                    height: 20
+                    color: "transparent"
+                    border.color: "steelblue"
+                    Text {
+                        font.pixelSize: 20
+                        color: "white"
+                        font.family: "楷体"
+                        text: qsTr("确定")
+                        style: Text.Outline
+                        styleColor: "steelblue"
+                        anchors.centerIn: parent
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked:{
+                            search_failed.close()
+                        }
+                    }
+                }
+            }
+
+
+        }
+
         Button {
             Text{
                 font.family: "楷体"
@@ -2171,8 +2369,31 @@ Window {
             visible: parent.visible
             enabled: parent.enabled
             onClicked: {
-                if(inputField.text !== ""){
-                    console.log(inputField.text)
+                if(inputField.text === ""){
+                    console.log("error!")
+                    search_failed.open()
+
+                }
+                var id = -1
+                for(var i = 0; i<rating_model.count;i++){
+                    if(rating_model.get(i).point_name === inputField.text){
+                        id = i;
+                        break;
+                    }
+                }
+
+                console.log(id) // 从 1 开始
+                if(id !== -1){
+                    searched_point_name = inputField.text
+                    searched_score = rating_model.get(id).score
+                    searched_scored_people_num = rating_model.get(id).people_num
+                    to_search_for_point_info.open()
+
+                }else{
+                    searched_point_name = "undefined"
+                    searched_score = -1
+                    searched_scored_people_num = -1
+                    search_failed.open()
                 }
             }
 
