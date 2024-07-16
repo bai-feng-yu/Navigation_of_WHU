@@ -12,7 +12,7 @@ Item {
         x:startx-7.5
         y:starty-7.5
         width: 15; height: 15
-        color: tc
+        color: "#A020F0"
         opacity: 1.0
         ParallelAnimation {
             id: playbanner
