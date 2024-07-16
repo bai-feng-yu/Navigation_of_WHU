@@ -829,6 +829,46 @@ Window {
 
             }
         }
+        Popup{
+            id:input_right_num
+            width: 400
+            height:200
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: second_window_form
+             padding: 0
+             Rectangle{
+                 id: input_right_num_rec
+                 width: input_right_num.width
+                 height: input_right_num.height
+             }
+             Text {
+                 id: input_right_num_text
+                 text: "请输入数字"
+                 font.family: "楷体"
+                 color: "white"
+                 style: Text.Outline
+                 styleColor: "steelblue"
+                 font.pointSize: 15
+                 anchors.centerIn: parent
+             }
+             MouseArea{
+                 anchors.fill:input_right_num
+
+             }
+             Button{
+                 id: input_right_num_button
+                 text: "OK"
+                 width:80
+                 height:40
+                 anchors.bottom: parent.bottom
+                 anchors.horizontalCenter: parent.horizontalCenter
+                 onClicked: {
+                     input_right_num.close()
+                 }
+             }
+        }
+
         Popup{            //输入路径信息弹窗
             id:confirm_add_road
             width:400
@@ -903,13 +943,15 @@ Window {
                     radius: 4
                     border.color: "steelblue"
                 }
-                validator: IntValidator
+               validator: IntValidator
                 {
                     bottom:1
                 }
+
                 onTextChanged: {
-                        if (!validator.validate(text, inputField.text.length)) {
-                            inputField.text = ""
+                        if (!validator.validate(input_road_length.text, input_road_length.text.length)) {
+                            input_right_num.visible=true
+                            //inputField.text = ""
                         }
                     }
             }
