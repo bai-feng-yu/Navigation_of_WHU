@@ -1744,6 +1744,47 @@ Window {
                 }
             }
         }
+        Popup{
+            id:not_get_road_success
+            width: 200
+            height:100
+            visible: false
+            enabled: parent.enabled
+            anchors.centerIn: first_window_form
+            padding: 0
+            Rectangle{
+                id: not_get_road_success_rec
+                width: not_get_road_success.width
+                height: not_get_road_success.height
+
+                Text {
+                    id: not_get_road_success_text
+                    text: "请选择起点和终点"
+                    font.family: "楷体"
+                    color: "white"
+                    style: Text.Outline
+                    styleColor: "steelblue"
+                    font.pointSize: 15
+                    anchors.centerIn: parent
+                }
+                MouseArea{
+                    anchors.fill:not_add_road_success
+
+                }
+                Button{
+                    id: not_get_road_success_button
+                    text: "OK"
+                    width:80
+                    height:40
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        not_get_road_success.close()
+                    }
+                }
+
+            }
+        }
         Button{
             property int clicknum1: 0
             id:shortest_search
@@ -1768,6 +1809,9 @@ Window {
                     if(start_pos.cur_chosen_point!==""&&end_pos.cur_chosen_point!==""){
                         timer1.restart()
                         clicknum1+=1
+                    }
+                    else{
+                        not_get_road_success.open()
                     }
                 }
                 else{
@@ -1915,6 +1959,9 @@ Window {
                         var all_point_key=database.inquire_all_roads(tempstartpoint,tempendpoint)
                         temppointnum2=all_point_key.length
                         clicknum2+=1
+                    }
+                    else{
+                        not_get_road_success.open()
                     }
                 }
                 else{
