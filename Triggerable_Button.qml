@@ -9,7 +9,8 @@ Item {
     enabled: true
     property alias button_text: circle_text.text
     property int index_of_point: circle_text.text
-
+    property string nameContext:"未知" //景点名字
+    property string infoContext1:"暂无信息"
     property int point_x: 0 // 每个按钮的 X 坐标
     property int point_y: 0 // 每个按钮的 Y 坐标
     // 设置较高的z值
@@ -55,11 +56,11 @@ Item {
         //property bool is_new:index_of_point>database.get_max_valid_point_key_from_points();
 
         //简介接口
-        property string nameContext:"未知"//景点名字
-        property string imageSource:""//图片的路径
-        property string infoContext1:"暂无信息"
-        property string infoContext2:""
-        property string infoContext3:""//景点信息
+
+        // property string imageSource:""//图片的路径
+
+        // property string infoContext2:""
+        // property string infoContext3:""//景点信息
         //鼠标悬浮未点击时显示的小弹窗 显示坐标名字
         Component {
             id: placeComponent
@@ -79,6 +80,7 @@ Item {
                         //width: parent.width
                         //height: parent.height
                         text: nameContext
+                        font.pixelSize: 10
                         font.family: "楷体"
                         font.weight: 600
                         anchors.centerIn: parent // 将文本居中显示
@@ -93,84 +95,94 @@ Item {
 
             //固定弹窗大小
             Rectangle {
-                width: 250
+                width: 400
                 height: 300
                 color: Qt.rgba(244/255,255/255,243/255,1.0)
                 radius: 10
                 border.color: Qt.rgba(20/255,4/255,110/255,0.6)
 
+
                 //支持鼠标滚轮以及滑动条浏览
                 ScrollView {
-                    anchors.fill: parent
+                    width: 400
+                    height: 300
+                    ScrollBar.vertical.policy: ScrollBar.AlwaysOn
 
-                    contentWidth: contentText.width
-                    contentHeight: contentText.height
+                    // contentWidth: contentText.width
+                    // contentHeight: contentText.height
+                    Column{
+                        Text{
+                            y:10
+                            x:5
+                            id:sceneName
+                            text:nameContext
+                            font.family:"楷体"
+                            font.weight:800
+                            font.pointSize: 25
+                            wrapMode: Text.WordWrap
+                        }
 
-                    //标题
-                    Text{
-                        y:10
-                        x:5
-                        id:sceneName
-                        text:circle_rect.nameContext
-                        font.family:"楷体"
-                        font.weight:800
-                        font.pointSize: 25
-                        wrapMode: Text.WordWrap
-                    }
+                        Rectangle{
+                            id:lineBelowTitle1
+                            // y:sceneName.y+34
+                            // x:3
+                            width:200
+                            height:1
+                            color:"black"
 
-                    Rectangle{
-                        id:lineBelowTitle1
-                        y:sceneName.y+34
-                        x:3
-                        width:200
-                        height:1
-                        color:"black"
+                        }
+                        Rectangle{
+                            id:lineBelowTitle2
+                            // y:sceneName.y+42
+                            // x:3
+                            width:200
+                            height:1
+                            color:"black"
 
-                    }
-                    Rectangle{
-                        id:lineBelowTitle2
-                        y:sceneName.y+42
-                        x:3
-                        width:200
-                        height:1
-                        color:"black"
-
-                    }
-                    Item{
-                        //anchors.centerIn: parent
-                        id:myCarousel
-                        width: 400
-                        height: 300
-                        Carousel{
-                            anchors.fill: parent
-                            delegate: Component{
-                                Image {
-                                    anchors.fill: parent
-                                    source: model.url
-                                    asynchronous: true
-                                    fillMode:Image.PreserveAspectCrop
+                        }
+                        Item{
+                            //anchors.centerIn: parent
+                            id:myCarousel
+                            width: 400
+                            height: 300
+                            Carousel{
+                                anchors.fill: parent
+                                delegate: Component{
+                                    Image {
+                                        anchors.fill: parent
+                                        source: model.url
+                                        asynchronous: true
+                                        fillMode:Image.PreserveAspectCrop
+                                    }
+                                }
+                                Layout.topMargin: 20
+                                Layout.leftMargin: 5
+                                Component.onCompleted: {
+                                    model = carousel_pics_model
                                 }
                             }
-                            Layout.topMargin: 20
-                            Layout.leftMargin: 5
-                            Component.onCompleted: {
-                                model = carousel_pics_model
-                            }
                         }
+                        //具体信息
+                        Text {
+                            id: contentText
+                            width: 225
+                            // y:sceneImage.y+sceneImage.height+10
+                            // x:5
+                            font.pixelSize: 25
+                            text:infoContext1
+                            font.family:"楷体"
+                            wrapMode: Text.WordWrap
+                        }
+
                     }
-                    //具体信息
-                    Text {
-                        id: contentText
-                        width: 225
-                        y:sceneImage.y+sceneImage.height+10
-                        x:5
-                        text:infoContext1+'\n'+infoContext2+'\n'+infoContext3+"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-                        font.family:"楷体"
-                        wrapMode: Text.WordWrap
-                    }
+                    //标题
 
                 }
+
+
             }
+
+
         }
 
 

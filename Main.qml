@@ -1417,8 +1417,8 @@ Window {
                 button_text: pointsMod.get(index).point_key
                 //anchors.left: parent.left
                 //anchors.leftMargin: index * 40
-
-
+                nameContext: database.get_point_name(pointsMod.get(index).point_key)
+                carousel_pics_model: all_images_model[index]
                 point_x: pointsMod.get(index).point_addr_x-15 // 使用当前元素的 point_x
 
                 point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
