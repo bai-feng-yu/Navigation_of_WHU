@@ -1,11 +1,12 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
-
+import QtQuick.Layouts
 Item {
     width: 30
     height: 30
     id : trigger_root
+    enabled: true
     property alias button_text: circle_text.text
     property int index_of_point: circle_text.text
 
@@ -14,7 +15,7 @@ Item {
     // 设置较高的z值
     property int zPriority: 1000
     property int buttonSize:30
-
+    property var carousel_pics_model
     function confirm_new_point(index,point_name,centerX,centerY){
         //confirm_add_point.visible=true;
         second_window_form.point_is_onrelease=true
@@ -36,9 +37,15 @@ Item {
         x:point_x
         y:point_y
         z:zPriority
+        Text{
+            id:circle_text
+            text: circle_text.text = ++root.max_point_key
+            anchors.centerIn: parent
+        }
         property int count: 0
         property bool draggable: first_window_form.enabled?false:true
-
+        // /* 代替版 */
+        // property bool draggable: true
         //在鼠标靠近按钮一定范围内时就可以显示小弹窗
         property int hoverMargin:5
 
@@ -53,7 +60,6 @@ Item {
         property string infoContext1:"暂无信息"
         property string infoContext2:""
         property string infoContext3:""//景点信息
-
         //鼠标悬浮未点击时显示的小弹窗 显示坐标名字
         Component {
             id: placeComponent
@@ -105,7 +111,7 @@ Item {
                         y:10
                         x:5
                         id:sceneName
-                        text:nameContext
+                        text:circle_rect.nameContext
                         font.family:"楷体"
                         font.weight:800
                         font.pointSize: 25
@@ -130,23 +136,28 @@ Item {
                         color:"black"
 
                     }
-                    //图片
-                    Image {
-                        id: sceneImage
-                        source:imageSource
-                        x:10
-                        y:lineBelowTitle2.y+4
-                        width:popupComponent.width-50
-                        property real aspectRatio: 1 // 默认宽高比，将在图片加载后更新
-                        onStatusChanged: {
-                            if (status === Image.Ready) {
-                                aspectRatio = sourceSize.width / sourceSize.height;
-                                height = width / aspectRatio;
+                    Item{
+                        //anchors.centerIn: parent
+                        id:myCarousel
+                        width: 400
+                        height: 300
+                        Carousel{
+                            anchors.fill: parent
+                            delegate: Component{
+                                Image {
+                                    anchors.fill: parent
+                                    source: model.url
+                                    asynchronous: true
+                                    fillMode:Image.PreserveAspectCrop
+                                }
+                            }
+                            Layout.topMargin: 20
+                            Layout.leftMargin: 5
+                            Component.onCompleted: {
+                                model = carousel_pics_model
                             }
                         }
-                        fillMode: Image.PreserveAspectFit // 保持比例的同时填充图片
                     }
-
                     //具体信息
                     Text {
                         id: contentText
@@ -167,12 +178,15 @@ Item {
             id: dragArea
             anchors.fill: parent
             enabled: true
+            //enabled: circle_rect.draggable | second_window_form.delete_button_pressed
             //property bool isDraggable: true
-            drag.target: circle_rect.draggable ? parent : null
+            drag.target: parent
+            /* 代替版 */
             //判断大弹窗是否存在
             property bool isPopupVisible: false
             onClicked: {
                 //console.log(rec.x + " " + rec.y + " " + rec.Drag.hotSpot.x + " " + rec.Drag.hotSpot.y)
+                console.log("Clicked!")
                 console.log("a test for triggerable button" + index_of_point)
                 console.log("最大点为"+root.max_point_key)
                 /*c++端的删除操作 to be added*/
@@ -231,10 +245,10 @@ Item {
 
                     }
 
-                    chosen_to_be_deleted_index = index_of_point
-                    if(chosen_to_be_deleted_index >= 0){
+                    choosen_del_point_index = index_of_point
+                    if(choosen_del_point_index >= 0){
 
-                        console.log("chosen_to_be_deleted_index = " + chosen_to_be_deleted_index)
+                        console.log("choosen_del_point_index = " + choosen_del_point_index)
                     }else{
                         console.log("not set successfully")
                     }
@@ -248,9 +262,9 @@ Item {
 
                 console.log("确认" + (++circle_rect.count))
                 console.log("最大点为"+root.max_point_key)
-                var centerX=circle_rect.x+15
-                var centerY=circle_rect.y+15
-                var point_name=""
+                // var centerX=circle_rect.x+15
+                // var centerY=circle_rect.y+15
+                // var point_name=""
 
                 if(second_window_form.add_button_success)
                 {
@@ -323,11 +337,7 @@ Item {
                 }
             }
 
-            Text{
-                id:circle_text
-                text: circle_text.text = ++root.max_point_key
-                anchors.centerIn: parent
-            }
+
 
             // 添加一个变量来存储悬停时的小弹窗
             property var hoverPopup: null

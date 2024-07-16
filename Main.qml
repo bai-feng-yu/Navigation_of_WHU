@@ -101,11 +101,11 @@ Window {
         enabled: false
         width: parent.width
         height: parent.height
-        Image {
-            id: myImage
-            anchors.centerIn: parent
-            source: "file:///D:/QTproject/new/Navigation_of_WHU/ditu.jpg"
-        }
+        // Image {
+        //     id: myImage
+        //     anchors.centerIn: parent
+        //     source: "file:///D:/QTproject/new/Navigation_of_WHU/ditu.jpg"
+        // }
         property bool delete_button_pressed: false
         property bool delete_button_success: false
         property bool delete_road_success: false
@@ -330,7 +330,7 @@ Window {
                 button_text: pointsMod.get(index).point_key
                 //anchors.left: parent.left
                 //anchors.leftMargin: index * 40
-
+                enabled: true
 
                 point_x: pointsMod.get(index).point_addr_x-15// 使用当前元素的 point_x
 
@@ -489,6 +489,7 @@ Window {
                     id: delete_finish_instruction_button
                     anchors.top: delete_finish_text.bottom
                     anchors.topMargin: 5
+                    signal refreshFirstWindowSig()
                     Text{
                         font.family: "楷体"
                         font.pointSize : 20
@@ -556,7 +557,7 @@ Window {
                         path_canvas.requestPaint()
                         console.log("被删除的点"+choosen_del_point_index)
 
-
+                        refreshFirstWindowSig()
                         //修改listmodel中的信息
 
                     }
@@ -739,7 +740,7 @@ Window {
                 anchors.centerIn: parent
             }
             Button{
-                anchors.fill: parent``````````
+                anchors.fill: parent
                 opacity: 0
                 enabled: parent.enabled
 
@@ -1279,6 +1280,7 @@ Window {
                anchors.centerIn: parent
                source: "file:///D:/QTproject/new/Navigation_of_WHU/ditu.jpg"
            }*/
+
         MediaPlayer {
             id: unnamed2
             loops: MediaPlayer.Infinite
@@ -1316,11 +1318,77 @@ Window {
 
              //contrast: 0.5
 
-         }
+        }
+
+        Canvas {
+            id: path_canvas
+            anchors.fill: parent
+
+            onPaint: {
+                var ctx = getContext("2d");
+                ctx.strokeStyle = Qt.rgba(255/255,8/255,0/255,0.5);
+                ctx.lineWidth = 5;//路径宽度
+                for (var i = 0; i <pathsMod.count; ++i) {
+                    var startPoint = pathsMod.get(i).start_point_add;
+                    var endPoint = pathsMod.get(i).end_point_add;
+                    ctx.beginPath();
+                    ctx.moveTo(startPoint.x, startPoint.y);
+                    ctx.lineTo(endPoint.x, endPoint.y);
+                    ctx.stroke();
+                }
+            }
+
+
+            MouseArea {
+                id: road_mouseArea
+                anchors.fill: parent
+                onClicked: {
+                    var mouseX = mouse.x - path_canvas.x;
+                    var mouseY = mouse.y - path_canvas.y;
+                    for(var i = 0; i < pathsMod.count; ++i) {
+                        var startPoint = pathsMod.get(i).start_point_add;
+                        var endPoint = pathsMod.get(i).end_point_add;
+
+                        // 计算点击距图像的路径
+                        var dx = endPoint.x - startPoint.x;
+                        var dy = endPoint.y - startPoint.y;
+                        var length = Math.sqrt(dx * dx + dy * dy);
+                        for (var t = 0; t <= length; t++) {
+                            var x = startPoint.x + dx * (t / length);
+                            var y = startPoint.y + dy * (t / length);
+
+
+                            var clickRadius = 4; // 按需要调整
+                            if (Math.abs(x - mouseX) <= clickRadius && Math.abs(y - mouseY) <= clickRadius) {
+                                // 调整label弹出的位置，目前在点击区域附件
+                                road_text.x = mouseX + 10;
+                                road_text.y = mouseY - road_text.height - 10;
+                                road_text.visible = true;
+
+                                /*road_text_label.text = "路名: " + pathsMod.get(i).road_name +
+                                        "\n长度: " + pathsMod.get(i).road_length +"米"+
+                                        "\n起点: " + pathsMod.get(i).start_point_name +
+                                        "\n终点: " + pathsMod.get(i).end_point_name;*/
+                                show_road_name.text="路名:"+pathsMod.get(i).road_name
+                                show_road_length.text="长度:"+pathsMod.get(i).road_length +"米"
+                                show_road_start.text="起点:"+pathsMod.get(i).start_point_name
+                                show_road_end.text="终点:"+pathsMod.get(i).end_point_name
+                                return;
+                            }
+                            else{
+                                road_text.visible=false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
         Repeater{
             id : pointsGenarating_fir
             property int init_point_key: init_point_key = root.max_point_key
-            model:pointsMod.count
+            model:pointsMod
             // x : index * 80
             // Triggerable_Button{
             //     anchors.fill: parent
@@ -1333,7 +1401,7 @@ Window {
                 //console.log(pointsMod.get(index).point_key)
                 //y : 20
                 //id : index
-
+                enabled: true
                 index_of_point :pointsMod.get(index).point_key
                 button_text: pointsMod.get(index).point_key
                 //anchors.left: parent.left
@@ -1345,8 +1413,19 @@ Window {
                 point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
 
             }
+
+
         }
 
+        Connections{
+            target: delete_finish_instruction_button
+            function onRefreshFirstWindowSig(){
+                console.log("signal")
+                //pointsGenarating_fir.model = null
+                pointsGenarating_fir.model = pointsMod
+
+            }
+        }
 
         // ButtonWithComponent{
         //     id:myButton_yinghuachengbao
@@ -1365,42 +1444,42 @@ Window {
         //     ]
 
         // }
-        Repeater{
-            id : carousel_image_init
-            model: all_images_model
-            delegate: ButtonWithComponent{
-                originalY : 100
-                originalX : index * 100
-                carousel_pics_model: all_images_model[index]
-            }
-        }
-        Repeater{
-            id : first_pointsGenarating
-            //property int init_point_key: init_point_key = root.max_point_key
+        // Repeater{
+        //     id : carousel_image_init
+        //     model: all_images_model
+        //     delegate: Triggerable_Button{
+        //         originalY : 100
+        //         originalX : index * 100
+        //         carousel_pics_model: all_images_model[index]
+        //     }
+        // }
+        // Repeater{
+        //     id : first_pointsGenarating
+        //     //property int init_point_key: init_point_key = root.max_point_key
 
-            model:pointsMod
-            // x : index * 80
-            // Triggerable_Button{
-            //     anchors.fill: parent
+        //     model:all_images_model
+        //     // x : index * 80
+        //     // Triggerable_Button{
+        //     //     anchors.fill: parent
 
-            //     button_text: index
+        //     //     button_text: index
 
-            // }
+        //     // }
 
-            delegate: Triggerable_Button{
-
-
-                index_of_point :pointsMod.get(index).point_key
-                button_text: pointsMod.get(index).point_key
-                //anchors.left: parent.left
-                //anchors.leftMargin: index * 40
+        //     delegate: Triggerable_Button{
 
 
-                point_x: pointsMod.get(index).point_addr_x-15// 使用当前元素的 point_x
+        //         index_of_point :pointsMod.get(index).point_key
+        //         button_text: pointsMod.get(index).point_key
+        //         //anchors.left: parent.left
+        //         //anchors.leftMargin: index * 40
+        //         carousel_pics_model: all_images_model[index]
 
-                point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
-            }
-        }
+        //         point_x: pointsMod.get(index).point_addr_x-15// 使用当前元素的 point_x
+
+        //         point_y: pointsMod.get(index).point_addr_y-15 // 使用当前元素的 point_y
+        //     }
+        // }
 
 
         /*Label {
@@ -1491,69 +1570,6 @@ Window {
 
 
 
-        Canvas {
-            id: path_canvas
-            anchors.fill: parent
-
-            onPaint: {
-                var ctx = getContext("2d");
-                ctx.strokeStyle = Qt.rgba(255/255,8/255,0/255,0.5);
-                ctx.lineWidth = 5;//路径宽度
-                for (var i = 0; i <pathsMod.count; ++i) {
-                    var startPoint = pathsMod.get(i).start_point_add;
-                    var endPoint = pathsMod.get(i).end_point_add;
-                    ctx.beginPath();
-                    ctx.moveTo(startPoint.x, startPoint.y);
-                    ctx.lineTo(endPoint.x, endPoint.y);
-                    ctx.stroke();
-                }
-            }
-
-
-            MouseArea {
-                id: road_mouseArea
-                anchors.fill: parent
-                onClicked: {
-                    var mouseX = mouse.x - path_canvas.x;
-                    var mouseY = mouse.y - path_canvas.y;
-                    for(var i = 0; i < pathsMod.count; ++i) {
-                        var startPoint = pathsMod.get(i).start_point_add;
-                        var endPoint = pathsMod.get(i).end_point_add;
-
-                        // 计算点击距图像的路径
-                        var dx = endPoint.x - startPoint.x;
-                        var dy = endPoint.y - startPoint.y;
-                        var length = Math.sqrt(dx * dx + dy * dy);
-                        for (var t = 0; t <= length; t++) {
-                            var x = startPoint.x + dx * (t / length);
-                            var y = startPoint.y + dy * (t / length);
-
-
-                            var clickRadius = 4; // 按需要调整
-                            if (Math.abs(x - mouseX) <= clickRadius && Math.abs(y - mouseY) <= clickRadius) {
-                                // 调整label弹出的位置，目前在点击区域附件
-                                road_text.x = mouseX + 10;
-                                road_text.y = mouseY - road_text.height - 10;
-                                road_text.visible = true;
-
-                                /*road_text_label.text = "路名: " + pathsMod.get(i).road_name +
-                                        "\n长度: " + pathsMod.get(i).road_length +"米"+
-                                        "\n起点: " + pathsMod.get(i).start_point_name +
-                                        "\n终点: " + pathsMod.get(i).end_point_name;*/
-                                show_road_name.text="路名:"+pathsMod.get(i).road_name
-                                show_road_length.text="长度:"+pathsMod.get(i).road_length +"米"
-                                show_road_start.text="起点:"+pathsMod.get(i).start_point_name
-                                show_road_end.text="终点:"+pathsMod.get(i).end_point_name
-                                return;
-                            }
-                            else{
-                                road_text.visible=false
-                            }
-                        }
-                    }
-                }
-            }
-        }
         TextField { // 文本输入框
             id: inputField
             visible: parent.visible
@@ -2493,6 +2509,8 @@ Window {
             /*max_point_key++;*/
             console.log("当前最大点为：" + root.max_point_key)
             console.log("init_max_key: " + pointsGenarating.init_point_key)
+            /*动态创建组件*/
+            //RefreshFirstWindowSig()
         }
 
     }
